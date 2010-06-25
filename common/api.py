@@ -2708,11 +2708,11 @@ def post(api_user, _task_ref=None, **kw):
   if thumbnail_url:
     extra['thumbnail_url'] = clean.url(thumbnail_url)
 
-  channel_post_match = channel_post_re.search(message)
+  channel_post_match = channel_post_re.search(message.replace("\n", "<br/>")) # temporary replace '\n' for match channel post regular expression  
   if channel_post_match:
     match_dict = channel_post_match.groupdict()
     channel = match_dict['channel']
-    message = match_dict['message']
+    message = match_dict['message'].replace("<br/>", "\n") # re-replace
     new_kw = kw.copy()
     new_kw['channel'] = channel
     new_kw['message'] = message

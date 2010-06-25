@@ -10,15 +10,14 @@
 #
 #ROOT_NICK = 'root@inforlearn.appspot.com'
 #
-#TEMPLATE_DEBUG = True
+#TEMPLATE_DEBUG = False
 #
 #DEFAULT_FROM_EMAIL = 'AloneRoad@Gmail.com'
 #
 #HOSTED_DOMAIN_ENABLED = False
 #
-#DEBUG = True
+#DEBUG = False
 #
 #SECRET_KEY = 'f245e0b233c1baba0521a8792031d879'
 #
 #SSL_LOGIN_ENABLED = True
-
