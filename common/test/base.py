@@ -43,7 +43,7 @@ class FixturesTestCase(test.TestCase):
                'root@example.com': 'fakepassword',
                'hotness@example.com': 'fakepassword'};
 
-  __metaclass__ = megamox.MoxMetaTestBase
+  __metaclass__ = mox.MoxMetaTestBase
 
   def setUp(self):
     settings.DEBUG = False
@@ -91,7 +91,7 @@ class ViewTestCase(FixturesTestCase):
   def login(self, nick, password=None):
     if not password:
       password = self.passwords[clean.nick(nick)]
-    r = self.client.post('/login', {'log': nick, 'pwd': password})
+    self.client.post('/login', {'log': nick, 'pwd': password})
     return
 
   def logout(self):

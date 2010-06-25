@@ -13,4 +13,4 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-python manage.py testserver common/fixtures/*.json
+python2.6 manage.py testserver common/fixtures/*.json

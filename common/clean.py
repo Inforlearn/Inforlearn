@@ -179,8 +179,11 @@ def redirect_to(value):
   if '\n' in value or '\r' in value:
     return '/'
 
-  scheme, netloc, path, params, query, fragment = urlparse.urlparse(
-      value.lower())
+  params = urlparse.urlparse(value.lower())
+
+  scheme = params[0]
+  netloc = params[1]
+  path = params[2]
 
   if not scheme and not netloc and path:
     # Check for a relative URL, which is fine
