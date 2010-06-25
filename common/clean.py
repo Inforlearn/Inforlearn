@@ -81,7 +81,7 @@ channel_re = re.compile(r'^#[a-zA-Z0-9]{%d,%d}@%s$' \
                                    NICK_MAX_LENGTH,
                                    RE_NS_DOMAIN))
 
-def channel(value, message='ID không hợp lệ'):
+def channel(value, message=u'ID không hợp lệ'):
   """ expects to get a channel in one of the following forms:
   
   popular
@@ -106,7 +106,7 @@ def oauth_type(value, message='Invalid OAuth type'):
     raise exception.ValidationError(message)
   return value
 
-def user(value, message='Tên đăng nhập không hợp lệ'):
+def user(value, message=u'Tên đăng nhập không hợp lệ'):
   """ expects to get a nick in one of the following forms:
 
   popular

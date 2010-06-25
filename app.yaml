@@ -43,12 +43,12 @@ handlers:
 - url: /images
   static_dir: images
 
-- url: /image/(avatar_default.*)
-  static_files: image/\1
-  upload: image/avatar_default.*
+- url: /images/(avatar_default.*)
+  static_files: images/\1
+  upload: images/avatar_default.*
 
-- url: /image/default
-  static_dir: image/default
+- url: /images/default
+  static_dir: images/default
 
 - url: /css
   static_dir: css
