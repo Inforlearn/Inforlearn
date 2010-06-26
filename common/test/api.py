@@ -1817,7 +1817,7 @@ class ApiUnitTestAvatarUpload(ApiUnitTest):
     all_sizes = {'original': (320, 320)} # original dimension
     all_sizes.update(api.AVATAR_IMAGE_SIZES)
     for size, dimensions in all_sizes.items():
-      keyname = 'images/%s_%s.jpg' % (avatar_base_path, size)
+      keyname = 'image/%s_%s.jpg' % (avatar_base_path, size)
       image_ref = models.Image.get_by_key_name(keyname)
       self.assert_(image_ref)
       image = images.Image(image_ref.content)

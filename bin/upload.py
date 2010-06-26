@@ -843,9 +843,9 @@ class SubversionVCS(VersionControlSystem):
     }
 
     def repl(m):
-       if m.group(2):
-         return "$%s::%s$" % (m.group(1), " " * len(m.group(3)))
-       return "$%s$" % m.group(1)
+      if m.group(2):
+        return "$%s::%s$" % (m.group(1), " " * len(m.group(3)))
+      return "$%s$" % m.group(1)
     keywords = [keyword
                 for name in keyword_str.split(" ")
                 for keyword in svn_keywords.get(name, [])]

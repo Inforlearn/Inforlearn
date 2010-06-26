@@ -179,7 +179,7 @@ def handle_view_action(request, actions):
 def common_design_update(request, success="/", nick=None):
   if not nick:
     nick = request.user.nick
-  view = api.actor_get(api.ROOT, nick)
+#  view = api.actor_get(api.ROOT, nick)
   if request.POST:
     try:
       validate.nonce(request, 'update_design')

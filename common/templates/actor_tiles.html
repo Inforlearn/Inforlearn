@@ -5,11 +5,13 @@
   {% for actor in actor_tiles %}
   <li class="vcard{{actor.my_follower|yesno:" follower,"}}{{actor.my_contact|yesno:" contact,"}}{% cycle ' clear' '' ''%}">
     {% linked_avatar actor "u" request %}
-    <h3><a class="url" href="{% url_for actor request %}" rel="{{actor.rel}}">
+    <h3>
+      <a class="url" href="{% url_for actor request %}" rel="{{actor.rel}}">
         {{actor.display_nick}}
-    </a></h3>
+      </a>
+    </h3>
     <p class="fn message">
-    {{actor.extra.full_name}}
+      {{actor.extra.full_name}}
     </p>
     <p class="foot">
       {% actor_add_contact request.user view actor %}
