@@ -26,7 +26,7 @@ def add_caching_headers(headers):
     def _wrap(request, *args, **kw):
       rv = handler(request, *args, **kw)
       return util.add_caching_headers(rv, headers)
-    _wrap.func_name == handler.func_name
+#    _wrap.func_name == handler.func_name
     return _wrap
   return _cache
 

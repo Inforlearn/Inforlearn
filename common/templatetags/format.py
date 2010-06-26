@@ -130,7 +130,8 @@ def linked_entry_title(value, request=None):
 #  return '<a href="%s">%s</a>' % (
 #      value.url(request=request), 
 #      format_fancy(escape(value.extra['title'])).replace('\n', ' '))
-  content = format_fancy(escape(value.extra['title'])).replace('\n', '<br/>')
+  content = format_fancy(escape(value.extra['title']))
+  content = content.replace('\n', '<br/>').replace(" ", "&nbsp;")
   content = format_autolinks(content)
   return '%s' % (content.strip())
 

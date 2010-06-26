@@ -55,7 +55,7 @@
     <style type="text/css"><!--
       body {
         {% if view.extra.bg_image %}
-        background-image: url("http://{{DOMAIN}}/images/{{view.extra.bg_image|urlencode}}");
+        background-image: url("http://{{DOMAIN}}/image/{{view.extra.bg_image|urlencode}}");
                 
         background-attachment: fixed;
         background-position: center;
@@ -101,32 +101,24 @@
           }
         })
     })
-    
-    
   </script>
-  
-  
-  
 </head>
-
-    
-    
-<body style="display:none;" {% block bodytag %}{% if area %}id="{{area}}"{% endif %}{% if not request.user %}class="global"{% endif %}{% endblock %}>
-    
-  {% block body %}
-  {% endblock %}
-
-  {% if DEBUG and 0 %}
-  <div id="debug" class="clear">
-    <a href="#dbg" onclick="$('div#dbg').toggle();">Toggle debug</a>
-    <div id="dbg" style="display: none; text-align: left;">
-      <pre><![CDATA[
-      {% debug %}
-      ]]></pre>
+  <body style="display:none;" {% block bodytag %}{% if area %}id="{{area}}"{% endif %}{% if not request.user %}class="global"{% endif %}{% endblock %}>
+      
+    {% block body %}
+    {% endblock %}
+  
+    {% if DEBUG and 0 %}
+    <div id="debug" class="clear">
+      <a href="#dbg" onclick="$('div#dbg').toggle();">Toggle debug</a>
+      <div id="dbg" style="display: none; text-align: left;">
+        <pre><![CDATA[
+        {% debug %}
+        ]]></pre>
+      </div>
     </div>
-  </div>
-  {% endif %}
-
-  {{component.best.analytics.footer|safe}}
-</body>
+    {% endif %}
+  
+    {{component.best.analytics.footer|safe}}
+  </body>
 </html>

@@ -334,7 +334,6 @@ def api_cleardata(request):
   kind = request.GET.get('kind', 'InboxEntry')
   c = 0
   from google.appengine.api import datastore
-  from google.appengine.runtime.apiproxy_errors import DeadlineExceededError
   try:
     q = datastore.Query(kind)
     for o in q.Run():
@@ -342,7 +341,7 @@ def api_cleardata(request):
       logging.debug(o)
       datastore.Delete(o.key())
   except Exception, e:
-    logging.error("Deadline Errorr %s" % e)
+    logging.error("Deadline Error %s" % e)
 
   return http.HttpResponse("kind=%s&count=%s" % (kind, c))
 

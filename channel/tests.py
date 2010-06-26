@@ -310,7 +310,7 @@ class SettingsTest(ViewTestCase):
       if page == '/delete':
         # See note in views.py for the issue with the delete page.
         continue
-      r = self.client.get('/channel/nonexist/settings' + page)
+      self.client.get('/channel/nonexist/settings' + page)
       # TODO(termie): it redirects twice and this function doesn't handle that
       #r = self.assertRedirectsPrefix(r, '/channel/nonexist')
       #self.assertWellformed(r)

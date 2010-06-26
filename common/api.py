@@ -1306,7 +1306,7 @@ def background_upload(api_user, nick, content):
   nick = clean.nick(nick)
 
   # XXX begin transaction
-  img = images.Image(content)
+#  img = images.Image(content)
 
   # note: only supporting JPEG format
   #img_data = img.execute_transforms(output_encoding=images.JPEG)
@@ -1317,11 +1317,11 @@ def background_upload(api_user, nick, content):
   path = 'bg_%s' % (path_uuid)
 
   # TODO: Check for hash collisions before uploading (!!)
-  img_ref = image_set(api_user,
-                      nick,
-                      path=path,
-                      format='jpg',
-                      content=content)
+  image_set(api_user,
+            nick,
+            path=path,
+            format='jpg',
+            content=content)
   # XXX end transaction
 
 
@@ -1414,10 +1414,10 @@ def channel_create(api_user, **kw):
   rel_ref.put()
 
   # create the presence stream for the channel
-  stream_ref = stream_create_presence(api_user,
-                                      channel_ref.nick,
-                                      read_privacy=PRIVACY_PUBLIC,
-                                      write_privacy=PRIVACY_CONTACTS)
+  stream_create_presence(api_user,
+                         channel_ref.nick,
+                         read_privacy=PRIVACY_PUBLIC,
+                         write_privacy=PRIVACY_CONTACTS)
 
   channel_join(api_user, creator_nick, channel_nick)
   # XXX end transaction
@@ -1549,7 +1549,6 @@ def channel_join(api_user, nick, channel):
   rel.put()
 
   # TODO probably a race-condition
-  count = channel_ref.extra['member_count']
   channel_ref.extra['member_count'] += 1
   channel_ref.rank += 1
   channel_ref.put()
@@ -1560,9 +1559,9 @@ def channel_join(api_user, nick, channel):
 
   streams = stream_get_actor(ROOT, channel)
   for stream in streams:
-    sub = subscription_request(api_user,
-                               topic=stream.key().name(),
-                               target='inbox/%s/overview' % actor_ref.nick)
+    subscription_request(api_user,
+                         topic=stream.key().name(),
+                         target='inbox/%s/overview' % actor_ref.nick)
   # XXX end transaction
 
   return rel
@@ -2138,7 +2137,7 @@ def im_associate(api_user, nick, im):
 
 @admin_required
 def im_disassociate(api_user, nick, im):
-  actor_ref = actor_get(ROOT, nick)
+  actor_get(ROOT, nick)
 
   key_name = Relation.key_from(relation='im_account',
                                owner=nick,
@@ -2167,7 +2166,7 @@ def im_get_actor(api_user, nick):
 #######
 
 def image_get(api_user, nick, path, format='jpg'):
-  keyname = 'images/%s/%s.%s' % (nick, path, format)
+  keyname = 'image/%s/%s.%s' % (nick, path, format)
   image_ref = Image.get_by_key_name(keyname)
 
   # LEGACY COMPAT
@@ -2186,7 +2185,7 @@ def image_get_all_keys(api_user, nick, size):
 @public_owner_or_contact
 def image_set(api_user, nick, path, content, format='jpg', size=None):
   nick = clean.nick(nick)
-  params = {'key_name': 'images/%s/%s.%s' % (nick, path, format),
+  params = {'key_name': 'image/%s/%s.%s' % (nick, path, format),
             'actor': 'actor/%s' % nick,
             'content': db.Blob(content),
             }
@@ -2488,7 +2487,7 @@ def mobile_confirm_doubleoptin(api_user, nick):
 
 @admin_required
 def mobile_disassociate(api_user, nick, mobile):
-  actor_ref = actor_get(ROOT, nick)
+  actor_get(ROOT, nick)
 
   key_name = Relation.key_from(relation='mobile',
                                owner=nick,
@@ -3441,14 +3440,14 @@ def user_cleanup(api_user, nick):
     actor_ref.put()
 
   try:
-    presence_stream_ref = stream_get_presence(api_user, actor_ref.nick)
+    stream_get_presence(api_user, actor_ref.nick)
   except exception.ApiException:
     stream_create_presence(api_user,
                            actor_ref.nick,
                            read_privacy=actor_ref.privacy)
 
   try:
-    comment_stream_ref = stream_get_comment(api_user, actor_ref.nick)
+    stream_get_comment(api_user, actor_ref.nick)
   except exception.ApiException:
     stream_create_comment(api_user, actor_ref.nick)
 
@@ -3464,7 +3463,6 @@ def user_create(api_user, **kw):
     'password': kw.get('password', ''),
     'extra': {
       'full_name': kw.get('full_name', kw.get('full_name', '')),
-#      'family_name': kw.get('family_name', kw.get('last_name', '')),
       'homepage': kw.get('homepage', ''),
       'sms_double_opt_in': True,
     },
@@ -3495,13 +3493,13 @@ def user_create(api_user, **kw):
   actor.put()
 
   # Create the streams
-  presence_stream = stream_create_presence(api_user,
-                                           actor.nick,
-                                           read_privacy=params['privacy'])
-  comments_stream = stream_create_comment(api_user, actor.nick)
+  stream_create_presence(api_user,
+                         actor.nick,
+                         read_privacy=params['privacy'])
+  stream_create_comment(api_user, actor.nick)
 
   # Add the contact
-  rel = actor_add_contact(actor, actor.nick, ROOT.nick)
+  actor_add_contact(actor, actor.nick, ROOT.nick)
 
   return actor
 
@@ -3532,13 +3530,13 @@ def user_create_root(api_user):
   actor.put()
 
   # Create the streams
-  presence_stream = stream_create_presence(api_user,
-                                           actor.nick,
-                                           read_privacy=params['privacy'])
-  comments_stream = stream_create_comment(api_user, actor.nick)
+  stream_create_presence(api_user,
+                         actor.nick,
+                         read_privacy=params['privacy'])
+  stream_create_comment(api_user, actor.nick)
 
   # Add the contact
-  rel = actor_add_contact(actor, actor.nick, ROOT.nick)
+  actor_add_contact(actor, actor.nick, ROOT.nick)
 
   return actor
 
@@ -3840,10 +3838,10 @@ class AddEntryInitial(Goal):
     # these are the most important first inboxes, they get the entry to show
     # up for the user that made them and anybody who directly views the
     # author's history
-    initial_inboxes_ref = _add_inbox(self.new_stream_ref,
-                                     new_entry_ref,
-                                     initial_inboxes,
-                                     shard='owner')
+    _add_inbox(self.new_stream_ref,
+               new_entry_ref,
+               initial_inboxes,
+               shard='owner')
 
     self.bump()
     return new_entry_ref

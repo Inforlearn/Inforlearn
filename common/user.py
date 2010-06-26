@@ -1,6 +1,5 @@
 import datetime
 import logging
-import oauth.oauth as oauth
 from django.conf import settings
 from django.core.cache import cache
 from common import api

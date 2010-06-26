@@ -1,6 +1,4 @@
-from django.conf import settings
 from django.core import mail
-
 from common import api
 from common import util
 from common import tests
