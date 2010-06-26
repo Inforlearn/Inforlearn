@@ -2807,6 +2807,7 @@ div.tabs div.tab p {
     display: block;
     padding: 4px;
     width: 75px;
+    height: 75px;
     right: 0;
     left: 0;
 }
