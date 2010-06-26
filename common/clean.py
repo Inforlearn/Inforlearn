@@ -42,7 +42,7 @@ def bg_repeat(value):
     return value
   return ''
 
-BG_IMAGE_RE = '^#?' + USER_RE[1:-1] + r'/bg_[0-9a-f]+\.jpg$'
+BG_IMAGE_RE = 'default|^#?' + USER_RE[1:-1] + r'/bg_[0-9a-f]'
 BG_IMAGE_COMPILED = re.compile(BG_IMAGE_RE)
 
 def bg_image(value, message='Invalid background image path'):

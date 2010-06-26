@@ -110,7 +110,10 @@ def linked_avatar(parser, token):
   Parameters: actor, args (arg, rel_attr), request.
   """
   try:
-    tag_name, actor, args, request = token.split_contents()
+    params = token.split_contents()
+    actor = params[1]
+    args = params[2]
+    request = params[3]
   except ValueError:
     raise template.TemplateSyntaxError, \
       "%r tag requires exactly three arguments" % token.contents.split()[0]

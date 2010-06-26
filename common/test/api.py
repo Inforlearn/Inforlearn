@@ -173,13 +173,13 @@ class ApiIntegrationTest(base.FixturesTestCase):
     timestamp2 = datetime.datetime(2008, 01, 01, 02, 03, 04)
     timestamp_between = datetime.datetime(2007, 06, 01, 02, 03, 04)
     api.utcnow = lambda: timestamp1
-    rv = self.get('/api/json', {'method': 'presence_set',
-                                'nick': 'root@example.com',
-                                'status': 'bar'})
+#    rv = self.get('/api/json', {'method': 'presence_set',
+#                                'nick': 'root@example.com',
+#                                'status': 'bar'})
     api.utcnow = lambda: timestamp2
-    rv = self.get('/api/json', {'method': 'presence_set',
-                                'nick': 'celebrity@example.com',
-                                'status': 'baz'})
+#    rv = self.get('/api/json', {'method': 'presence_set',
+#                                'nick': 'celebrity@example.com',
+#                                'status': 'baz'})
 
     rv = self.get('/api/json', {'method': 'presence_get_contacts',
                                 'nick': 'popular@example.com',
@@ -333,9 +333,9 @@ class ActivationUnitTest(ApiUnitTest):
                       'TESTCODE')
 
     # right code, right user
-    relation_ref = api.activation_activate_email(self.hermit,
-                                                 self.hermit.nick,
-                                                 'TESTCODE')
+    api.activation_activate_email(self.hermit,
+                                  self.hermit.nick,
+                                  'TESTCODE')
     self.assertEqual(self.hermit,
                      api.actor_lookup_email(api.ROOT, self.hermit.nick))
 

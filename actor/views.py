@@ -598,6 +598,7 @@ def actor_settings(request, nick, page='index'):
   # TODO(tyler): Merge this into handle_view_action, if possible
   if 'password' in request.POST:
     try:
+      full_page = "Mật khẩu"
       validate.nonce(request, 'change_password')
 
       password = request.POST.get('password', '')
@@ -623,6 +624,7 @@ def actor_settings(request, nick, page='index'):
       exception.handle_exception(request)
 
   if page == 'photo':
+    full_page = "Ảnh đại diện"
     redirect_to = view.url() + '/settings/photo'
     handled = common_views.common_photo_upload(request, redirect_to)
     if handled:
@@ -630,7 +632,7 @@ def actor_settings(request, nick, page='index'):
 
 
   area = 'settings'
-  full_page = page.capitalize()
+#  full_page = page.capitalize()
 
   if page == 'mobile':
     full_page = 'Mobile Number'
@@ -639,7 +641,6 @@ def actor_settings(request, nick, page='index'):
     sms_notify = view.extra.get('sms_notify', False)
 
   elif page == 'im':
-    full_page = 'IM Address'
     im_address = api.im_get_actor(request.user, view.nick)
     im_notify = view.extra.get('im_notify', False)
   elif page == 'index':
@@ -650,7 +651,7 @@ def actor_settings(request, nick, page='index'):
   elif page == 'feeds':
     full_page = 'Web Feeds'
   elif page == 'email':
-    full_page = 'Email Address'
+    full_page = 'Email'
     email_notify = view.extra.get('email_notify', False)
 
     # check if we already have an email
@@ -663,11 +664,12 @@ def actor_settings(request, nick, page='index'):
         unconfirmed_email = unconfirmeds[0].content
 
   elif page == 'design':
+    backgrounds = display.DEFAULT_BACKGROUNDS
     redirect_to = view.url() + '/settings/design'
     handled = common_views.common_design_update(request, redirect_to, view.nick)
     if handled:
       return handled
-    full_page = 'Look and Feel'
+    full_page = u'Hiển thị'
 
   elif page == 'notifications':
     email = api.email_get_actor(request.user, view.nick)
@@ -697,7 +699,7 @@ def actor_settings(request, nick, page='index'):
     # TODO(tyler): Fix this avatar nonsense!
     own_photos = [{
         'path' : small_photo.key().name(),
-        'name' : small_photo.key().name()[len('images/'):-len('_f.jpg')],
+        'name' : small_photo.key().name()[len('image/'):-len('_f.jpg')],
       } for small_photo in small_photos
     ]
 

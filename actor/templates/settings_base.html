@@ -1,6 +1,6 @@
 {% extends 'common/templates/base_wide.html' %}
 {% load format %}
-{% block title %}Settings {{full_page|yesno:"|,"}} {{full_page}}{% endblock %}
+{% block title %}Thiết lập {{full_page|yesno:"|,"}} {{full_page}}{% endblock %}
 
 {% block content %}
 <div class="path">
@@ -11,7 +11,7 @@
     {% ifnotequal page "index" %}
       <a href="{% url_for view request %}/settings">
     {% endifnotequal %}
-    Settings
+    Thiết lập
     {% if full_page %}
       </a> / {{full_page}}
     {% endif %}
@@ -68,7 +68,7 @@
     <h3>Hiển thị</h3>
     <ul>
       <li{% ifequal page "design" %} class="current"{% endifequal %}>
-        <a href="{{view.url}}/settings/design">Giao diện</a>
+        <a href="{{view.url}}/settings/design">Màu nền và ảnh nền</a>
       </li>
       {% if BADGES_ENABLED %}
         <li{% ifequal page "badge" %} class="current"{% endifequal %}>

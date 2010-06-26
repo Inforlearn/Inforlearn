@@ -1,3 +1,4 @@
+#! coding: utf-8
 from django import http
 from django import template
 from django.conf import settings
@@ -396,7 +397,6 @@ def channel_members(request, nick=None, format='html'):
 @decorator.login_required
 def channel_settings(request, nick, page='index'):
   nick = clean.channel(nick)
-
   view = api.actor_lookup_nick(request.user, nick)
 
   if not view:
@@ -416,13 +416,14 @@ def channel_settings(request, nick, page='index'):
   if page == 'photo' and not handled:
     handled = common_views.common_photo_upload(request, request.path, nick)
   if page == 'design' and not handled:
-    handled = common_views.common_design_update(request, nick)
+    handled = common_views.common_design_update(request=request, nick=nick)
 
   if handled:
     return handled
 
   area = 'settings'
   avatars = display.DEFAULT_AVATARS
+  backgrounds = display.DEFAULT_BACKGROUNDS
   actor_url = '/channel/%s' % nick
 
   if page == 'index':
@@ -448,20 +449,20 @@ def channel_settings(request, nick, page='index'):
                },
               ]
   elif page == 'delete':
-    pass
+    full_page = "Xóa"
   elif page == 'design':
-    pass
+    full_page = u"Hiển thị"
   elif page == 'details':
-    pass
+    full_page = "Thông tin bổ sung"
   elif page == 'photo':
-    pass
+    full_page = "Ảnh đại diện"
   else:
     return common_views.common_404(request)
 
   # full_page adds the title of the sub-component.  Not useful if it's the
   # main settings page
-  if page != 'index':
-    full_page = page.capitalize()
+#  if page != 'index':
+#    full_page = page.capitalize()
 
   # rendering
   c = template.RequestContext(request, locals())

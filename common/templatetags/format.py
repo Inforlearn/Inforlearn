@@ -230,7 +230,10 @@ def url_for(parser, token):
   Parameters: entity, request.
   """
   try:
-    tag_name, entity, request = token.split_contents()
+    params = token.split_contents()
+    entity = params[1]
+    request = params[2]
+
   except ValueError:
     raise template.TemplateSyntaxError, \
       "%r tag requires exactly two arguments" % token.contents.split()[0]
@@ -267,7 +270,9 @@ def actor_link(parser, token):
   Parameters: actor, request.
   """
   try:
-    tag_name, actor, request = token.split_contents()
+    params = token.split_contents()
+    actor = params[1]
+    request = params[2]
   except ValueError:
     raise template.TemplateSyntaxError, \
       "%r tag requires exactly two arguments" % token.contents.split()[0]
