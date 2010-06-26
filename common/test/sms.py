@@ -74,11 +74,11 @@ class SmsTest(base.FixturesTestCase):
   def test_post_and_reply(self):
 
     unpop = '+14083839393'
-    r = self.sign_in('unpopular', sender=unpop)
-    r = self.receive('on', sender=unpop)
+    self.sign_in('unpopular', sender=unpop)
+    self.receive('on', sender=unpop)
 
-    r = self.sign_in('popular')
-    r = self.receive('on')
+    self.sign_in('popular')
+    self.receive('on')
 
     r = self.receive('bling blao')
     self.assertOutboxContains(r, 'popular: bling blao', sender=unpop)
@@ -90,7 +90,7 @@ class SmsTest(base.FixturesTestCase):
     o = test_util.override(SMS_MT_WHITELIST=re.compile('\+23'))
 
     def _all_blocked():
-      r = self.sign_in('popular')
+      self.sign_in('popular')
 
     self.assertRaises(exception.ServiceError, _all_blocked)
 
@@ -103,7 +103,7 @@ class SmsTest(base.FixturesTestCase):
     o = test_util.override(SMS_MT_BLACKLIST=re.compile('\+1'))
 
     def _all_blocked():
-      r = self.sign_in('popular')
+      self.sign_in('popular')
 
     self.assertRaises(exception.ServiceError, _all_blocked)
 

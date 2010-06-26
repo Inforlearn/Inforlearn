@@ -464,6 +464,10 @@ p.foot-note {
 
 a:link, a:visited {
     color: #009bc7;
+    padding-left: 6px;
+    padding-right: 4px;
+    padding-top: 2px;
+    padding-bottom: 2px;
 }
 
 a:hover, a:link:hover, a:visited:hover {
@@ -525,13 +529,18 @@ div#sidebar div#channels ul li a:hover img.photo {
     border: solid 1px #009bc7;
 }
 
-div.avatars li label:hover {
+div.avatars li label:hover, div.backgrounds li label:hover {
     background: #dbeaff;
 }
 
 div.avatars li.selected label {
     background: #009bc7;
 }
+
+div.backgrounds li.selected label {
+	background: #009bc7;
+}
+	
 
 #settings div.body dd {
     background: transparent url(bg-settings-profile.gif) no-repeat 95% 90%;

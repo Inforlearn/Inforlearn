@@ -187,7 +187,7 @@ class OAuthTest(base.ViewTestCase):
 
     response = self.client.get("/api/access_token", access_request.parameters)
 
-    access_token = oauth.OAuthToken.from_string(response.content)
+#    access_token = oauth.OAuthToken.from_string(response.content)
 
   def test_update_bad_type(self):
     """Verify that sending a bad auth mode fails"""

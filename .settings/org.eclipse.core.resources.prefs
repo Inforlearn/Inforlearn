@@ -1,8 +1,9 @@
-#Fri Jun 25 02:32:51 ICT 2010
+#Sun Jun 27 00:40:52 ICT 2010
 eclipse.preferences.version=1
 encoding//actor/tests.py=utf-8
 encoding//actor/views.py=utf-8
 encoding//bin/upload.py=utf-8
+encoding//channel/views.py=utf-8
 encoding//common/api.py=utf-8
 encoding//common/clean.py=utf-8
 encoding//common/messages.py=utf-8

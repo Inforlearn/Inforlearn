@@ -30,7 +30,7 @@ class AcceptInviteTest(tests.ViewTestCase):
   actor_code = 'ACTORINVITE'
   channel_code = 'CHANNELINVITE'
   def test_invite_email_accept_logged_in(self):
-    r = self.login_and_get('hermit', '/invite/email/%s' % self.actor_code)
+    self.login_and_get('hermit', '/invite/email/%s' % self.actor_code)
     r = self.client.post(
         '/invite/email/%s' % self.actor_code,
         {'invite_accept': '',

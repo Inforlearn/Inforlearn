@@ -1,7 +1,7 @@
 {% load nonce %}
 <h2>Hiển thị</h2>
 {% include 'form_error.html' %}
-<form action="" method="post" enctype="multipart/form-data">
+<form id="form-design" action="" method="post" enctype="multipart/form-data">
   {{request.user|noncefield:"update_design"}}
   <div id="picker" style="float: right;"></div>
   <div>
@@ -10,7 +10,7 @@
   </div>
   <div>
     <label id="bg_image">Ảnh nền</label>
-    <input type="hidden" name="MAX_FILE_SIZE" value="400000" /> 
+    <input type="hidden" name="MAX_FILE_SIZE" value="200000" /> 
     <input type="hidden" name="action" value="upload" /> 
     <input type="file" name="bg_image" id="bg_image" value="" />
     <p class="help">
@@ -22,6 +22,27 @@
 <!--    <input type="checkbox" name="bg_repeat" id="bg_repeat" -->
 <!--    {% ifnotequal view.extra.bg_repeat "no-repeat" %}checked="checked"{% endifnotequal %} />-->
 <!--  </div>-->
+  Bạn cũng có thể chọn một ảnh nền trong thư viện dưới đây:
+
+  <div class="backgrounds">
+    <ul>
+        {% for bg in backgrounds %}
+        <li {% ifequal bg.path view.extra.bg_image %} 
+              class="selected"
+            {% endifequal %}>
+          <label>
+            <img src="/image/{{bg.path}}_thumb.jpg" alt=""/>
+            <input type="radio" 
+                   {% ifequal bg.path view.extra.bg_image %} 
+                     checked="checked"
+                   {% endifequal %} 
+                   value="{{bg.path}}" />
+          </label>
+        </li>
+        {% endfor %}
+        <input type="hidden" id="background"/>
+      </ul>
+  </div>
   <div class="buttons">
     {% if redirect_to %}
     <input type="hidden" name="redirect_to" value="{{redirect_to}}" />

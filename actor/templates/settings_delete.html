@@ -2,25 +2,24 @@
 {% load nonce %}
 {% block settings %}
 
-<h2>Delete Yourself</h2>
+<h2>Xóa tài khoản</h2>
 
 {% include 'form_error.html' %}
 <div id="account-form">
   <p>
-    There is no way to undo this, are you sure you want to erase all
-    traces of your presence from our life?
+    Tất cả mọi dữ liệu được lưu trữ trên Inforlearn thuộc về tài khoản này sẽ bị 
+    xóa bỏ. Sẽ không có bất cứ một cách nào có thể phục hồi lại dữ liệu.
   </p>
   <p>
-    I mean, give us another chance, we can change, we'll do the
-    dishes more often, we swear.
+    Nếu có gì sai sót, xin hãy góp ý với chúng tôi <a href="/channel/feedback">tại đây</a>. Chúng tôi vẫn đang cố gắng 
+    làm cho sản phẩm tốt lên.
   </p>
   <form action="" method="post">
     {{request.user|noncefield:"actor_remove"}}
     <input type="hidden" name="actor_remove" />
     <input type="hidden" name="nick" value="{{request.user.nick}}" />
     <div class="buttons">
-      <input type="submit" value="Goodbye Cruel World, Goodbye" />
-      or <a href="{{view.url}}/settings">cancel</a>, we'll forgive you.
+      <input type="submit" value="Vĩnh biệt" />
     </div>
   </form>
 </div>

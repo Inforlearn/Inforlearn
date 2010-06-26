@@ -1663,7 +1663,7 @@ div#sidebar div#channels ul li h3, div#sidebar div#channels ul li p {
     padding: 0;
 }
 
-div.avatars ul, div.tabs div.avatars ul,
+div.avatars ul, div.backgrounds ul, div.tabs div.avatars ul,
 #settings div.tabs div.avatars ul {
     list-style-type: none;
     margin: 6px 0 1em 6px;
@@ -1675,7 +1675,7 @@ div.avatars ul, div.tabs div.avatars ul,
     margin: 0 0 1em 0;
 }
 
-div.avatars li, div.tabs div.avatars ul li {
+div.avatars li, div.backgrounds li, div.tabs div.avatars ul li, div.backgrounds ul li {
     background: transparent;
     width: auto;
     margin: 4px;
@@ -1683,8 +1683,8 @@ div.avatars li, div.tabs div.avatars ul li {
     padding: 0;
 }
 
-div.avatars li label, #welcome div.tabs div.tab div.avatars label,
-#settings div.avatars li label {
+div.avatars li label, div.backgrounds li label, #welcome div.tabs div.tab div.avatars label,
+#settings div.avatars li label, #settings div.backgrounds li label {
     cursor: pointer;
     display: block;
     padding: 2px;
@@ -1699,6 +1699,20 @@ div.avatars li label input {
 }
 
 div.avatars li label img {
+    display: block;
+    height: 75px;
+    width: 75px;
+    margin: 0;
+}
+
+/* Backgrounds list CSS */
+div.backgrounds li label input {
+    position: absolute;
+    left: -100px;
+    top: -100px;
+}
+
+div.backgrounds li label img {
     display: block;
     height: 75px;
     width: 75px;

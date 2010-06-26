@@ -343,6 +343,22 @@ jQuery.fn.avatars = function () {
   );
 };
 
+jQuery.fn.backgrounds = function () {
+  var container = this;
+  var background = $("input#background");
+  $("label", container).click(
+    function (e) {
+      $("li", container).removeClass("selected");
+      $(this).parent().addClass("selected");
+      
+      var value = $("input", this).attr("value");
+      background.attr("value", value);
+      background.attr("name", "background");
+      background.attr("checked", "checked");
+    }
+  );
+};
+
 jQuery.fn.ajaxify = function () {
   this.click(
     function () {
@@ -515,6 +531,9 @@ jQuery.fn.forms = function () {
         break;
       case "form-location":
         $(this).location();
+        break;
+      case "form-design":
+        $(this).backgrounds();
         break;
       case "form-avatar":
         $("div.avatars", this).avatars();

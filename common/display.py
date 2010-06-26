@@ -39,7 +39,10 @@ def prep_comment_list(comment_list, actors):
   return comments
 
 DEFAULT_AVATARS = [{'name': 'user%s' % i, 'path': 'default/user%s' % i}
-                   for i in xrange(1, 20)]
+                   for i in range(1, 21)]
+
+DEFAULT_BACKGROUNDS = [{'name': 'bg%s' % i, 'path': 'default/bg%s' % i}
+                       for i in xrange(1, 7)]
 
 ICONS = {
   '101': ('feed-blog', 'blog', ''),

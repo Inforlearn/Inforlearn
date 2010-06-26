@@ -1326,7 +1326,7 @@ def background_upload(api_user, nick, content):
 
 
   # TODO(termie): this returns somewhat differently than avatar_upload above,
-  return '%s/bg_%s.jpg' % (nick, path_uuid)
+  return '%s/bg_%s' % (nick, path_uuid)
 
 #######
 ####### TODO: Slice channels

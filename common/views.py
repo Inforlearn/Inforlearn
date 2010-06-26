@@ -169,7 +169,7 @@ def handle_view_action(request, actions):
   after the call.
   """
   for action in actions.keys():
-    called, ret = call_api_from_request(request, action)
+    called = call_api_from_request(request, action)[0]
     if called:
       redirect = actions[action]
       return util.RedirectFlash(redirect, messages.flash(action))
@@ -195,6 +195,8 @@ def common_design_update(request, success="/", nick=None):
         img_url = api.background_upload(request.user,
                                         nick,
                                         img.read())
+      elif "background" in request.POST:
+        img_url = request.POST.get("background")
       api.background_set_actor(request.user,
                                nick,
                                img_url,
