@@ -7,7 +7,7 @@
 {% include 'form_error.html' %}
 <form action="" id="form-avatar" method="POST" enctype="multipart/form-data">
   <div class="tabs">
-    <div>
+    <div style="padding: 0em 0px;">
       {{request.user|noncefield:"change_photo"}}
       {{view|noncached_avatar:"f,current"}}
       {% if view.extra.icon %}
