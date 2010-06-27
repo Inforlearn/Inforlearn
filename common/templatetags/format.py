@@ -190,6 +190,7 @@ def format_comment(value, request=None):
   content = format_markdown(content)
   content = format_autolinks(content)
   content = format_actor_links(content, request)
+  content = format_emoticons(content)
   return content.strip().replace('\n', '<br/>')
 
 @register.filter(name="truncate")
