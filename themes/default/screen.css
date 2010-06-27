@@ -464,10 +464,12 @@ p.foot-note {
 
 a:link, a:visited {
     color: #009bc7;
+    /*
     padding-left: 6px;
     padding-right: 4px;
     padding-top: 2px;
     padding-bottom: 2px;
+    */
 }
 
 a:hover, a:link:hover, a:visited:hover {

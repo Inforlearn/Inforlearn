@@ -22,12 +22,11 @@
 
       {% if request.user %}
         {% if user_is_contact %}
-        <p class="contact">
-          {{view.display_nick}} đang là bạn của bạn.
+        <p class="contact" style="margin-top: 20px;">
           {% actor_remove_contact request.user request.user view %}
         </p>
         {% else %}
-        <p>
+        <p style="margin-top: 20px;">
           {% actor_add_contact_long request.user request.user view %}
         </p>
         {% endif %}
