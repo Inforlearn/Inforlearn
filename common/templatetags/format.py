@@ -22,6 +22,112 @@ r'(^|\s|>)([A-Za-z][A-Za-z0-9+.-]{1,120}:[A-Za-z0-9/](([A-Za-z0-9$_.+!*,;/?:@&~=
 autolink_regex = re.compile(r'(^|\s|>)([A-Za-z][A-Za-z0-9+.-]{1,120}:[A-Za-z0-9/](([A-Za-z0-9$_.+!*,;/?:@&~=-])|%[A-Fa-f0-9]{2}){1,333}(#([a-zA-Z0-9][a-zA-Z0-9$_.+!*,;/?:@&~=%-]{0,1000}))?)')
 bold_regex = re.compile(r'\*([^*]+)\*')
 italic_regex = re.compile(r'_([^_]+)_')
+emoticons_style = "style='display: inline; vertical-align: middle; margin-bottom: 7px;'"
+emoticons = [
+[":)", "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/1.gif'"],
+[":(", "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/2.gif'>"],
+[";)", "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/3.gif'>"],
+[":D", "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/4.gif'>"],
+[";;)", "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/5.gif'>"],
+[">:D<", "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/6.gif'>"],
+[":-/", "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/7.gif'>"],
+[":x", "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/8.gif'>"],
+[':">', "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/9.gif'>"],
+[":P", "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/10.gif'>"],
+[":-*", "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/11.gif'>"],
+["=((", "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/12.gif'>"],
+[":-O", "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/13.gif'>"],
+["X(", "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/14.gif'>"],
+[":>", "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/15.gif'>"],
+["B-)", "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/16.gif'>"],
+[":-S", "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/17.gif'>"],
+["#:-S", "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/18.gif'>"],
+[">:)", "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/19.gif'>"],
+[":((", "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/20.gif'>"],
+[":))", "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/21.gif'>"],
+[":|", "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/22.gif'>"],
+["/:)", "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/23.gif'>"],
+["=))", "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/24.gif'>"],
+["O:)", "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/25.gif'>"],
+[":-B", "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/26.gif'>"],
+["=;", "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/27.gif'>"],
+[':-c', " <img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/101.gif'>"],
+[':)]', "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/100.gif'>"],
+['~X(', "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/102.gif'>"],
+[':-h', "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/103.gif'>"],
+[':-t', "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/104.gif'>"],
+['8->', "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/105.gif'>"],
+['I-|', "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/28.gif'>"],
+['8-|', "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/29.gif'>"],
+['L-)', "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/30.gif'>"],
+[':-&', "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/31.gif'>"],
+[':-$', "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/32.gif'>"],
+['[-(', "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/33.gif'>"],
+[':O)', "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/34.gif'>"],
+['8-}', "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/35.gif'>"],
+['<:-P', "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/36.gif'>"],
+['(:|', "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/37.gif'>"],
+['=P~', "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/38.gif'>"],
+[':-?', "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/39.gif'>"],
+['#-o', "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/40.gif'>"],
+['=D>', "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/41.gif'>"],
+[':-SS', "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/42.gif'>"],
+['@-)', "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/43.gif'>"],
+[':^o', "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/44.gif'>"],
+[':-w', "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/45.gif'>"],
+[':-<', "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/46.gif'>"],
+['>:P', "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/47.gif'>"],
+['<):)', "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/48.gif'>"],
+['X_X', "<img src='http://l.yimg.com/us.yimg.com/i/mesg/emoticons7/109.gif'>"],
+[':!!', "<img src='http://l.yimg.com/us.yimg.com/i/mesg/emoticons7/110.gif'>"],
+['\\m/', "<img src='http://l.yimg.com/us.yimg.com/i/mesg/emoticons7/111.gif'>"],
+[':-q', "<img src='http://l.yimg.com/us.yimg.com/i/mesg/emoticons7/112.gif'>"],
+[':-bd', "<img src='http://l.yimg.com/us.yimg.com/i/mesg/emoticons7/113.gif'>"],
+['^#(^', "<img src='http://l.yimg.com/us.yimg.com/i/mesg/emoticons7/114.gif'>"],
+[':ar!', "<img src='http://l.yimg.com/a/i/us/msg/emoticons/pirate_2.gif'>"],
+[':-??', "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/106.gif'>"],
+['%-(', "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/107.gif'>"],
+[':@)', "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/49.gif'>"],
+['3:-O', " <img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/50.gif'>"],
+[':(|)', " <img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/51.gif'>"],
+['~:>', " <img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/52.gif'>"],
+['@};-', " <img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/53.gif'>"],
+['%%-', "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/54.gif'>"],
+['**==', " <img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/55.gif'>"],
+['(~~)', "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/56.gif'>"],
+['~O)', " <img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/57.gif'>"],
+['*-:)', " <img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/58.gif'>"],
+['8-X', " <img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/59.gif'>"],
+['=:)', "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/60.gif'>"],
+['>-)', "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/61.gif'>"],
+[':-L', "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/62.gif'>"],
+['[-O<', "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/63.gif'>"],
+['$-)', "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/64.gif'>"],
+[':-"', "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/65.gif'>"],
+['b-(', "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/66.gif'>"],
+[':)>-', "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/67.gif'>"],
+['[-X', "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/68.gif'>"],
+['\\:D/', "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/69.gif'>"],
+['>:/', "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/70.gif'>"],
+[';))', "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/71.gif'>"],
+[':-@', "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/76.gif'>"],
+['^:)^', "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/77.gif'>"],
+[':-j', "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/78.gif'>"],
+['(*)', "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/79.gif'>"],
+['o->', "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/72.gif'>"],
+['o=>', "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/73.gif'>"],
+['o-+', "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/74.gif'>"],
+['(%)', "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/75.gif'>"],
+[':bz', "<img src='http://l.yimg.com/us.yimg.com/i/mesg/emoticons7/115.gif'>"],
+['[..]', "<img src='http://l.yimg.com/a/i/us/msg/emoticons/transformer.gif'>"]
+]
+
+@register.filter(name="format_emoticons")
+@safe
+def format_emoticons(value, arg=None):
+  for e in emoticons:
+    value = value.replace(e[0], e[1].replace("img src", "img %s src" % emoticons_style))
+  return value
 
 
 @register.filter(name="format_fancy")
@@ -132,7 +238,9 @@ def linked_entry_title(value, request=None):
 #      format_fancy(escape(value.extra['title'])).replace('\n', ' '))
   content = format_fancy(escape(value.extra['title']))
   content = content.replace('\n', '<br/>').replace(" ", "&nbsp;")
-  content = format_autolinks(content)
+#  content = format_autolinks(content)
+  content = format_links(content)
+  content = format_emoticons(content)
   return '%s' % (content.strip())
 
 @register.filter
