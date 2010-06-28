@@ -1,6 +1,5 @@
 from django import http
 from django import template
-from django.conf import settings
 from django.template import loader
 from common import api
 from common import display
