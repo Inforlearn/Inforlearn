@@ -322,8 +322,7 @@ def owner_required(f):
 
     if not actor_owns_actor(api_user, actor_ref):
       raise exception.ApiOwnerRequired(
-          'Operation not allowed: %s does not own %s'
-          % (api_user and api_user.nick or '(nobody)', actor_ref.nick))
+          'Bạn không có quyền thực hiện hành động này')
     # everything checks out, call the original function
     return f(api_user, *args, **kw)
 
@@ -342,7 +341,7 @@ def owner_required_by_target(f):
 
     actor_ref = actor_get_safe(ROOT, nick)
     if not actor_ref:
-      raise exception.ApiNotFound('Actor does not exist: %s' % nick)
+      raise exception.ApiNotFound('Người dùng này (%s) không tồn tại' % nick)
 
 
     if not actor_owns_actor(api_user, actor_ref):
@@ -524,7 +523,7 @@ def activation_activate_email(api_user, nick, code):
 
   if existing_ref:
     raise exception.ApiAlreadyInUse(
-        u'Địa chỉ email %s đã được kích hoạt.' % activation_ref.content)
+        'Địa chỉ email %s đã được kích hoạt.' % activation_ref.content)
 
   # XXX begin transaction
 
@@ -1377,7 +1376,7 @@ def channel_create(api_user, **kw):
   if existing_ref:
     channel_nick = channel_nick.split("@")[0][1:]
     raise exception.ApiException(
-        u'Nhóm %s đã tồn tại. Bạn có thể tham gia bằng cách truy cập vào\
+        'Nhóm %s đã tồn tại. Bạn có thể tham gia bằng cách truy cập vào\
         địa chỉ: http://inforlearn.com/channel/%s' % (channel_nick,
                                                       channel_nick))
 
@@ -2308,7 +2307,7 @@ def invite_get(api_user, code):
   key_name = Invite.key_from(code=code)
   invite_ref = Invite.get_by_key_name(key_name)
   if not invite_ref:
-    raise exception.ApiException("Invalid invite code")
+    raise exception.ApiException("Mã thư mời không hợp lệ.")
   return invite_ref
 
 @owner_required
@@ -3486,7 +3485,7 @@ def user_create(api_user, **kw):
 
   if existing_ref:
     raise exception.ValidationError(
-        u'Có người khác đã dùng tên %s trước bạn.' % util.display_nick(nick))
+        'Có người khác đã dùng tên %s trước bạn.' % util.display_nick(nick))
 
   # Create the user
   actor = Actor(**params)
@@ -3523,7 +3522,7 @@ def user_create_root(api_user):
 
   if existing_ref:
     raise exception.ValidationError(
-        u'Có người khác đã dùng tên %s trước bạn.' % util.display_nick(nick))
+        'Có người khác đã dùng tên %s trước bạn.' % util.display_nick(nick))
 
   # Create the user
   actor = Actor(**params)

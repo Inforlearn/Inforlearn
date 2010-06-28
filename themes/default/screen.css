@@ -642,7 +642,7 @@ div#comments ul li div.bottom {
 }
 
 div#stream div.controls a.comment {
-    background: transparent url(comment.gif) no-repeat 0% 50%;
+    background: transparent url(comment.png) no-repeat 0% 50%;
 }
 
 /* status bubble */
