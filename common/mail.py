@@ -1,3 +1,4 @@
+#! coding: utf-8
 import logging
 import re
 from django.conf import settings
@@ -128,8 +129,9 @@ def email_invite(from_actor_ref, invite_code):
   full_name = _full_name(from_actor_ref)
   nick_name = from_actor_ref.display_nick()
   accept_url = 'http://%s/invite/email/%s' % (settings.DOMAIN, invite_code)
-  accept_mobile_url = 'http://m.%s/invite/email/%s' % (settings.DOMAIN,
-                                                       invite_code)
+#  accept_mobile_url = 'http://m.%s/invite/email/%s' % (settings.DOMAIN,
+#                                                       invite_code)
+  SITE_NAME = settings.SITE_NAME
 
   t = loader.get_template('common/templates/email/email_invite.txt')
   c = template.Context(locals(), autoescape=False)
@@ -138,7 +140,10 @@ def email_invite(from_actor_ref, invite_code):
   html_template = loader.get_template(
       'common/templates/email/email_invite.html')
   html_message = html_template.render(c)
-  subject = '%s invited you to %s' % (full_name, settings.SITE_NAME)
+  if not full_name:
+    subject = u'%s mời bạn tham gia %s' % (nick_name, settings.SITE_NAME)
+  else:
+    subject = u'%s mời bạn tham gia %s' % (full_name, settings.SITE_NAME)
   return (subject, message, html_message)
 
 def email_new_follower(owner_ref, target_ref):

@@ -6,6 +6,13 @@
   <h1><a href="{% url_for view request %}/contacts">Bạn bè</a> / Mời bạn tham gia</h1>
 </div>
 
+{% if flash %}
+<div class="notice">
+  <p>
+  {{flash}}
+  </p>
+</div>
+{% endif %}
 
 <div class="body">
   <div class="box">

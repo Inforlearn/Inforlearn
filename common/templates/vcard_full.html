@@ -1,10 +1,10 @@
 {% load avatar %}
 {{actor|avatar:"f"}}
-<h1 class="fn">
-  <span class="nickname">{{actor.display_nick}}</span>
-  <span class="full-name">{{actor.extra.fulll_name}}</span>
+<h3 class="fn">
+  <span class="nickname">{{actor.nick}}</span><br/>
+  <span class="full-name">{{actor.extra.full_name}}</span>
   {# XXX this should just be "name" for i18n purposes #}
-</h1>
+</h3>
 
 <!--<p class="message">-->
 <!--  <a href="{{actor.url}}/presence/last">-->

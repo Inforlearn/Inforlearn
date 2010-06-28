@@ -1,0 +1,4 @@
+#!/bin/sh
+mv .local_settings.py local_settings.py
+python2.6 manage.py update
+mv local_settings.py .local_settings.py
