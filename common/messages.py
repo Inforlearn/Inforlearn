@@ -61,7 +61,7 @@ _message_table__ = {
        'Thư mời bị từ chối :('),
   'invite_request_email':
       (None,
-       'Một thư mời tham gia đã được gửi'),
+       'Thư mời đã được gửi.'),
   'login_forgot':
       (None,
        'Mật khẩu mới đã được gửi đến hòm thư của bạn'),

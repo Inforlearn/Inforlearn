@@ -11,14 +11,14 @@
       <input type="hidden" name="nick" value="{{request.user.nick}}" />
       <input type="hidden" name="code" value="{{code}}" />
       <input type="hidden" name="invite_accept" value="" />
-      <input type="submit" value="Vâng, Tôi đồng ý!" />
+      <input type="submit" value=" Chấp nhận lời mời " />
     </form>
     <form action="" method="post">
       {{request.user|noncefield:"invite_reject"}}
       <input type="hidden" name="nick" value="{{request.user.nick}}" />
       <input type="hidden" name="code" value="{{code}}" />
       <input type="hidden" name="invite_reject" value="" />
-      <input type="submit" value="Không, cảm ơn" />
+      <input type="submit" value=" Từ chối " />
     </form>
     <br/>
     <br/>

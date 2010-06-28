@@ -1,17 +1,16 @@
-{% filter wordwrap:60 %}
-{{full_name}} ({{nick_name}}) có lời mời bạn gia nhập {{SITE_NAME}} cùng với cậu (cô) ấy.
+{% if full_name %} {{full_name}} ({{nick_name}}) {% else %} {{ nick_name }} {% endif %}có lời mời bạn tham gia vào phiên bản thử nghiệm của {{SITE_NAME}}.
 
-{{SITE_NAME}} là một cách để bạn có thể kết nối và chia sẻ kiến thức của mình và 
-nhận lại những thông tin, kiến thức, kinh nghiệm, ... từ những lĩnh vực bạn quan
-tâm.
+{{SITE_NAME}} được phát triển với mục đích giúp cho việc kết nối, chia sẻ và nhận lại những thông tin, kiến thức,... từ những lĩnh vực bạn quan tâm đơn giản và dễ dàng hơn.
 
-................
+Bạn có thể sử dụng {{SITE_NAME}} vào các mục đích:
+- Chia sẻ các nguồn tài nguyên: liên kết/bài viết hay, tin tức mới
+- Đặt câu hỏi/trả lời/thảo luận theo các chủ đề
+- Tìm nguồn kiến thức mới/bạn mới
+- Kênh trao đổi sau giờ học của giáo viên và học sinh theo từng chủ đề/môn học
+- ...
 
-{{accept_url}}
 
-{{accept_mobile_url}} (cho điện thoại di động)
+Nhấn vào liên kết dưới đây để xác nhận: 
+    {{accept_url}}
 
-................
-
-Hẹn gặp lại :)
-{% endfilter %}
+Hẹn gặp lại bạn tại {{SITE_NAME}} :)

@@ -2387,7 +2387,7 @@ ul.stream li div.comment-all {
 }
 
 ul.stream li p.comment a {
-    text-decoration: underline;
+    /*text-decoration: underline;*/
 }
 
 ul.stream li p.comment a:hover {
