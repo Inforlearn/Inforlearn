@@ -234,15 +234,13 @@ def linked_entry_title(value, request=None):
   value     an entry object.
   request   a HttpRequest (optional).
   """
-#  return '<a href="%s">%s</a>' % (
-#      value.url(request=request), 
-#      format_fancy(escape(value.extra['title'])).replace('\n', ' '))
-  content = format_fancy(escape(value.extra['title']))
-  content = content.replace('\n', '<br/>').replace(" ", "&nbsp;")
-#  content = format_autolinks(content)
-  content = format_links(content)
+  content = escape(value.extra.get('title'))
+  content = format_markdown(content)
+  content = format_autolinks(content)
+  content = format_actor_links(content, request)
   content = format_emoticons(content)
-  return '%s' % (content.strip())
+  return content.strip().replace('\n', '<br/>')
+
 
 @register.filter
 @safe

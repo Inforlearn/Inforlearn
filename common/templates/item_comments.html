@@ -36,7 +36,7 @@
   <div id="leave-comment">
     <h2>Gửi bình luận</h2>
     {% include 'form_error.html' %}
-    <form id="comment-form" action="" method="post">
+    <form id="comment-form" name="comment_form" action="" method="post">
     <div>
       <label for="comment">Ý kiến của bạn
 	      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -62,7 +62,7 @@
         </script>
         <script type="text/javascript">
         shortcut.add("Ctrl+Enter",function() {
-          document.message_form.submit();
+          document.comment_form.submit();
         });
         </script>
         
