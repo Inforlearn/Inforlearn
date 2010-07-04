@@ -37,18 +37,24 @@ skip_files: |
  (vendor/.*)
  )$
 
-default_expiration: "1d"
+default_expiration: "7d"
 
 handlers:
+- url: /images/backgrounds
+  static_dir: images/backgrounds
+  expiration: "365d"
+
 - url: /images
   static_dir: images
 
 - url: /image/(avatar_default.*)
   static_files: image/\1
   upload: image/avatar_default.*
+  expiration: "365d"
 
 - url: /image/default
   static_dir: image/default
+  expiration: "365d"
 
 - url: /css
   static_dir: css
