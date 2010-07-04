@@ -647,7 +647,7 @@ div#stream div.controls a.comment {
 
 /* status bubble */
 div#status-bubble {
-    background: transparent url(bg_bubble.gif) no-repeat bottom right;
+    /*background: transparent url(bg_bubble.gif) no-repeat bottom right;*/
 }
 
 /* tabs */
