@@ -129,6 +129,23 @@ def format_emoticons(value, arg=None):
     value = value.replace(e[0], e[1].replace("img src", "img %s src" % emoticons_style))
   return value
 
+@register.filter(name="auto_background")
+@safe
+def auto_background(value, arg=None):
+  from random import choice
+
+  # auto change backgrounds 
+  hour = datetime.datetime.now().hour + 7 # from utc to hanoi
+  if hour in range(5, 7):
+    bg_image = "1" + choice(["a", "b"]) + ".jpg"
+  elif hour in range(8, 16):
+    bg_image = "2" + choice(["a", "b", "c"]) + ".jpg"
+  elif hour in range(17, 19):
+    bg_image = "3" + choice(["a"]) + ".jpg"
+  else:
+    bg_image = "4" + choice(["a"]) + ".jpg"
+  # end background options
+  return bg_image
 
 @register.filter(name="format_fancy")
 @safe

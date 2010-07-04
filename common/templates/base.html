@@ -1,3 +1,4 @@
+{% load format %}
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
@@ -106,7 +107,7 @@
     })
   </script>
 </head>
-  <body style="display:none;" {% block bodytag %}{% if area %}id="{{area}}"{% endif %}{% if not request.user %}class="global"{% endif %}{% endblock %}>
+  <body style="display:none; {% if not view.extra.bg_image %} background: url(/images/backgrounds/{{ bg_image|auto_background }}); background-attachment: fixed; background-position: center;{% endif %}" {% block bodytag %}{% if area %}id="{{area}}"{% endif %}{% if not request.user %}class="global"{% endif %}{% endblock %}>
       
     {% block body %}
     {% endblock %}
