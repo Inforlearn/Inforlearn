@@ -11,6 +11,7 @@ except ImportError:
   import pickle
 
 import simplejson
+from hashlib import md5
 
 from django import template
 from django.conf import settings
@@ -611,39 +612,67 @@ def activation_get(api_user, nick, type, content):
 @owner_required
 def activation_get_actor_email(api_user, nick):
   """Get a list of outstanding email activations for actor"""
+  memcache_key = "%s::%s" % (api_user, nick)
+  memcache_key = md5(memcache_key).hexdigest()
+  cached_data = memcache.client.get(memcache_key)
+  if cached_data:
+    return cached_data
+
   query = Activation.gql('WHERE type = :1 AND actor = :2',
                          'email',
                          nick)
 
   activations = list(query.run())
+  memcache.client.add(memcache_key, activations, 120)
   return activations
 
 @owner_required
 def activation_get_actor_mobile(api_user, nick):
+  memcache_key = "%s::%s" % (api_user, nick)
+  memcache_key = md5(memcache_key).hexdigest()
+  cached_data = memcache.client.get(memcache_key)
+  if cached_data:
+    return cached_data
+
   query = Activation.gql('WHERE type = :1 AND actor = :2',
                          'mobile',
                          nick)
 
   activations = list(query.run())
+  memcache.client.add(memcache_key, activations, 120)
   return activations
 
 @admin_required
 def activation_get_by_email(api_user, email):
+  memcache_key = "%s::%s" % (api_user, email)
+  memcache_key = md5(memcache_key).hexdigest()
+  cached_data = memcache.client.get(memcache_key)
+  if cached_data:
+    return cached_data
+
   query = Activation.gql('WHERE type = :1 AND content = :2',
                          'email',
                          email)
 
   activations = list(query.run())
+  memcache.client.add(memcache_key, activations, 120)
   return activations
 
 @owner_required
 def activation_get_code(api_user, nick, type, code):
+  memcache_key = "%s::%s::%s::%s" % (api_user, nick, type, code)
+  memcache_key = md5(memcache_key).hexdigest()
+  cached_data = memcache.client.get(memcache_key)
+  if cached_data:
+    return cached_data
+
   query = Activation.gql('WHERE type = :1 AND actor = :2 AND code = :3',
                          type,
                          nick,
                          code)
 
   activation_ref = query.get()
+  memcache.client.add(memcache_key, activation_ref, 120)
   return activation_ref
 
 @admin_required
@@ -835,19 +864,35 @@ def actor_add_contacts(api_user, owner, targets):
 
 @admin_required
 def actor_count_contacts(api_user, nick):
+  memcache_key = "%s::%s" % (api_user, nick)
+  memcache_key = md5(memcache_key).hexdigest()
+  cached_data = memcache.client.get(memcache_key)
+  if cached_data:
+    return cached_data
+
   nick = clean.user(nick)
   query = Relation.gql('WHERE owner = :1 AND relation = :2',
                        nick,
                        'contact')
-  return query.count()
+  result = query.count()
+  memcache.client.add(memcache_key, result, 60)
+  return result
 
 @admin_required
 def actor_count_followers(api_user, nick):
+  memcache_key = "%s::%s" % (api_user, nick)
+  memcache_key = md5(memcache_key).hexdigest()
+  cached_data = memcache.client.get(memcache_key)
+  if cached_data:
+    return cached_data
+
   nick = clean.user(nick)
   query = Relation.gql('WHERE target = :1 AND relation = :2',
                        nick,
                        'contact')
-  return query.count()
+  result = query.count()
+  memcache.client.add(memcache_key, result, 60)
+  return result
 
 def actor_is_follower(api_user, nick, potential_follower):
   """Determine if one is a follower.
@@ -962,23 +1007,39 @@ def actor_get_actors(api_user, nicks):
 @public_owner_or_contact
 def actor_get_channels_admin(api_user, nick, limit=48, offset=None):
   """returns the channels the given actor is a member of"""
+  memcache_key = "%s::%s::%s::%s" % (api_user, nick, limit, offset)
+  memcache_key = md5(memcache_key).hexdigest()
+  cached_data = memcache.client.get(memcache_key)
+  if cached_data:
+    return cached_data
+
   nick = clean.nick(nick)
   query = Relation.gql('WHERE target = :1 AND relation = :2 AND owner > :3',
                        nick,
                        'channeladmin',
                        offset)
   rv = query.fetch(limit)
-  return [x.owner for x in rv]
+  result = [x.owner for x in rv]
+  memcache.client.add(memcache_key, result)
+  return result
 
 @public_owner_or_contact
 def actor_get_channels_member(api_user, nick, limit=48, offset=None):
   """returns the channels the given actor is a member of"""
+  memcache_key = "%s::%s::%s::%s" % (api_user, nick, limit, offset)
+  memcache_key = md5(memcache_key).hexdigest()
+  cached_data = memcache.client.get(memcache_key)
+  if cached_data:
+    return cached_data
+
   query = Relation.gql('WHERE target = :1 AND relation = :2 AND owner > :3',
                        nick,
                        'channelmember',
                        offset)
   rv = query.fetch(limit)
-  return [x.owner for x in rv]
+  result = [x.owner for x in rv]
+  memcache.client.add(memcache_key, result, 60)
+  return result
 
 def actor_get_channels_member_safe(api_user, nick, limit=48, offset=None):
   try:
@@ -989,12 +1050,20 @@ def actor_get_channels_member_safe(api_user, nick, limit=48, offset=None):
 @public_owner_or_contact
 def actor_get_contacts(api_user, nick, limit=48, offset=None):
   """returns the contacts for the given actor if current_actor can view them"""
+  memcache_key = "%s::%s::%s::%s" % (api_user, nick, limit, offset)
+  memcache_key = md5(memcache_key).hexdigest()
+  cached_data = memcache.client.get(memcache_key)
+  if cached_data:
+    return cached_data
+
   query = Relation.gql('WHERE owner = :1 AND relation = :2 AND target > :3',
                        nick,
                        'contact',
                        offset)
   results = query.fetch(limit)
-  return [x.target for x in results]
+  result = [x.target for x in results]
+  memcache.client.add(memcache_key, result, 120)
+  return result
 
 def actor_get_contacts_safe(api_user, nick, limit=48, offset=None):
   try:
@@ -1005,12 +1074,20 @@ def actor_get_contacts_safe(api_user, nick, limit=48, offset=None):
 @owner_required
 def actor_get_contacts_since(api_user, nick, limit=30, since_time=None):
   """returns the contacts for the given actor if current_actor can view them"""
+  memcache_key = "%s::%s::%s::%s" % (api_user, nick, limit, since_time)
+  memcache_key = md5(memcache_key).hexdigest()
+  cached_data = memcache.client.get(memcache_key)
+  if cached_data:
+    return cached_data
+
   query = Relation.gql('WHERE owner = :1 AND relation = :2 AND target > :3',
                        nick,
                        'contact',
                        since_time)
   results = query.fetch(limit)
-  return [x.target for x in results]
+  result = [x.target for x in results]
+  memcache.client.add(memcache_key, result, 120)
+  return result
 
 @owner_required
 def actor_get_contacts_avatars_since(api_user, nick, limit=30, since_time=None):
@@ -1061,12 +1138,20 @@ def actor_get_contacts_avatars_since(api_user, nick, limit=30, since_time=None):
 @public_owner_or_contact
 def actor_get_followers(api_user, nick, limit=48, offset=None):
   """returns the followers for the given actor if current_actor can view them"""
+  memcache_key = "%s::%s::%s::%s" % (api_user, nick, limit, offset)
+  memcache_key = md5(memcache_key).hexdigest()
+  cached_data = memcache.client.get(memcache_key)
+  if cached_data:
+    return cached_data
+
   query = Relation.gql('WHERE target = :1 AND relation = :2 AND owner > :3',
                        nick,
                        'contact',
                        offset)
   results = query.fetch(limit)
-  return [x.owner for x in results]
+  result = [x.owner for x in results]
+  memcache.client.add(memcache_key, result, 120)
+  return result
 
 def actor_get_safe(api_user, nick):
   try:
@@ -1086,15 +1171,28 @@ def actor_lookup_email(api_user, email):
     email - email alias
   RETURNS: actor_ref
   """
+  memcache_key = "%s::%s" % (api_user, email)
+  memcache_key = md5(memcache_key).hexdigest()
+  cached_data = memcache.client.get(memcache_key)
+  if cached_data:
+    return cached_data
+
   query = Relation.gql("WHERE target = :1 AND relation = 'email'",
                        email)
   for rel_ref in query:
     actor_ref = actor_get_safe(api_user, rel_ref.owner)
     if actor_ref:
+      memcache.client.add(memcache_key, actor_ref, 120)
       return actor_ref
   return None
 
 def actor_lookup_im(api_user, im):
+  memcache_key = "%s::%s" % (api_user, im)
+  memcache_key = md5(memcache_key).hexdigest()
+  cached_data = memcache.client.get(memcache_key)
+  if cached_data:
+    return cached_data
+
   query = Relation.gql('WHERE relation = :1 AND target = :2',
                        'im_account',
                        im)
@@ -1102,20 +1200,35 @@ def actor_lookup_im(api_user, im):
   if not rel_ref:
     return None
   else:
-    return actor_get(api_user, rel_ref.owner)
+    result = actor_get(api_user, rel_ref.owner)
+    memcache.client.add(memcache_key, result, 120)
+    return result
 
 def actor_lookup_mobile(api_user, mobile):
+  memcache_key = "%s::%s" % (api_user, mobile)
+  memcache_key = md5(memcache_key).hexdigest()
+  cached_data = memcache.client.get(memcache_key)
+  if cached_data:
+    return cached_data
+
   mobile = clean.mobile(mobile)
   query = Relation.gql("WHERE target = :1 AND relation = 'mobile'",
                        mobile)
   for rel_ref in query:
     actor_ref = actor_get_safe(api_user, rel_ref.owner)
     if actor_ref:
+      memcache.client.add(memcache_key, actor_ref, 120)
       return actor_ref
   return None
 
 def actor_lookup_nick(api_user, nick):
   """ lookup actor based on normalized version of the nick """
+  memcache_key = "%s::%s" % (api_user, nick)
+  memcache_key = md5(memcache_key).hexdigest()
+  cached_data = memcache.client.get(memcache_key)
+  if cached_data:
+    return cached_data
+
   actor_ref = actor_get_safe(api_user, nick)
   if actor_ref:
     return actor_ref
@@ -1126,7 +1239,9 @@ def actor_lookup_nick(api_user, nick):
   actor_ref = query.get()
   if not actor_ref:
     return None
-  return actor_get_safe(api_user, actor_ref.nick)
+  result = actor_get_safe(api_user, actor_ref.nick)
+  memcache.client.add(memcache_key, result, 120)
+  return result
 
 @delete_required
 @owner_required
@@ -1338,6 +1453,12 @@ def channel_browse(api_user, limit, offset_channel_nick=''):
     offset_channel_nick - Retrieve channels with nick > this value.
   """
   # Sort by nick, so that filtering works.
+  memcache_key = "%s::%s::%s" % (api_user, limit, offset_channel_nick)
+  memcache_key = md5(memcache_key).hexdigest()
+  cached_data = memcache.client.get(memcache_key)
+  if cached_data:
+    return cached_data
+
   query = Actor.gql('WHERE type = :1 AND deleted_at = :2 '
                     'ORDER BY rank DESC',
                     'channel',
@@ -1347,6 +1468,7 @@ def channel_browse(api_user, limit, offset_channel_nick=''):
   if offset_channel_nick:
     logging.info('offset: ' + offset_channel_nick)
   results = query.fetch(limit)
+  memcache.client.add(memcache_key, results, 120)
   return results
 
 def channel_browse_recent(api_user, limit=48, offset=None):
@@ -1433,10 +1555,14 @@ def channel_get(api_user, channel):
   RETURNS:  Channel object
   THROWS: ApiExceptioon
   """
+  memcache_key = "%s::%s" % (api_user, channel)
+  memcache_key = md5(memcache_key).hexdigest()
+  cached_data = memcache.client.get(memcache_key)
+  if cached_data:
+    return cached_data
 
   not_found_message = 'Channel not found: %s' % channel
   channel = clean.channel(channel)
-
 
   nick = clean.normalize_nick(clean.nick(channel))
   query = Actor.gql('WHERE normalized_nick = :1', nick)
@@ -1455,14 +1581,23 @@ def channel_get(api_user, channel):
 
   if channel_ref.is_deleted():
     raise exception.ApiDeleted(not_found_message)
+  memcache.client.add(memcache_key, channel_ref, 120)
   return channel_ref
 
 @public_owner_or_member
 def channel_get_admins(api_user, channel, limit=24):
+  memcache_key = "%s::%s::%s" % (api_user, channel, limit)
+  memcache_key = md5(memcache_key).hexdigest()
+  cached_data = memcache.client.get(memcache_key)
+  if cached_data:
+    return cached_data
+
   query = Relation.gql('WHERE owner = :1 AND relation = :2',
                        channel,
                        'channeladmin')
-  return [a.target for a in query.fetch(limit)]
+  results = [a.target for a in query.fetch(limit)]
+  memcache.client.add(memcache_key, results, 120)
+  return results
 
 # depends on channel_get's privacy
 def channel_get_channels(api_user, channels):
@@ -1491,11 +1626,19 @@ def channel_get_channels(api_user, channels):
 
 @public_owner_or_member
 def channel_get_members(api_user, channel, limit=24, offset=None):
+  memcache_key = "%s::%s::%s" % (api_user, limit, offset)
+  memcache_key = md5(memcache_key).hexdigest()
+  cached_data = memcache.client.get(memcache_key)
+  if cached_data:
+    return cached_data
+
   query = Relation.gql('WHERE owner = :1 AND relation = :2 AND target > :3',
                        channel,
                        'channelmember',
                        offset)
-  return [a.target for a in query.fetch(limit)]
+  results = [a.target for a in query.fetch(limit)]
+  memcache.client.add(memcache_key, results, 120)
+  return results
 
 def channel_get_safe(api_user, channel):
   """Retrieve the specified channel, if it has not been deleted.
@@ -1708,12 +1851,19 @@ def email_associate(api_user, nick, email):
 
 @owner_required
 def email_get_actor(api_user, nick):
+  memcache_key = "%s::%s" % (api_user, nick)
+  memcache_key = md5(memcache_key).hexdigest()
+  cached_data = memcache.client.get(memcache_key)
+  if cached_data:
+    return cached_data
+
   nick = clean.nick(nick)
   query = Relation.gql('WHERE owner = :1 AND relation = :2',
                        nick,
                        'email')
   rel_ref = query.get()
   if rel_ref:
+    memcache.client.add(memcache_key, rel_ref.target)
     return rel_ref.target
   return None
 
@@ -1882,6 +2032,12 @@ def entry_get(api_user, entry):
 
 @public_owner_or_contact_by_entry
 def entry_get_comments(api_user, entry):
+  memcache_key = "%s::%s" % (api_user, entry)
+  memcache_key = md5(memcache_key).hexdigest()
+  cached_data = memcache.client.get(memcache_key)
+  if cached_data:
+    return cached_data
+
   entry_ref = entry_get_safe(api_user, entry)
   if not entry_ref:
     return None
@@ -1889,7 +2045,9 @@ def entry_get_comments(api_user, entry):
   query = InboxEntry.gql('WHERE inbox = :1 ORDER BY created_at',
                          entry_ref.key().name() + '/comments')
   comment_keys = [c.stream_entry_keyname() for c in query]
-  return entry_get_entries(api_user, comment_keys)
+  results = entry_get_entries(api_user, comment_keys)
+  memcache.client.add(memcache_key, results, 3)
+  return results
 
 # Relies on ACLs on the called functions
 def entry_get_comments_with_entry_uuid(api_user, entry_uuid):
@@ -2011,17 +2169,31 @@ def entry_get_last(api_user, stream):
   """ Queries the StreamEntry entities to find the last StreamEntry
   for the given stream.
   """
+  memcache_key = "%s::%s" % (api_user, stream)
+  memcache_key = md5(memcache_key).hexdigest()
+  cached_data = memcache.client.get(memcache_key)
+  if cached_data:
+    return cached_data
+
   query = StreamEntry.gql('WHERE stream = :1 ORDER BY created_at DESC',
                           stream)
   entry_ref = query.get()
   if not entry_ref:
     return None
-  return entry_get(api_user, entry_ref.key().name())
+  results = entry_get(api_user, entry_ref.key().name())
+  memcache.client.add(memcache_key, results, 10)
+  return results
 
 def entry_get_uuid(api_user, uuid):
   """ Queries the StreamEntry entities to find the StreamEntry corresponding to
   given uuid.
   """
+  memcache_key = "%s::%s" % (api_user, uuid)
+  memcache_key = md5(memcache_key).hexdigest()
+  cached_data = memcache.client.get(memcache_key)
+  if cached_data:
+    return cached_data
+
   entry_ref = StreamEntry.gql("WHERE uuid = :1", uuid).get()
   if not entry_ref:
     return None
@@ -2029,7 +2201,9 @@ def entry_get_uuid(api_user, uuid):
     raise exception.ApiViewableRequired(
         'Operation not allowed: %s cannot see entry with uuid %s'
         % (api_user.nick, uuid))
-  return entry_get(api_user, entry_ref.key().name())
+  results = entry_get(api_user, entry_ref.key().name())
+  memcache.client.add(memcache_key, results, 10)
+  return results
 
 def entry_get_safe(api_user, entry):
   """Like entry_get, but returns None for entries you don't have rights to see
@@ -2178,8 +2352,16 @@ def image_get(api_user, nick, path, format='jpg'):
 @public_owner_or_contact
 def image_get_all_keys(api_user, nick, size):
   """Given an actor, retrieve keynames"""
+  memcache_key = "%s::%s::%s" % (api_user, nick, size)
+  memcache_key = md5(memcache_key).hexdigest()
+  cached_data = memcache.client.get(memcache_key)
+  if cached_data:
+    return cached_data
+
   query = Image.gql('WHERE actor = :1 AND size = :2', nick, size)
-  return list(query.run())
+  results = list(query.run())
+  memcache.client.add(memcache_key, results, 120)
+  return results
 
 @public_owner_or_contact
 def image_set(api_user, nick, path, content, format='jpg', size=None):
@@ -2276,6 +2458,12 @@ def inbox_get_explore(api_user, limit=30, offset=None):
 
 @admin_required
 def inbox_get_all_for_entry(api_user, stream, uuid, entry=None):
+  memcache_key = "%s::%s" % (api_user, uuid)
+  memcache_key = md5(memcache_key).hexdigest()
+  cached_data = memcache.client.get(memcache_key)
+  if cached_data:
+    return cached_data
+
   query = InboxEntry.gql('WHERE stream = :1 AND uuid = :2 AND entry = :3',
                          stream,
                          uuid,
@@ -2283,6 +2471,7 @@ def inbox_get_all_for_entry(api_user, stream, uuid, entry=None):
   inboxes = []
   for inbox_entry in query:
     inboxes += inbox_entry.inbox
+  memcache.client.add(memcache_key, inboxes, 5)
   return inboxes
 
 #######
@@ -3262,8 +3451,16 @@ def stream_get(api_user, stream):
 
 @public_owner_or_contact
 def stream_get_actor(api_user, nick):
+  memcache_key = "%s::%s" % (api_user, nick)
+  memcache_key = md5(memcache_key).hexdigest()
+  cached_data = memcache.client.get(memcache_key)
+  if cached_data:
+    return cached_data
+
   query = Stream.gql('WHERE owner = :1', nick)
-  return list(query.run())
+  results = list(query.run())
+  memcache.client.add(memcache_key, results, 5)
+  return results
 
 @public_owner_or_contact
 def stream_get_comment(api_user, nick):
