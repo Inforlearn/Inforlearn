@@ -1,0 +1,12 @@
+{% load avatar format %}
+<div class="vcard" id="inforlearn:{{actor.nick}}">
+  {% linked_avatar actor "u,contact" request %}
+  <div class="bubble">
+    <h3>
+      <span>
+        {{ actor.extra.full_name }} ({{actor.display_nick}})
+      </span>
+    </h3>
+  </div>
+</div>
+
