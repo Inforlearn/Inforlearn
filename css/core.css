@@ -1876,11 +1876,12 @@ div#current-stream div.bottom h2, div#current-stream div.bottom p {
 
 div#content div#current-stream a {
     /*text-decoration: underline;*/
-    color: #000;
+    color: #333;
 }
 
 div#content div#current-stream a:hover {
-    text-decoration: underline;
+	  color: #009BC7;
+    text-decoration: none;
 }
 
 div#current-stream img.photo {
@@ -1906,7 +1907,7 @@ div#current-stream h2 strong {
 div#content div#current-stream p {
     padding: 0 0 0.5em 15px;
     font-size: 0.9em;
-    color: #666;
+    color: #333;
     margin: 0;
 }
 
@@ -2321,7 +2322,7 @@ ul.stream li a, ul.stream li a:visited {
 ul.stream li a:hover {
     /*text-decoration: underline;*/ 
     background: transparent;
-    color: #111;
+    color: #009BC7;
     /*text-shadow: 0px 1px 0px #ccc;*/
 }
 
