@@ -12,6 +12,7 @@ from common import exception
 from common import util
 from common import views as common_views
 
+
 CHANNEL_HISTORY_PER_PAGE = 20
 CHANNELS_PER_INDEX_PAGE = 12
 CHANNELS_PER_PAGE = 24
