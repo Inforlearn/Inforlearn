@@ -612,50 +612,29 @@ def activation_get(api_user, nick, type, content):
 @owner_required
 def activation_get_actor_email(api_user, nick):
   """Get a list of outstanding email activations for actor"""
-  memcache_key = "%s::%s" % (api_user, nick)
-  memcache_key = md5(memcache_key).hexdigest()
-  cached_data = memcache.client.get(memcache_key)
-  if cached_data:
-    return cached_data
-
   query = Activation.gql('WHERE type = :1 AND actor = :2',
                          'email',
                          nick)
 
   activations = list(query.run())
-  memcache.client.add(memcache_key, activations, 120)
   return activations
 
 @owner_required
 def activation_get_actor_mobile(api_user, nick):
-  memcache_key = "%s::%s" % (api_user, nick)
-  memcache_key = md5(memcache_key).hexdigest()
-  cached_data = memcache.client.get(memcache_key)
-  if cached_data:
-    return cached_data
-
   query = Activation.gql('WHERE type = :1 AND actor = :2',
                          'mobile',
                          nick)
 
   activations = list(query.run())
-  memcache.client.add(memcache_key, activations, 120)
   return activations
 
 @admin_required
 def activation_get_by_email(api_user, email):
-  memcache_key = "%s::%s" % (api_user, email)
-  memcache_key = md5(memcache_key).hexdigest()
-  cached_data = memcache.client.get(memcache_key)
-  if cached_data:
-    return cached_data
-
   query = Activation.gql('WHERE type = :1 AND content = :2',
                          'email',
                          email)
 
   activations = list(query.run())
-  memcache.client.add(memcache_key, activations, 120)
   return activations
 
 @owner_required
@@ -2352,15 +2331,8 @@ def image_get(api_user, nick, path, format='jpg'):
 @public_owner_or_contact
 def image_get_all_keys(api_user, nick, size):
   """Given an actor, retrieve keynames"""
-  memcache_key = "%s::%s::%s" % (api_user, nick, size)
-  memcache_key = md5(memcache_key).hexdigest()
-  cached_data = memcache.client.get(memcache_key)
-  if cached_data:
-    return cached_data
-
   query = Image.gql('WHERE actor = :1 AND size = :2', nick, size)
   results = list(query.run())
-  memcache.client.add(memcache_key, results, 120)
   return results
 
 @public_owner_or_contact
@@ -3451,15 +3423,8 @@ def stream_get(api_user, stream):
 
 @public_owner_or_contact
 def stream_get_actor(api_user, nick):
-  memcache_key = "%s::%s" % (api_user, nick)
-  memcache_key = md5(memcache_key).hexdigest()
-  cached_data = memcache.client.get(memcache_key)
-  if cached_data:
-    return cached_data
-
   query = Stream.gql('WHERE owner = :1', nick)
   results = list(query.run())
-  memcache.client.add(memcache_key, results, 5)
   return results
 
 @public_owner_or_contact
