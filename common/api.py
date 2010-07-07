@@ -986,7 +986,7 @@ def actor_get_actors(api_user, nicks):
 @public_owner_or_contact
 def actor_get_channels_admin(api_user, nick, limit=48, offset=None):
   """returns the channels the given actor is a member of"""
-  memcache_key = "%s::%s::%s::%s" % (api_user, nick, limit, offset)
+  memcache_key = "channeladmin::%s::%s::%s::%s" % (api_user, nick, limit, offset)
   memcache_key = md5(memcache_key).hexdigest()
   cached_data = memcache.client.get(memcache_key)
   if cached_data:
@@ -1005,7 +1005,7 @@ def actor_get_channels_admin(api_user, nick, limit=48, offset=None):
 @public_owner_or_contact
 def actor_get_channels_member(api_user, nick, limit=48, offset=None):
   """returns the channels the given actor is a member of"""
-  memcache_key = "%s::%s::%s::%s" % (api_user, nick, limit, offset)
+  memcache_key = "channelmember::%s::%s::%s::%s" % (api_user, nick, limit, offset)
   memcache_key = md5(memcache_key).hexdigest()
   cached_data = memcache.client.get(memcache_key)
   if cached_data:
@@ -1029,7 +1029,7 @@ def actor_get_channels_member_safe(api_user, nick, limit=48, offset=None):
 @public_owner_or_contact
 def actor_get_contacts(api_user, nick, limit=48, offset=None):
   """returns the contacts for the given actor if current_actor can view them"""
-  memcache_key = "%s::%s::%s::%s" % (api_user, nick, limit, offset)
+  memcache_key = "contact::%s::%s::%s::%s" % (api_user, nick, limit, offset)
   memcache_key = md5(memcache_key).hexdigest()
   cached_data = memcache.client.get(memcache_key)
   if cached_data:
@@ -1053,7 +1053,7 @@ def actor_get_contacts_safe(api_user, nick, limit=48, offset=None):
 @owner_required
 def actor_get_contacts_since(api_user, nick, limit=30, since_time=None):
   """returns the contacts for the given actor if current_actor can view them"""
-  memcache_key = "%s::%s::%s::%s" % (api_user, nick, limit, since_time)
+  memcache_key = "contact_since::%s::%s::%s::%s" % (api_user, nick, limit, since_time)
   memcache_key = md5(memcache_key).hexdigest()
   cached_data = memcache.client.get(memcache_key)
   if cached_data:
@@ -1117,7 +1117,7 @@ def actor_get_contacts_avatars_since(api_user, nick, limit=30, since_time=None):
 @public_owner_or_contact
 def actor_get_followers(api_user, nick, limit=48, offset=None):
   """returns the followers for the given actor if current_actor can view them"""
-  memcache_key = "%s::%s::%s::%s" % (api_user, nick, limit, offset)
+  memcache_key = "followers::%s::%s::%s::%s" % (api_user, nick, limit, offset)
   memcache_key = md5(memcache_key).hexdigest()
   cached_data = memcache.client.get(memcache_key)
   if cached_data:
@@ -1150,7 +1150,7 @@ def actor_lookup_email(api_user, email):
     email - email alias
   RETURNS: actor_ref
   """
-  memcache_key = "%s::%s" % (api_user, email)
+  memcache_key = "email::%s::%s" % (api_user, email)
   memcache_key = md5(memcache_key).hexdigest()
   cached_data = memcache.client.get(memcache_key)
   if cached_data:
@@ -1166,7 +1166,7 @@ def actor_lookup_email(api_user, email):
   return None
 
 def actor_lookup_im(api_user, im):
-  memcache_key = "%s::%s" % (api_user, im)
+  memcache_key = "im::%s::%s" % (api_user, im)
   memcache_key = md5(memcache_key).hexdigest()
   cached_data = memcache.client.get(memcache_key)
   if cached_data:
@@ -1184,7 +1184,7 @@ def actor_lookup_im(api_user, im):
     return result
 
 def actor_lookup_mobile(api_user, mobile):
-  memcache_key = "%s::%s" % (api_user, mobile)
+  memcache_key = "mobile::%s::%s" % (api_user, mobile)
   memcache_key = md5(memcache_key).hexdigest()
   cached_data = memcache.client.get(memcache_key)
   if cached_data:
@@ -1202,7 +1202,7 @@ def actor_lookup_mobile(api_user, mobile):
 
 def actor_lookup_nick(api_user, nick):
   """ lookup actor based on normalized version of the nick """
-  memcache_key = "%s::%s" % (api_user, nick)
+  memcache_key = "nick::%s::%s" % (api_user, nick)
   memcache_key = md5(memcache_key).hexdigest()
   cached_data = memcache.client.get(memcache_key)
   if cached_data:
@@ -1432,7 +1432,7 @@ def channel_browse(api_user, limit, offset_channel_nick=''):
     offset_channel_nick - Retrieve channels with nick > this value.
   """
   # Sort by nick, so that filtering works.
-  memcache_key = "%s::%s::%s" % (api_user, limit, offset_channel_nick)
+  memcache_key = "channel_browse::%s::%s::%s" % (api_user, limit, offset_channel_nick)
   memcache_key = md5(memcache_key).hexdigest()
   cached_data = memcache.client.get(memcache_key)
   if cached_data:
@@ -1534,7 +1534,7 @@ def channel_get(api_user, channel):
   RETURNS:  Channel object
   THROWS: ApiExceptioon
   """
-  memcache_key = "%s::%s" % (api_user, channel)
+  memcache_key = "channel_get::%s::%s" % (api_user, channel)
   memcache_key = md5(memcache_key).hexdigest()
   cached_data = memcache.client.get(memcache_key)
   if cached_data:
@@ -1565,7 +1565,7 @@ def channel_get(api_user, channel):
 
 @public_owner_or_member
 def channel_get_admins(api_user, channel, limit=24):
-  memcache_key = "%s::%s::%s" % (api_user, channel, limit)
+  memcache_key = "channeladmin::%s::%s::%s" % (api_user, channel, limit)
   memcache_key = md5(memcache_key).hexdigest()
   cached_data = memcache.client.get(memcache_key)
   if cached_data:
@@ -1605,7 +1605,7 @@ def channel_get_channels(api_user, channels):
 
 @public_owner_or_member
 def channel_get_members(api_user, channel, limit=24, offset=None):
-  memcache_key = "%s::%s::%s" % (api_user, limit, offset)
+  memcache_key = "channelmember::%s::%s::%s" % (api_user, limit, offset)
   memcache_key = md5(memcache_key).hexdigest()
   cached_data = memcache.client.get(memcache_key)
   if cached_data:
@@ -1830,7 +1830,7 @@ def email_associate(api_user, nick, email):
 
 @owner_required
 def email_get_actor(api_user, nick):
-  memcache_key = "%s::%s" % (api_user, nick)
+  memcache_key = "email_actor::%s::%s" % (api_user, nick)
   memcache_key = md5(memcache_key).hexdigest()
   cached_data = memcache.client.get(memcache_key)
   if cached_data:
@@ -2011,7 +2011,7 @@ def entry_get(api_user, entry):
 
 @public_owner_or_contact_by_entry
 def entry_get_comments(api_user, entry):
-  memcache_key = "%s::%s" % (api_user, entry)
+  memcache_key = "comments::%s::%s" % (api_user, entry)
   memcache_key = md5(memcache_key).hexdigest()
   cached_data = memcache.client.get(memcache_key)
   if cached_data:
@@ -2148,7 +2148,7 @@ def entry_get_last(api_user, stream):
   """ Queries the StreamEntry entities to find the last StreamEntry
   for the given stream.
   """
-  memcache_key = "%s::%s" % (api_user, stream)
+  memcache_key = "last::%s::%s" % (api_user, stream)
   memcache_key = md5(memcache_key).hexdigest()
   cached_data = memcache.client.get(memcache_key)
   if cached_data:
@@ -2167,7 +2167,7 @@ def entry_get_uuid(api_user, uuid):
   """ Queries the StreamEntry entities to find the StreamEntry corresponding to
   given uuid.
   """
-  memcache_key = "%s::%s" % (api_user, uuid)
+  memcache_key = "uuid::%s::%s" % (api_user, uuid)
   memcache_key = md5(memcache_key).hexdigest()
   cached_data = memcache.client.get(memcache_key)
   if cached_data:
@@ -2430,7 +2430,7 @@ def inbox_get_explore(api_user, limit=30, offset=None):
 
 @admin_required
 def inbox_get_all_for_entry(api_user, stream, uuid, entry=None):
-  memcache_key = "%s::%s" % (api_user, uuid)
+  memcache_key = "inbox_entries::%s::%s" % (api_user, uuid)
   memcache_key = md5(memcache_key).hexdigest()
   cached_data = memcache.client.get(memcache_key)
   if cached_data:

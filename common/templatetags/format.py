@@ -134,27 +134,16 @@ def format_emoticons(value, arg=None):
 @register.filter(name="auto_background")
 @safe
 def auto_background(value, arg=None):
-  memcache_key = "background_image_name"
-  last = memcache.client.get("last")
   hour = datetime.datetime.now().hour + 7 # from utc to hanoi
-  memcache.client.add("last", hour)
-
-  if last is not None and int(last) != int(hour):
-      memcache.client.delete(memcache_key)
-
-  cached_data = memcache.client.get(memcache_key)
-  if cached_data:
-    return cached_data
 
   if hour in range(5, 7):
-    value = "1" + choice(["a", "b"]) + ".jpg"
+    value = "1" + choice(["a"]) + ".jpg"
   elif hour in range(8, 16):
-    value = "2" + choice(["a", "b", "c"]) + ".jpg"
+    value = "2" + choice(["a"]) + ".jpg"
   elif hour in range(17, 19):
     value = "3" + choice(["a"]) + ".jpg"
   else:
     value = "4" + choice(["a"]) + ".jpg"
-  memcache.client.set(memcache_key, value)
   return value
 
 @register.filter(name="format_fancy")
