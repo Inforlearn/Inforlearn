@@ -253,7 +253,6 @@ def linked_entry_title(value, request=None):
   """
   content = escape(value.extra.get('title'))
   content = format_fancy(content)
-  content = format_markdown(content)
   content = format_autolinks(content)
   content = format_actor_links(content, request)
   content = format_emoticons(content)
