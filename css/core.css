@@ -1593,7 +1593,6 @@ div#sidebar div.contacts ul li {
 div#sidebar div#channels ul {
     list-style-type: none;
     overflow: hidden;
-    margin: 0 8px;
 }
 
 #frontpage div#sidebar div#channels ul li {
