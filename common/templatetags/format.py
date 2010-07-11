@@ -204,7 +204,7 @@ def format_markdown(value, arg=None):
 @safe
 def format_comment(value, request=None):
   content = escape(value.extra.get('content', 'no title'))
-  content = format_fancy(content)
+#  content = format_fancy(content)
   content = format_markdown(content)
   content = format_autolinks(content)
   content = format_actor_links(content, request)
@@ -253,7 +253,8 @@ def linked_entry_title(value, request=None):
   request   a HttpRequest (optional).
   """
   content = escape(value.extra.get('title'))
-  content = format_fancy(content)
+#  content = format_fancy(content)
+  content = format_markdown(content)
   content = format_autolinks(content)
   content = format_actor_links(content, request)
   content = format_emoticons(content)
