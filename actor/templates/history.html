@@ -48,13 +48,6 @@
   {% endifequal %}
 {% endif %}
 
-{% ifequal request.user.nick view.nick %}
-<h2>Những tin bạn đã gửi lên</h2>
-{% else %}
-<h2>Gửi lên bởi {{ view.display_nick }}</h2>
-{% endifequal %}
-
-
 <div id='stream'>   
   {% include 'common/templates/stream.html' %}
   {% include 'common/templates/paging.html' %}

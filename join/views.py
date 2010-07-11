@@ -184,6 +184,7 @@ def join_welcome_design(request):
   # set the progress
   welcome_photo = True
 
+  backgrounds = display.DEFAULT_BACKGROUNDS
   view = request.user
   page = 'design'
 
