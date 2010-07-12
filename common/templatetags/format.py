@@ -209,6 +209,8 @@ def format_comment(value, request=None):
   content = format_autolinks(content)
   content = format_actor_links(content, request)
   content = format_emoticons(content)
+  if "<li>" in content:
+    return content
   return content.strip().replace('\n', '<br/>')
 
 @register.filter(name="truncate")
@@ -258,6 +260,8 @@ def linked_entry_title(value, request=None):
   content = format_autolinks(content)
   content = format_actor_links(content, request)
   content = format_emoticons(content)
+  if "<li>" in content:
+    return content
   return content.strip().replace('\n', '<br/>')
 
 

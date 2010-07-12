@@ -3038,7 +3038,14 @@ dd {
 
 img {
     display: block;
+    max-height: 500px;
+    max-width: 500px;
 }
+
+div#current-stream div.bottom img {
+    max-height: 460px;
+    max-width: 460px;
+	}
 
 img.float-right {
     float: right;
