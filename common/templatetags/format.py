@@ -135,7 +135,8 @@ def format_emoticons(value, arg=None):
 @safe
 def auto_background(value, arg=None):
   hour = datetime.datetime.now().hour + 7 # from utc to hanoi
-
+  if hour >= 24:
+    hour = hour - 24
   if hour in range(5, 7):
     value = "1" + choice(["a"]) + ".jpg"
   elif hour in range(8, 16):
