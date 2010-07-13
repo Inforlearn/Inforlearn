@@ -171,6 +171,9 @@ def handle_view_action(request, actions):
   for action in actions.keys():
     called = call_api_from_request(request, action)[0]
     if called:
+#      if action == "presence_set":
+#        from django.http import HttpResponse
+#        return HttpResponse("Ha Noi")
       redirect = actions[action]
       return util.RedirectFlash(redirect, messages.flash(action))
   return None

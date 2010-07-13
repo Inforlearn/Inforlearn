@@ -53,29 +53,29 @@ jQuery.fn.location = function () {
       return false;
     }
   );
-//  this.submit( function () {
-//    $.ajax({
-//      type: "POST",
-//      url: this.action,
-//      data: $("input", this).serialize(),
-//      success: function(res){
-//        var current = $("span#current-location");
-//        if (current.length) {
-//          var loc = $("input#loc").attr("value");
-//          $("span#current-location").html(loc);
-//        }
-//        else {
-//          var l = $("a#set-location");
-//          l.html("Change");
-//          l.before("<span id=\"current-location\">" + $("input#loc").attr("value") + "</span> | ");
-//        }
-//      }});
-//    f.hide();
-//    $("a#set-location").parent().show();
-//    $("span.loader", this).hide();
-//    $("input[@type=submit]").show();
-//    return false;
-//  });
+  this.submit( function () {
+    $.ajax({
+      type: "POST",
+      url: this.action,
+      data: $("input", this).serialize(),
+      success: function(res){
+        var current = $("span#current-location");
+        if (current.length) {
+          var loc = $("input#loc").attr("value");
+          $("span#current-location").html(loc);
+        }
+        else {
+          var l = $("a#set-location");
+          l.html("Change");
+          l.before("<span id=\"current-location\">" + $("input#loc").attr("value") + "</span> | ");
+        }
+      }});
+    f.hide();
+    $("a#set-location").parent().show();
+    $("span.loader", this).hide();
+    $("input[@type=submit]").show();
+    return false;
+  });
 }
 
 var counter = {
