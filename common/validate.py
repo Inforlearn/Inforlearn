@@ -215,7 +215,7 @@ def user_nick(s, message=None):
   pass
 
 def presence_extra(d, message=None):
-  allowed_keys = set(['status', 'availability', 'location',
+  allowed_keys = set(['status', 'availability', 'location', 'submit-location',
                       'senders_timestamp', 'activity',
                       'profile', 'presenceline', 'presenceline',
                       'bt', 'calendar', 'generated',

@@ -3647,7 +3647,7 @@ def user_create(api_user, **kw):
 
   if existing_ref:
     raise exception.ValidationError(
-        'Có người khác đã dùng tên %s trước bạn.' % util.display_nick(nick))
+        u'Có người khác đã dùng tên %s trước bạn.' % util.display_nick(nick))
 
   # Create the user
   actor = Actor(**params)
