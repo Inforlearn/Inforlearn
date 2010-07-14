@@ -1,497 +1,321 @@
 jQuery.fn.addHover = function() {
-  return this.hover(
-    function(){ jQuery(this).addClass("hover"); },
-    function(){ jQuery(this).removeClass("hover"); }
-  )
+  return this.hover(function() {
+    jQuery(this).addClass("hover")
+  }, function() {
+    jQuery(this).removeClass("hover")
+  })
 };
-
-jQuery.fn.bubble = function(top, left) {
-  var bubble = null;
-  var body = null;
-  var _created = false;
-  
-  this.each(
-    function() {
-      this._title = this.title;
-      this.removeAttribute("title");
+jQuery.fn.bubble = function(a, b) {
+  var c = null, d = null, e = false;
+  this.each(function() {
+    this._title = this.title;
+    this.removeAttribute("title")
+  });
+  this.hover(function() {
+    if(!e) {
+      $(document.body).append('<div id="status-bubble"><div></div></div>');
+      c = $("div#status-bubble");
+      d = c.find("div");
+      e = true
     }
-  );
-  
-  this.hover(
-    function() {
-      if (!_created) {
-        $(document.body).append("<div id=\"status-bubble\"><div></div></div>");
-        bubble = $("div#status-bubble");
-        body = bubble.find("div");
-        _created = true;
-      }
-      var offset = getOffset(this);
-      var txt = $(this).find("div.bubble").html() || this._title.replace(",", "<br/>");
-      
-      body.html(txt);
-      h = bubble.get(0).offsetHeight;
-      bubble.css({
-        top: (offset[1] + top - h + 10) + "px",
-               left: (offset[0] + left - 120) + "px",
-        visibility: "visible"
-      });
-    },
-    function() {
-      bubble.css("visibility", "hidden");
-    }
-  );
+    var f = getOffset(this), g = $(this).find("div.bubble").html() || this._title.replace(",", "<br/>");
+    d.html(g);
+    h = c.get(0).offsetHeight;
+    c.css({top:f[1] + a - h + 10 + "px", left:f[0] + b - 120 + "px", visibility:"visible"})
+  }, function() {
+    c.css("visibility", "hidden")
+  })
 };
-
-// Doesn't seem to work in firefox.
-jQuery.fn.location = function () {
-  var f = this;
-  $("a#set-location").click(
-    function () {
-      $(this).parent().hide();
-      f.show();
-      $("input#loc", f)[0].focus();
-      return false;
-    }
-  );
-}
-
-var counter = {
-  el : null,
-  button : null,
-  target: null,
-  re : new RegExp(/^\s*|\s*$/g),
-  count: function () {
-    var value = counter.el.value.replace(/\n/g,''); //remove newline
-    var count = value.length;
-    chars_left = 256 - count;
-    if (chars_left >= 0) {
-      if ($(counter.target.parentNode).is('.overlimit')) {
-        $(counter.target.parentNode).removeClass("overlimit");
-      }
-
-      if (chars_left > 1) {
-        str = "còn " + (chars_left) + " ký tự";
-      }
-      else if (chars_left > 0) {
-        str = "còn 1 ký tự";
-      }
-      else {
-        str = "vừa hết số ký tự cho phép";
-      }
-    } else {
-      if (!$(counter.target.parentNode).is('.overlimit')) {
-        $(counter.target.parentNode).addClass("overlimit");
-      }
-
-      if (chars_left < -1) {
-        str = "quá " + -chars_left + " ký tự";
-      }
-      else {
-        str = "quá 1 ký tự";
-      }
-    }
-    var ok = (count > 0 && count < 257) && (value.replace(counter.re,"") != counter.el._value);
-    if (ok == true) {
-      ob  = $(".send-message-disable");
-      ob.attr("onclick", "document.message_form.submit();");
-      ob.attr("class", "send-message-enable");
-    }
-    counter.target.nodeValue = str;
+jQuery.fn.location = function() {
+  var a = this;
+  $("a#set-location").click(function() {
+    $(this).parent().hide();
+    a.show();
+    $("input#loc", a)[0].focus();
+    return false
+  })
+};
+var counter = {el:null, button:null, target:null, re:RegExp(/^\s*|\s*$/g), count:function() {
+  var a = counter.el.value.replace(/\n/g, ""), b = a.length;
+  chars_left = 256 - b;
+  if(chars_left >= 0) {
+    $(counter.target.parentNode).is(".overlimit") && $(counter.target.parentNode).removeClass("overlimit");
+    str = chars_left > 1 ? "c\u00f2n " + chars_left + " k\u00fd t\u1ef1" : chars_left > 0 ? "c\u00f2n 1 k\u00fd t\u1ef1" : "v\u1eeba h\u1ebft s\u1ed1 k\u00fd t\u1ef1 cho ph\u00e9p"
+  }else {
+    $(counter.target.parentNode).is(".overlimit") || $(counter.target.parentNode).addClass("overlimit");
+    str = chars_left < -1 ? "qu\u00e1 " + -chars_left + " k\u00fd t\u1ef1" : "qu\u00e1 1 k\u00fd t\u1ef1"
   }
-};
-
+  if((b > 0 && b < 257 && a.replace(counter.re, "") != counter.el._value) == true) {
+    ob = $(".send-message-disable");
+    ob.attr("onclick", "document.message_form.submit();");
+    ob.attr("class", "send-message-enable")
+  }
+  counter.target.nodeValue = str
+}};
 jQuery.fn.presence = function() {
-  var msg = $("textarea#message", this);
-  var submit = $(this).find("input[@type=submit]");
-  var interval = null;
-  var el = this;
-
-  submit.attr("disabled", true);
-
-  // Init selectable icons
+  var a = $("textarea#message", this), b = $(this).find("input[@type=submit]"), c = null;
+  b.attr("disabled", true);
   this.icons();
-  
-  // Message input
-  msg.get(0)._value = msg.attr("value");
-  msg.one("focus", function () {
+  a.get(0)._value = a.attr("value");
+  a.one("focus", function() {
     this.value = "";
-    $(this).css({color: "#000"});
+    $(this).css({color:"#000"})
   });
-  msg.focus( function () {
-    $(this).css({color: "#000"});
+  a.focus(function() {
+    $(this).css({color:"#000"});
     counter.el = this;
-    counter.button = submit.get(0);
+    counter.button = b.get(0);
     counter.target = $("p#counter").get(0).firstChild;
-    interval = window.setInterval(counter.count, 500);
+    c = window.setInterval(counter.count, 500)
   });
-  msg.blur( function () {
-    if (interval)
-      window.clearInterval(interval);
+  a.blur(function() {
+    c && window.clearInterval(c)
   });
-
-  // Bỏ tác dụng của phím enter 
-//  msg.keypress(function (e) {
-//    var key = e.which ? e.which : e.keyCode;
-//    if (key == 13) {
-//      el.submit();
-//      //e.preventDefault(); 
-//    }            
-//  });
-  // TODO termie: turn this back on
-  return;
-  this.submit( function () {
-    if (submit.attr("disabled")) {
-      submit.show();
+  this.submit(function() {
+    if(b.attr("disabled")) {
+      b.show();
       $("span.loader", this).hide();
-      submit.attr("disabled", true);
-      return false;
+      b.attr("disabled", true);
+      return false
     }
-
-    // Get location
-    var loc = $("input#loc");
-    if (loc.length > 0)
-      $("input#location").attr("value", loc.attr("value"));
-    if (window.location.search.indexOf("?page") == 0) {
-      return;
-    }
-    $.ajax({
-      type: "POST",
-      url: this.action,
-      data: $("textarea, input, select", this).serialize(),
-      success: function(res){
-        var tmp = document.createElement("div");
-        tmp.innerHTML = res;
-        var item = $("li", tmp);
-        item.css("display", "none");
-        
-        if (item.size() > 0) {
-          var f = $("div#stream li.date:first");
-          if (f.length) {
-            $("div#stream li.date:first").after(item);
-          }
-          else {
-            var ul = document.createElement("ul");
-            ul.className = "stream";
+    var d = $("input#loc");
+    d.length > 0 && $("input#location").attr("value", d.attr("value"));
+    if(window.location.search.indexOf("?page") != 0) {
+      $.ajax({type:"POST", url:this.action, data:$("textarea, input, select", this).serialize(), success:function(e) {
+        var f = document.createElement("div");
+        f.innerHTML = e;
+        e = $("li", f);
+        e.css("display", "none");
+        if(e.size() > 0) {
+          if($("div#stream li.date:first").length) {
+            $("div#stream li.date:first").after(e)
+          }else {
+            f = document.createElement("ul");
+            f.className = "stream";
             $("div#stream p:first").remove();
-            $("div#stream").prepend(ul);
-            $("div#stream ul").append(item);
+            $("div#stream").prepend(f);
+            $("div#stream ul").append(e)
           }
-          item.toggle();
-        } else {
-          alert("Hmm. Có một số thứ đã hoạt động không đúng như mong muốn :(")
+          e.toggle()
+        }else {
+          alert("Hmm. C\u00f3 m\u1ed9t s\u1ed1 th\u1ee9 \u0111\u00e3 ho\u1ea1t \u0111\u1ed9ng kh\u00f4ng \u0111\u00fang nh\u01b0 mong mu\u1ed1n :(")
         }
-            submit.show();
-            $("span.loader", this).hide();
-        submit.attr("disabled", true);
+        b.show();
+        $("span.loader", this).hide();
+        b.attr("disabled", true)
       }});
-    msg.get(0)._value = msg.attr("value");
-    msg.get(0).blur();
-    msg.css({color: "#ccc"});
-    return false;
+      a.get(0)._value = a.attr("value");
+      a.get(0).blur();
+      a.css({color:"#ccc"});
+      return false
+    }
+  })
+};
+jQuery.fn.spy = function() {
+  var a = this;
+  window.setInterval(function() {
+    $.get(window.location.href, function(b) {
+      a.find("ul").remove();
+      a.append(b)
+    })
+  }, 3E4)
+};
+jQuery.fn.toggleable = function(a) {
+  a = a;
+  var b = this;
+  $("a[@href=#" + this.attr("id") + "]").click(function() {
+    if(b.css("display") == "none") {
+      a && $(a).hide();
+      b.show()
+    }else {
+      a && $(a).show();
+      b.hide()
+    }
+  })
+};
+jQuery.fn.toggleSelection = function(a, b) {
+  var c = $(a);
+  this.click(function() {
+    c.attr("checked", b ? true : false);
+    return false
+  })
+};
+jQuery.fn.icons = function() {
+  var a = $("a#add-icons", this), b = null, c = null, d = this;
+  a.toggle(function() {
+    if(!b) {
+      var e = ['<div id="form-icons">'];
+      $("option", d).each(function() {
+        if(this.value != "") {
+          e.push('<label for="icon-' + this.value + '" title="' + this.title + '">');
+          e.push('<img src="' + this.id + '" class="icon" alt="' + this.text + '" />');
+          this.title != "" && e.push("<h4> " + this.title + " </h4>");
+          e.push("</label>")
+        }
+      });
+      e.push("</div>");
+      d.append(e.join(""));
+      b = $("div#form-icons");
+      $("textarea#message").before('<img id="current-photo" class="icon"/>');
+      c = $("img#current-photo").hide();
+      c.click(function() {
+        a.click()
+      });
+      $("label", b).click(function() {
+        var f = $(this).attr("for").replace("icon-", ""), g = 0;
+        $("select#icon>option").each(function(j) {
+          if(this.value == f) {
+            g = j
+          }
+        });
+        $("select#icon").get(0).selectedIndex = g;
+        $("label", b).removeClass("selected");
+        $(this).addClass("selected");
+        c.attr("src", $(this).find("img").get(0).src);
+        c.css({display:"inline"});
+        c.click();
+        var i = $("textarea#message");
+        i.css({width:"349px"});
+        if(i.size() > 0) {
+          d = i.get(0);
+          if(d._first) {
+            d.value = this.title;
+            d._first = null
+          }
+          d.focus()
+        }
+      })
+    }
+    b.show();
+    $(document.body).bind("click", function() {
+      c.click()
+    })
+  }, function() {
+    b.hide();
+    $(document.body).unbind("click")
+  })
+};
+jQuery.fn.avatars = function() {
+  var a = this, b = $("img#current"), c = $("button[@type='submit']");
+  $("label", a).click(function(d) {
+    var e = $("img", this).attr("src");
+    $("li", a).removeClass("selected");
+    $(this).parent().addClass("selected");
+    $(this).parent().find("input").get(0).checked = true;
+    b.attr("src", e);
+    c.attr("class", "active");
+    d.preventDefault()
+  })
+};
+jQuery.fn.backgrounds = function() {
+  var a = this, b = $("input#background");
+  $("label", a).click(function() {
+    $("li", a).removeClass("selected");
+    $(this).parent().addClass("selected");
+    var c = $("input", this).attr("value");
+    b.attr("value", c);
+    b.attr("name", "background");
+    b.attr("checked", "checked")
+  })
+};
+jQuery.fn.ajaxify = function() {
+  this.click(function() {
+    var a = $(this).parent();
+    a.html("vui l\u00f2ng ch\u1edd m\u1ed9t ch\u00fat...");
+    $.ajax({type:"GET", url:this.href, success:function(b) {
+      a.html(b)
+    }});
+    return false
+  })
+};
+jQuery.fn.confirm = function() {
+  this.click(function() {
+    this.href += "&confirm=1";
+    return window.confirm("B\u1ea1n ch\u1eafc ch\u1eafn mu\u1ed1n th\u1ef1c hi\u1ec7n thao t\u00e1c n\u00e0y?")
+  })
+};
+jQuery.fn.setAccordion = function() {
+  var a = this, b = a.find("li>a");
+  a._current = null;
+  b.click(function() {
+    var c = this.hash.substring(1, this.hash.length);
+    if(a._current == c) {
+      $("div#" + a._current).removeClass("current");
+      a.find("ul li").removeClass("current");
+      a.removeClass("open");
+      a._current = null;
+      return false
+    }else {
+      a._current && $("div#" + a._current).removeClass("current")
+    }
+    $("div#" + c).addClass("current").find("input[@type='text'], input[@type='file'], textarea").get(0).focus();
+    a.find("ul li").removeClass("current");
+    $(this.parentNode).addClass("current");
+    a._current = c;
+    a.addClass("open");
+    return false
+  })
+};
+jQuery.fn.toggleCheckbox = function() {
+  var a = $(this.form).find("input[@name=" + this.attr("name") + "]");
+  this.click(function() {
+    var b = this.checked;
+    a.each(function() {
+      this.checked = false
+    });
+    this.checked = b ? true : false
+  })
+};
+jQuery.fn.poll = function(a) {
+  var b = window.location.href;
+  window.setInterval(function() {
+    $.ajax({type:"GET", url:b, dataType:"json", success:function(c) {
+      if(c.result) {
+        if(a) {
+          window.location.href = a
+        }else {
+          window.location.reload()
+        }
+      }
+    }})
+  }, 2500)
+};
+jQuery.fn.setTabs = function() {
+  var a = this;
+  a.find("li>a").click(function() {
+    var b = this.hash.substring(1, this.hash.length);
+    $("div#" + a._current).removeClass("current");
+    $("div#" + b).addClass("current");
+    a.find("ul li").removeClass("current");
+    $(this.parentNode).addClass("current");
+    a._current = b;
+    return false
   });
+  a._current = this.find("div.current").attr("id")
 };
-
-jQuery.fn.spy = function () {
-  var stream = this;
-  var timer = window.setInterval(
-    function() {
-      $.get(window.location.href,
-            function (res) {
-              stream.find("ul").remove();
-              stream.append(res);
-            })
-    }, 1000 * 30);
-};
-
-jQuery.fn.toggleable = function (other) {
-  var other = other;
-  var el = this;
-
-  $("a[@href=#" + this.attr("id") + "]").click(
-    function () {
-      if (el.css("display") == "none") {
-        if (other) $(other).hide();
-        el.show();
-      }
-      else {
-        if (other) $(other).show();
-        el.hide();
-      }
-    }
-  )
-};
-
-jQuery.fn.toggleSelection = function (elements, select) {
-  var els = $(elements);
-  this.click(
-    function () {
-      els.attr("checked", select ? true : false);
-      return false;
-    }
-  );
-};
-
-jQuery.fn.icons = function () {
-  var opener = $("a#add-icons", this);
-  var container = null;
-  var current = null;
-  var el = this;
-
-  // Show and hide 
-  opener.toggle(
-    function(){
-      if (!container) {
-        var html = ["<div id=\"form-icons\">"];
-        $("option", el).each(
-          function() {
-            if (this.value != "") {
-              html.push("<label for=\"icon-" + this.value + "\" title=\"" + this.title + "\">");
-              html.push("<img src=\"" + this.id + "\" class=\"icon\" alt=\"" + this.text + "\" />");
-              if (this.title != "")
-                html.push("<h4> "+ this.title+" </h4>")
-              html.push("</label>");
-            }
-          }
-        );
-        html.push("</div>");
-        el.append(html.join(""));
-
-        container = $("div#form-icons");
-        $("textarea#message").before("<img id=\"current-photo\" class=\"icon\"/>");
-        current = $("img#current-photo").hide();
-        current.click(function () {opener.click()});
-        $("label", container).click(
-          function () {
-            var val = $(this).attr("for").replace("icon-","");
-            var title = this.title;
-            var index = 0;
-
-            $("select#icon>option").each( function (i) {
-              if (this.value == val) index = i;
-            });
-            $("select#icon").get(0).selectedIndex = index;
-
-            $("label", container).removeClass("selected");
-            $(this).addClass("selected");
-
-            current.attr("src", $(this).find("img").get(0).src);
-            current.css({display: 'inline'});
-            current.click();
-
-            var msg = $("textarea#message");
-            msg.css({width: '349px'})
-            if (msg.size() > 0) {
-              el = msg.get(0);
-              if (el._first) {
-                el.value = this.title;
-                el._first = null;
-              }
-              el.focus();
-            }
-          }
-        );
-      }
-      container.show();
-      $(document.body).bind("click", function () { current.click();});
-    }, function(){
-      container.hide();
-      $(document.body).unbind("click");
-    }
-  );
-};
-
-jQuery.fn.avatars = function () {
-  var container = this;
-  var current = $("img#current");
-  var save = $("button[@type='submit']");
-
-  $("label", container).click(
-    function (e) {
-      var src = $("img", this).attr("src");
-      
-      $("li", container).removeClass("selected");
-      $(this).parent().addClass("selected");
-      
-      $(this).parent().find("input").get(0).checked = true;
-      current.attr("src", src);
-      save.attr("class", "active");
-      e.preventDefault();
-    }
-  );
-};
-
-jQuery.fn.backgrounds = function () {
-  var container = this;
-  var background = $("input#background");
-  $("label", container).click(
-    function (e) {
-      $("li", container).removeClass("selected");
-      $(this).parent().addClass("selected");
-      
-      var value = $("input", this).attr("value");
-      background.attr("value", value);
-      background.attr("name", "background");
-      background.attr("checked", "checked");
-    }
-  );
-};
-
-jQuery.fn.ajaxify = function () {
-  this.click(
-    function () {
-      var el = $(this).parent();
-      el.html("vui lòng chờ một chút...");
-
-      $.ajax({
-        type: "GET",
-        url: this.href,
-        success: function(res) {
-          el.html(res);
-        }
-      });
-
-      return false;
-    }
-  );
-};
-
-jQuery.fn.confirm = function () {
-    this.click(
-      function () {
-        this.href = this.href + "&confirm=1";
-        return window.confirm("Bạn chắc chắn muốn thực hiện thao tác này?");
-      }
-    );
-  };
-
-
-jQuery.fn.setAccordion = function () {
-  var container = this;
-  var links = container.find("li>a");
-  container._current = null;
-  links.click (
-    function () {
-      var open = this.hash.substring(1, this.hash.length);
-      if (container._current == open) {
-        $("div#" + container._current).removeClass("current");
-        container.find("ul li").removeClass("current");
-        container.removeClass("open"); 
-        container._current = null;
-        return false;
-      }
-      else if (container._current){
-        $("div#" + container._current).removeClass("current");
-      }
-      $("div#" + open).addClass("current").find("input[@type='text'], input[@type='file'], textarea").get(0).focus();
-      container.find("ul li").removeClass("current");
-      $(this.parentNode).addClass("current");
-      container._current = open;
-      container.addClass("open");  
-      return false;
-    }
-  );
-};
-
-jQuery.fn.toggleCheckbox = function () {
-  var all = $(this.form).find("input[@name=" + this.attr("name") + "]");
-  var el = this;
-  this.click(
-    function () {
-      var checked = this.checked;
-      all.each(function() {
-        this.checked = false;
-      });
-      this.checked = checked ? true : false;
-    }
-  );
-};
-
-jQuery.fn.poll = function (frwd) {
-  var current = window.location.href;
-  var interval = window.setInterval(
-    function () {
-      $.ajax({
-        type: "GET",
-        url: current,
-        dataType: "json",
-        success: function(res) {
-          if (res.result)
-            if (frwd)
-              window.location.href = frwd;
-          else 
-            window.location.reload();
-        }
-      });
-    }, 2500);
-};
-
-jQuery.fn.setTabs = function () {
-  var container = this;
-  var tabs = container.find("li>a");
-  tabs.click(
-    function () {
-      var tab = this.hash.substring(1, this.hash.length);
-      $("div#" + container._current).removeClass("current");
-      $("div#" + tab).addClass("current");
-      container.find("ul li").removeClass("current");
-      $(this.parentNode).addClass("current");
-      container._current = tab;
-      return false;
-    }
-  );
-  container._current = this.find("div.current").attr("id");
-};
-
-jQuery.fn.forms = function () {
-  var btn = $("input[@type=submit]", this);
-  btn.parent().prepend("<span class=\"loader\" title=\"Đang gửi...\">&nbsp;</span>");
-  
-  this.bind("submit",
-            function() {
-              $("input[@type=submit]", this).hide();
-              $("span.cancel", this).hide();
-              $("span.loader", this).show();
-            }
-           );
-  
-  this.each(
-    function() {
-      // Some special cases
-      switch (this.id) {
+jQuery.fn.forms = function() {
+  $("input[@type=submit]", this).parent().prepend("<span class='loader' title='\u0110ang g\u1eedi...'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Processing...</span>");
+  this.bind("submit", function() {
+    $("input[@type=submit]", this).hide();
+    $("span.cancel", this).hide();
+    $("span.loader", this).show()
+  });
+  this.each(function() {
+    switch(this.id) {
       case "comment-form":
-        $("#participant-nicks > a", this).each( function (i) {
-          $(this).click(
-            function () {
-              var nick = $(this).text();
-              var textarea = $("#comment");
-              var text = textarea.val();
-
-              // get comment textarea selection
-              var selection;
-              textarea.focus();
-              if(textarea.get(0).selectionStart == undefined) {
-                var range = document.selection.createRange();
-                selection = new Array(range.start, range.end);
-              } else {
-                selection = new Array(textarea.get(0).selectionStart,
-                                textarea.get(0).selectionEnd);
-              }
-
-              // Cursor is at the beginning or selection includes the first
-              // position?
-              if(selection[0] === 0) {
-                // Insert '@nickname: '
-                textarea.val('@' + nick + ': ' +
-                             text.substring(selection[1], text.length));
-              } else {
-                // Insert '@nickname'
-                textarea.val(text.substring(0, selection[0]) +
-                             '@' + nick +
-                             text.substring(selection[1], text.length));
-              }
-              return false;
+        $("#participant-nicks > a", this).each(function() {
+          $(this).click(function() {
+            var b = $(this).text(), c = $("#comment"), d = c.val(), e;
+            c.focus();
+            if(c.get(0).selectionStart == undefined) {
+              e = document.selection.createRange();
+              e = Array(e.start, e.end)
+            }else {
+              e = Array(c.get(0).selectionStart, c.get(0).selectionEnd)
             }
-          );
+            e[0] === 0 ? c.val("@" + b + ": " + d.substring(e[1], d.length)) : c.val(d.substring(0, e[0]) + "@" + b + d.substring(e[1], d.length));
+            return false
+          })
         });
         $("#participant-nicks").show();
         break;
@@ -500,10 +324,10 @@ jQuery.fn.forms = function () {
         break;
       case "signup":
         $("input[@type=text]", this).get(0).focus();
-        var pwd = $("input#password");
-        pwd.parent().append("<div id=\"pwstatus\"></div");
-        pwd.bind("keyup", function () {
-          analyseAccountPassword();
+        var a = $("input#password");
+        a.parent().append('<div id="pwstatus"></div');
+        a.bind("keyup", function() {
+          analyseAccountPassword()
         });
         break;
       case "form-location":
@@ -514,214 +338,164 @@ jQuery.fn.forms = function () {
         break;
       case "form-avatar":
         $("div.avatars", this).avatars();
-        var a = $("a#toggle");
-        if (a.size() > 0) {
+        if($("a#toggle").size() > 0) {
           $("div.form-fields").hide();
-          $("a#toggle").click(
-            function () {
-              $("div#account-form div.form-fields").show();
-              $(this).hide();
-              return false;
-            }
-          );
+          $("a#toggle").click(function() {
+            $("div#account-form div.form-fields").show();
+            $(this).hide();
+            return false
+          })
         }
-        break;
-      }
-
-      switch (this.parentNode.id) {
+        break
+    }
+    switch(this.parentNode.id) {
       case "form-message":
         $(this).presence();
-        break;
-      }
+        break
     }
-  );
+  })
 };
-
 $(document).ready(function() {
-  // Main navigation hovers for IE
-  if ( jQuery.browser.msie)
-    $("ul#main-nav>li").addHover();
-  
-  var body = document.body;
-  var bg = $(body).css("background-color");
-  var mobile = ((bg == "#ffffff") || (bg == "rbg(255,255,255)"));
-  
-  if (!mobile) {
-    // Common forms stuff
+  jQuery.browser.msie && $("ul#main-nav>li").addHover();
+  var a = document.body, b = $(a).css("background-color");
+  if(!(b == "#ffffff" || b == "rbg(255,255,255)")) {
     $("form").forms();
-
-    // Bubbles
-    var sb = $("div#sidebar");
-    if (sb.length) {
-      sb.find("div#contacts>ul>li").bubble(0, -18);
-      sb.find("div#channels>ul>li").bubble(0, -18);
+    b = $("div#sidebar");
+    if(b.length) {
+      b.find("div#contacts>ul>li").bubble(0, -18);
+      b.find("div#channels>ul>li").bubble(0, -18)
     }
-
-    // Delete confirmation links
     $("a.confirm-delete").confirm();
-    // Spam confirmation links
     $("a.confirm-spam").confirm();
-
-    // Ajaxified links
     $("a.ajaxify").ajaxify();
-
     $("div.tabs").setTabs();
-    
     $("div.accordion").setTabs();
-    
     $("form#change-number").toggleable("div#activation, div#activated");
-
-    if (body.id == "welcome" || body.id == "contacts") {
+    if(a.id == "welcome" || a.id == "contacts") {
       $("a#select-all").toggleSelection("input[@name='actor[]'], input[@name='email[]']", true);
-      $("a#select-none").toggleSelection("input[@name='actor[]'], input[@name='email[]']", false);
+      $("a#select-none").toggleSelection("input[@name='actor[]'], input[@name='email[]']", false)
     }
-    
-    if (body.id == "settings" && $("ul#badges").length) {
-      initBadges();
-    }    
-
-    // Delete confirmation links
-    $("input#only-channel, input#only-user").toggleCheckbox();
-    
-    //            if (body.id == "overview")
-    //                $("div#stream").spy();
+    a.id == "settings" && $("ul#badges").length && initBadges();
+    $("input#only-channel, input#only-user").toggleCheckbox()
   }
 });
-
-/* Helper */
-
-if (!Array.prototype.indexOf) {
-  Array.prototype.indexOf = function (obj, fromIndex) {
-    if (fromIndex == null) {
-      fromIndex = 0;
-    } else if (fromIndex < 0) {
-      fromIndex = Math.max(0, this.length + fromIndex);
+if(!Array.prototype.indexOf) {
+  Array.prototype.indexOf = function(a, b) {
+    if(b == null) {
+      b = 0
+    }else {
+      if(b < 0) {
+        b = Math.max(0, this.length + b)
+      }
     }
-    for (var i = fromIndex; i < this.length; i++) {
-      if (this[i] === obj)
-        return i;
+    for(var c = b;c < this.length;c++) {
+      if(this[c] === a) {
+        return c
+      }
     }
-    return -1;
-  };
+    return-1
+  }
 }
-
-/* Some old stuff */
-
-var pwMinLen = 6;
-var pwOkLen = 8;
-var pwCut = 10;
-
-function passwordStrength(pw, bans) {
-  var points = 0;
-  if(pw.length > 0) {
-    if(pw.length >= pwMinLen) {
-      pw = pw.substr(0, pwCut);
-      var tpw = pw.toLowerCase();
-
-      points = 1;
-      var banned = false;
-      for(var i = 0; i < bans.length; i++) {
-        if(tpw.indexOf(bans[i].substr(0, pwCut).toLowerCase()) != -1) {
-          banned = true;
-          break;
+var pwMinLen = 6, pwOkLen = 8, pwCut = 10;
+function passwordStrength(a, b) {
+  var c = 0;
+  if(a.length > 0) {
+    if(a.length >= pwMinLen) {
+      a = a.substr(0, pwCut);
+      var d = a.toLowerCase();
+      c = 1;
+      for(var e = false, f = 0;f < b.length;f++) {
+        if(d.indexOf(b[f].substr(0, pwCut).toLowerCase()) != -1) {
+          e = true;
+          break
         }
       }
-      
-      if(!banned) {
-        if(pw.length >= pwOkLen) {
-          points++;
-        }
-        if(pw.toLowerCase() != pw && pw.toUpperCase() != pw) {
-          points++;
-        }
-        if(pw.search(/[0-9]/) != -1 && pw.search(/[A-Za-z]/) != -1) {
-          points++;
-        }
-        if(pw.search(/[^0-9A-Za-z]/) != -1) {
-          points++;
-        }
-        if(points > 4) {
-          points = 4;
+      if(!e) {
+        a.length >= pwOkLen && c++;
+        a.toLowerCase() != a && a.toUpperCase() != a && c++;
+        a.search(/[0-9]/) != -1 && a.search(/[A-Za-z]/) != -1 && c++;
+        a.search(/[^0-9A-Za-z]/) != -1 && c++;
+        if(c > 4) {
+          c = 4
         }
       }
     }
+  }else {
+    c = -1
   }
-  else {
-    points = -1;
-  }
-  return points;
+  return c
 }
-
-function analyseAccountPassword(ret) {
-  var pw = document.getElementById("password").value;
-  var pwstatus = document.getElementById("pwstatus");
-  if(pwstatus || ret) {
-    ban = new Array();
-    var tmp = document.getElementById("nick");
-    if(tmp && tmp.value) {
-      ban.push(tmp.value);
-    }
-    tmp = document.getElementById("email");
-    if(tmp && tmp.value) {
-      ban.push(tmp.value);
-    }
-    tmp = document.getElementById("full_name");
-    if(tmp && tmp.value) {
-      ban.push(tmp.value);
-    }
-    tmp = document.getElementById('city');
-    if(tmp && tmp.value) {
-      ban.push(tmp.value);
-    }
-
-    var points = passwordStrength(pw, ban);
-    pwstatus.style.backgroundPosition = '0px ' + ((-points * 20) - 20)+ 'px';
-    if(ret) {
-      return points;
+function analyseAccountPassword(a) {
+  var b = document.getElementById("password").value, c = document.getElementById("pwstatus");
+  if(c || a) {
+    ban = [];
+    var d = document.getElementById("nick");
+    d && d.value && ban.push(d.value);
+    (d = document.getElementById("email")) && d.value && ban.push(d.value);
+    (d = document.getElementById("full_name")) && d.value && ban.push(d.value);
+    (d = document.getElementById("city")) && d.value && ban.push(d.value);
+    b = passwordStrength(b, ban);
+    c.style.backgroundPosition = "0px " + (-b * 20 - 20) + "px";
+    if(a) {
+      return b
     }
   }
 }
-
-function checkPassword(pw) {
-  if(pw.length < 8) {
-    return false;
+function checkPassword(a) {
+  if(a.length < 8) {
+    return false
   }
-  if(pw.search(/[A-Z]/) == -1) {
-    return false;
+  if(a.search(/[A-Z]/) == -1) {
+    return false
   }
-  if(pw.search(/[a-z]/) == -1) {
-    return false;
+  if(a.search(/[a-z]/) == -1) {
+    return false
   }
-  if(pw.search(/[0-9]/) == -1) {
-    return false;
+  if(a.search(/[0-9]/) == -1) {
+    return false
   }
-  return true;
+  return true
 }
-
-
-function getFieldValue(id) {
-  var field = document.getElementById(id);
-  if(field && field.value) {
-    return field.value;
+function getFieldValue(a) {
+  if((a = document.getElementById(a)) && a.value) {
+    return a.value
   }
-  return '';
+  return""
 }
-
-function getOffset(o) {
-  var top = 0, left = 0;
-  while (o.offsetParent) {
-    top += o.offsetTop  || 0;
-    left += o.offsetLeft || 0;
-    o = o.offsetParent;
-  };
-  return [left, top];
+function getOffset(a) {
+  for(var b = 0, c = 0;a.offsetParent;) {
+    b += a.offsetTop || 0;
+    c += a.offsetLeft || 0;
+    a = a.offsetParent
+  }
+  return[c, b]
 }
-
 $(function() {
-    // setTimeout() function will be fired after page is loaded
-    // it will wait for 5 sec. and then will fire
-    // $("#successMessage").hide() function
-    setTimeout(function() {
-        $("#notice").fadeOut(300)
-    }, 700);
+  setTimeout(function() {
+    $("#notice").fadeOut(300)
+  }, 3E3)
 });
+
+$(document).ready(function(){   
+    $(document.body).click(function (event) {
+      if (
+          (
+            event.target.nodeName == "A" &&
+            event.target.className != "send-message-disable" &&
+            event.target.target != "_new" &&
+            event.target.target != "_blank"
+           ) || 
+          
+           (
+             event.target.nodeName == "IMG" && 
+             event.target.className == "photo"
+           ) || 
+           (
+             event.target.type == "submit" && 
+             event.target.name != "submit-location"
+           ) || 
+             event.target.nodeName == "SPAN"
+           )  
+        { $(document.body).fadeOut(200) }
+      })
+  })

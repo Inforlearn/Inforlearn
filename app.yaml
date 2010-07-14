@@ -1,5 +1,5 @@
 application: "inforlearn"
-version: 1-0-beta2
+version: 1-0-beta3
 runtime: python
 api_version: 1
 skip_files: |
@@ -37,7 +37,7 @@ skip_files: |
  (vendor/.*)
  )$
 
-default_expiration: "7d"
+default_expiration: "30d"
 
 handlers:
 - url: /images/backgrounds
@@ -99,3 +99,7 @@ handlers:
 
 inbound_services:
 - xmpp_message
+
+derived_file_type:
+- python_precompiled
+

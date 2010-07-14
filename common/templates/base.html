@@ -88,32 +88,6 @@
   {% block head %}
   {% endblock %}
   
-  <script type="text/javascript" src="/js/jquery.js"></script>
-  <script type="text/javascript">
-    $(document).ready(function(){   
-      $(document.body).click(function (event) {
-        if (
-            (
-              event.target.nodeName == "A" &&
-              event.target.className != "send-message-disable" &&
-              event.target.target != "_new" &&
-              event.target.target != "_blank"
-             ) || 
-            
-             (
-               event.target.nodeName == "IMG" && 
-               event.target.className == "photo"
-             ) || 
-             (
-               event.target.type == "submit" && 
-               event.target.name != "submit-location"
-             ) || 
-               event.target.nodeName == "SPAN"
-             )  
-          { $(document.body).fadeOut(200) }
-        })
-    })
-  </script>
 </head>
   <body style="{% if not view.extra.bg_image %} background: url(/images/backgrounds/{{ bg_image|auto_background }}); background-attachment: fixed; background-position: center; {% endif %}" {% block bodytag %}{% if area %}id="{{area}}"{% endif %}{% if not request.user %}class="global"{% endif %}{% endblock %}>
       
@@ -130,6 +104,22 @@
       </div>
     </div>
     {% endif %}
+    <div class="hidden">
+	    <script type="text/javascript">
+	        <!--//--><![CDATA[//><!--
+	            var images = new Array()
+	            function preload() {
+	                for (i = 0; i < preload.arguments.length; i++) {
+	                    images[i] = new Image()
+	                    images[i].src = preload.arguments[i]
+	                }
+	            }
+	            preload(
+	                "http://{{DOMAIN}}/themes/default/unchecked.png",
+	            )
+	        //--><!]]>
+	    </script>
+    </div>
   
     {{component.best.analytics.footer|safe}}
   </body>
