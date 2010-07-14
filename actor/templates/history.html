@@ -4,7 +4,7 @@
   {% ifequal request.user.nick view.nick %}
   Những kinh nghiệm/bình luận được gửi lên từ tài khoản của bạn
   {% else %}
-  {{POST_NAME}}s from {{ view.display_nick }}
+  Những kinh nghiệm/bình luận được gửi lên từ {{ view.display_nick }}
   {% endifequal %}
 {% endblock %}
 

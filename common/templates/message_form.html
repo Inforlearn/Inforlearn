@@ -36,14 +36,14 @@
     {% if not request.mobile %}
       <p id="counter">256 ký tự</p>
       <p id="icons">
-        <label for="icon" id="icon-label">Icon</label>
-        <select name="icon" id="icon">
-          <option value="">Chọn hình đại diện</option>
-          {% for key, icon in selectable_icons.items %}
-           <option value="{{ key }}" id="/themes/{{DEFAULT_THEME|urlencode}}/icons/{{ icon.0 }}.gif" title="{{ icon.2 }}"{% ifequal key current_icon %} selected="selected"{% endifequal %}>{{ icon.1 }}</option>
-          {% endfor %}
-        </select>
-        <a href="#" id="add-icons">+ Thêm hình</a>
+<!--        <label for="icon" id="icon-label">Icon</label>-->
+<!--        <select name="icon" id="icon">-->
+<!--          <option value="">Chọn hình đại diện</option>-->
+<!--          {% for key, icon in selectable_icons.items %}-->
+<!--           <option value="{{ key }}" id="/themes/{{DEFAULT_THEME|urlencode}}/icons/{{ icon.0 }}.gif" title="{{ icon.2 }}"{% ifequal key current_icon %} selected="selected"{% endifequal %}>{{ icon.1 }}</option>-->
+<!--          {% endfor %}-->
+<!--        </select>-->
+<!--        <a href="#" id="add-icons">+ Thêm hình</a>-->
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
         
         <script src="/js/avim.js" type="text/javascript"></script>

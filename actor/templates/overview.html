@@ -6,7 +6,7 @@
 
 {% block above_container %}
 {% if unconfirmed_email and not flash %}
-<div class="notice">
+<div class="notice" id="notice">
   <p>
   Bạn cần xác thực địa chỉ email "{{unconfirmed_email}}", nếu vẫn chưa nhận được thư, bạn có thể yêu cầu hệ thống <a href="{% url_for view request %}/settings/email">gửi lại</a>.
   </p>

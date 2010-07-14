@@ -170,7 +170,9 @@ def handle_view_action(request, actions):
   """
   for action in actions.keys():
     called = call_api_from_request(request, action)[0]
-    if called:
+    if called: 
+      if "location" in request.POST.keys():
+        return None # if request is only update location, return nothing
       redirect = actions[action]
       return util.RedirectFlash(redirect, messages.flash(action))
   return None
