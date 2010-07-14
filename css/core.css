@@ -2115,7 +2115,7 @@ div.cols div#stream {
 }
 
 div#stream div.controls {
-    margin: 0 5px -1.5em 0;
+    margin: 0 5px 0em 0;
     z-index: 2;
     position: relative;
     text-align: right;

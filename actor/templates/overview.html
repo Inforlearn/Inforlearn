@@ -29,6 +29,7 @@
 {% endif %}
 
 <div id='stream'>
+{% if entries|length %}
   {% if HIDE_COMMENTS_ENABLED %}
   <div class="controls">
     {% if view.extra.comments_hide %}
@@ -43,6 +44,8 @@
     </a>
   </div>
   {% endif %}
+
+{% endif %}
 
   {% include 'common/templates/stream.html' %}
   {% include 'common/templates/paging.html' %}

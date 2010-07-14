@@ -90,27 +90,34 @@
   
   <script type="text/javascript" src="/js/jquery.js"></script>
   <script type="text/javascript">
-    $(document).ready(function(){
+    $(document).ready(function(){    
       $(document.body).fadeIn(200)
       {# Fade when click submit button #}
       $(document.body).click(function (event) {
-        if ((event.target.nodeName == "A" &&
-             event.target.className != "send-message-disable" &&
-             event.target.target != "_new" &&
-             event.target.target != "_blank") || 
-            (event.target.nodeName == "IMG" && 
-             event.target.className == "photo") || 
-            (event.target.type == "submit" && 
-             event.target.name != "submit-location") || 
-            event.target.nodeName == "SPAN")  {
-            alert(event.target.name);
-          $(document.body).fadeOut(100) 
-          }
+        if (
+            (
+              event.target.nodeName == "A" &&
+              event.target.className != "send-message-disable" &&
+              event.target.target != "_new" &&
+              event.target.target != "_blank"
+             ) || 
+            
+             (
+               event.target.nodeName == "IMG" && 
+               event.target.className == "photo"
+             ) || 
+             (
+               event.target.type == "submit" && 
+               event.target.name != "submit-location"
+             ) || 
+               event.target.nodeName == "SPAN"
+             )  
+          { $(document.body).fadeOut(200) }
         })
     })
   </script>
 </head>
-  <body style="display:none; {% if not view.extra.bg_image %} background: url(/images/backgrounds/{{ bg_image|auto_background }}); background-attachment: fixed; background-position: center; {% endif %}" {% block bodytag %}{% if area %}id="{{area}}"{% endif %}{% if not request.user %}class="global"{% endif %}{% endblock %}>
+  <body style="{% if not view.extra.bg_image %} background: url(/images/backgrounds/{{ bg_image|auto_background }}); background-attachment: fixed; background-position: center; {% endif %}" {% block bodytag %}{% if area %}id="{{area}}"{% endif %}{% if not request.user %}class="global"{% endif %}{% endblock %}>
       
     {% block body %}
     {% endblock %}
