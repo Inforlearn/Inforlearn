@@ -29,10 +29,10 @@
   </div>
   <div class="buttons">
     {% if redirect_to %}
-    <input type="hidden" name="redirect_to" value="{{redirect_to}}" />
+      <input type="hidden" name="redirect_to" value="{{redirect_to}}" />
     {% endif %}
     {% block buttons %}
-    <input type="submit" value="Lưu" />
+      <input type="submit" value="Lưu" />
     {% endblock %}
   </div>
 </form>

@@ -339,7 +339,9 @@ class Image(CachingModel):
 
   # TODO(termie): key_template plans don't really work very well here
   #               because we haven't been storing the path :/
-
+class File(CachingModel):
+  content = models.BlobProperty()     # the image itself
+  
 class InboxEntry(CachingModel):
   """This is the inbox index for an entry.
 

@@ -1,9 +1,14 @@
 {% load avatar format entry presence%}
 {% if not hide_avatar %}
-{% linked_avatar entry.actor_ref "f" request %}
+  {% linked_avatar entry.actor_ref "f" request %}
 {% endif %}
+
 <p class="comment">
-  {% if request %}{{entry|format_comment:request}}{% else %}{{entry|format_comment}}{% endif %}
+  {% if request %}
+    {{entry|format_comment:request}}
+  {% else %}
+    {{entry|format_comment}}
+  {% endif %}
 </p>
 <p class="meta">
   Ý kiến bình luận của {% actor_link entry.actor_ref request %} trong chủ đề

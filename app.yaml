@@ -44,6 +44,10 @@ handlers:
   static_dir: images/backgrounds
   expiration: "365d"
 
+- url: /archive
+  static_files: archive/\1
+  upload: archive/*.txt.gz
+
 - url: /images
   static_dir: images
 
@@ -92,6 +96,9 @@ handlers:
   script: "main.py"
   login: admin
 
+- url: /stats.*
+  script: appstats/ui.py  
+
 - url: .*
   script: "main.py"
   secure: optional
@@ -100,6 +107,5 @@ handlers:
 inbound_services:
 - xmpp_message
 
-derived_file_type:
-- python_precompiled
+
 

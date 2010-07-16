@@ -8,6 +8,8 @@ import os.path
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
+COMPRESS_CSS_FILTERS = None
+
 
 ADMINS = (
 #    ('AloneRoad', 'AloneRoad@Gmail.com'),
@@ -45,7 +47,7 @@ LANGUAGE_CODE = 'en-us'
 USE_I18N = True
 
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = 'Inforlearn secret key :)'
+SECRET_KEY = 'dd0bf43ad04974c6436219a9e863a838'
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
@@ -98,6 +100,7 @@ INSTALLED_APPS = (
      'install',
      'confirm',
      'components',
+     'compress',
 )
 
 # We override the default test runner so that we can be Totally Awesome
