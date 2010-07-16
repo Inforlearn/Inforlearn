@@ -46,7 +46,7 @@ handlers:
 
 - url: /archive
   static_files: archive/\1
-  upload: archive/*.txt.gz
+  upload: archive/.*
 
 - url: /images
   static_dir: images
@@ -107,5 +107,6 @@ handlers:
 inbound_services:
 - xmpp_message
 
-
+derived_file_type:
+- python_precompiled
 

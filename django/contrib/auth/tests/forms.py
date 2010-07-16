@@ -190,4 +190,42 @@ True
 False
 >>> form['username'].errors
 [u'This value must contain only letters, numbers and underscores.']
+
+
+### PasswordResetForm
+
+>>> from django.contrib.auth.forms import PasswordResetForm
+>>> data = {'email':'not valid'}
+>>> form = PasswordResetForm(data)
+>>> form.is_valid()
+False
+>>> form['email'].errors
+[u'Enter a valid e-mail address.']
+
+# Test nonexistant email address
+>>> data = {'email':'foo@bar.com'}
+>>> form = PasswordResetForm(data)
+>>> form.is_valid()
+False
+>>> form.errors
+{'email': [u"That e-mail address doesn't have an associated user account. Are you sure you've registered?"]}
+
+# Test cleaned_data bug fix
+>>> user = User.objects.create_user("jsmith3", "jsmith3@example.com", "test123")
+>>> data = {'email':'jsmith3@example.com'}
+>>> form = PasswordResetForm(data)
+>>> form.is_valid()
+True
+>>> form.cleaned_data['email']
+u'jsmith3@example.com'
+
+# bug #5605, preserve the case of the user name (before the @ in the email address)
+# when creating a user.
+>>> user = User.objects.create_user('forms_test2', 'tesT@EXAMple.com', 'test')
+>>> user.email
+'tesT@example.com'
+>>> user = User.objects.create_user('forms_test3', 'tesT', 'test')
+>>> user.email
+'tesT'
+
 """

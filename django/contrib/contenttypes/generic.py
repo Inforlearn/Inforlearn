@@ -59,7 +59,7 @@ class GenericForeignKey(object):
 
     def __get__(self, instance, instance_type=None):
         if instance is None:
-            raise AttributeError, u"%s must be accessed via instance" % self.name
+            return self
 
         try:
             return getattr(instance, self.cache_attr)
@@ -131,7 +131,7 @@ class GenericRelation(RelatedField, Field):
         return self.object_id_field_name
 
     def m2m_reverse_name(self):
-        return self.model._meta.pk.column
+        return self.rel.to._meta.pk.column
 
     def contribute_to_class(self, cls, name):
         super(GenericRelation, self).contribute_to_class(cls, name)
@@ -183,7 +183,7 @@ class ReverseGenericRelatedObjectsDescriptor(object):
 
     def __get__(self, instance, instance_type=None):
         if instance is None:
-            raise AttributeError, "Manager must be accessed via instance"
+            return self
 
         # This import is done here to avoid circular import importing this module
         from django.contrib.contenttypes.models import ContentType
@@ -203,7 +203,7 @@ class ReverseGenericRelatedObjectsDescriptor(object):
             join_table = qn(self.field.m2m_db_table()),
             source_col_name = qn(self.field.m2m_column_name()),
             target_col_name = qn(self.field.m2m_reverse_name()),
-            content_type = ContentType.objects.get_for_model(self.field.model),
+            content_type = ContentType.objects.get_for_model(instance),
             content_type_field_name = self.field.content_type_field_name,
             object_id_field_name = self.field.object_id_field_name
         )
@@ -253,6 +253,8 @@ def create_generic_related_manager(superclass):
 
         def add(self, *objs):
             for obj in objs:
+                if not isinstance(obj, self.model):
+                    raise TypeError, "'%s' instance expected" % self.model._meta.object_name
                 setattr(obj, self.content_type_field_name, self.content_type)
                 setattr(obj, self.object_id_field_name, self.pk_val)
                 obj.save()
@@ -283,35 +285,44 @@ class GenericRel(ManyToManyRel):
         self.limit_choices_to = limit_choices_to or {}
         self.symmetrical = symmetrical
         self.multiple = True
+        self.through = None
 
 class BaseGenericInlineFormSet(BaseModelFormSet):
     """
     A formset for generic inline objects to a parent.
     """
-    ct_field_name = "content_type"
-    ct_fk_field_name = "object_id"
 
-    def __init__(self, data=None, files=None, instance=None, save_as_new=None):
+    def __init__(self, data=None, files=None, instance=None, save_as_new=None,
+                 prefix=None, queryset=None):
+        # Avoid a circular import.
+        from django.contrib.contenttypes.models import ContentType
         opts = self.model._meta
         self.instance = instance
         self.rel_name = '-'.join((
             opts.app_label, opts.object_name.lower(),
             self.ct_field.name, self.ct_fk_field.name,
         ))
+        if self.instance is None or self.instance.pk is None:
+            qs = self.model._default_manager.none()
+        else:
+            if queryset is None:
+                queryset = self.model._default_manager
+            qs = queryset.filter(**{
+                self.ct_field.name: ContentType.objects.get_for_model(self.instance),
+                self.ct_fk_field.name: self.instance.pk,
+            })
         super(BaseGenericInlineFormSet, self).__init__(
-            queryset=self.get_queryset(), data=data, files=files,
-            prefix=self.rel_name
+            queryset=qs, data=data, files=files,
+            prefix=prefix
         )
 
-    def get_queryset(self):
-        # Avoid a circular import.
-        from django.contrib.contenttypes.models import ContentType
-        if self.instance is None:
-            return self.model._default_manager.empty()
-        return self.model._default_manager.filter(**{
-            self.ct_field.name: ContentType.objects.get_for_model(self.instance),
-            self.ct_fk_field.name: self.instance.pk,
-        })
+    #@classmethod
+    def get_default_prefix(cls):
+        opts = cls.model._meta
+        return '-'.join((opts.app_label, opts.object_name.lower(),
+                        cls.ct_field.name, cls.ct_fk_field.name,
+        ))
+    get_default_prefix = classmethod(get_default_prefix)
 
     def save_new(self, form, commit=True):
         # Avoid a circular import.
@@ -345,6 +356,7 @@ def generic_inlineformset_factory(model, form=ModelForm,
         raise Exception("fk_name '%s' is not a ForeignKey to ContentType" % ct_field)
     fk_field = opts.get_field(fk_field) # let the exception propagate
     if exclude is not None:
+        exclude = list(exclude)
         exclude.extend([ct_field.name, fk_field.name])
     else:
         exclude = [ct_field.name, fk_field.name]
@@ -374,9 +386,11 @@ class GenericInlineModelAdmin(InlineModelAdmin):
             "formfield_callback": self.formfield_for_dbfield,
             "formset": self.formset,
             "extra": self.extra,
-            "can_delete": True,
+            "can_delete": self.can_delete,
             "can_order": False,
             "fields": fields,
+            "max_num": self.max_num,
+            "exclude": self.exclude
         }
         return generic_inlineformset_factory(self.model, **defaults)
 

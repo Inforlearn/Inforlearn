@@ -6,7 +6,7 @@ from django.core import signals
 from django.core.handlers.base import BaseHandler
 from django.core.urlresolvers import set_script_prefix
 from django.utils import datastructures
-from django.utils.encoding import force_unicode, smart_str
+from django.utils.encoding import force_unicode, smart_str, iri_to_uri
 
 # NOTE: do *not* import settings (or any module which eventually imports
 # settings) until after ModPythonHandler has been called; otherwise os.environ
@@ -64,7 +64,9 @@ class ModPythonRequest(http.HttpRequest):
                           unicode(cookies), unicode(meta)))
 
     def get_full_path(self):
-        return '%s%s' % (self.path, self._req.args and ('?' + self._req.args) or '')
+        # RFC 3986 requires self._req.args to be in the ASCII range, but this
+        # doesn't always happen, so rather than crash, we defensively encode it.
+        return '%s%s' % (self.path, self._req.args and ('?' + iri_to_uri(self._req.args)) or '')
 
     def is_secure(self):
         try:
@@ -75,6 +77,10 @@ class ModPythonRequest(http.HttpRequest):
 
     def _load_post_and_files(self):
         "Populates self._post and self._files"
+        if self.method != 'POST':
+            self._post, self._files = http.QueryDict('', encoding=self._encoding), datastructures.MultiValueDict()
+            return
+
         if 'content-type' in self._req.headers_in and self._req.headers_in['content-type'].startswith('multipart'):
             self._raw_post_data = ''
             try:
@@ -128,8 +134,8 @@ class ModPythonRequest(http.HttpRequest):
         if not hasattr(self, '_meta'):
             self._meta = {
                 'AUTH_TYPE':         self._req.ap_auth_type,
-                'CONTENT_LENGTH':    self._req.clength, # This may be wrong
-                'CONTENT_TYPE':      self._req.content_type, # This may be wrong
+                'CONTENT_LENGTH':    self._req.headers_in.get('content-length', 0),
+                'CONTENT_TYPE':      self._req.headers_in.get('content-type'),
                 'GATEWAY_INTERFACE': 'CGI/1.1',
                 'PATH_INFO':         self.path_info,
                 'PATH_TRANSLATED':   None, # Not supported
@@ -141,7 +147,7 @@ class ModPythonRequest(http.HttpRequest):
                 'REQUEST_METHOD':    self._req.method,
                 'SCRIPT_NAME':       self.django_root,
                 'SERVER_NAME':       self._req.server.server_hostname,
-                'SERVER_PORT':       self._req.server.port,
+                'SERVER_PORT':       self._req.connection.local_addr[1],
                 'SERVER_PROTOCOL':   self._req.protocol,
                 'SERVER_SOFTWARE':   'mod_python'
             }

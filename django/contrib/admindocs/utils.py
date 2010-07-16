@@ -4,6 +4,8 @@ import re
 from email.Parser import HeaderParser
 from email.Errors import HeaderParseError
 from django.utils.safestring import mark_safe
+from django.core.urlresolvers import reverse
+from django.utils.encoding import smart_str
 try:
     import docutils.core
     import docutils.nodes
@@ -52,7 +54,7 @@ def parse_docstring(docstring):
                 body = "\n\n".join(parts[1:])
     return title, body, metadata
 
-def parse_rst(text, default_reference_context, thing_being_parsed=None, link_base='../..'):
+def parse_rst(text, default_reference_context, thing_being_parsed=None):
     """
     Convert the string from reST to an XHTML fragment.
     """
@@ -60,10 +62,10 @@ def parse_rst(text, default_reference_context, thing_being_parsed=None, link_bas
         'doctitle_xform' : True,
         'inital_header_level' : 3,
         "default_reference_context" : default_reference_context,
-        "link_base" : link_base,
+        "link_base" : reverse('django-admindocs-docroot').rstrip('/')
     }
     if thing_being_parsed:
-        thing_being_parsed = "<%s>" % thing_being_parsed
+        thing_being_parsed = smart_str("<%s>" % thing_being_parsed)
     parts = docutils.core.publish_parts(text, source_path=thing_being_parsed,
                 destination_path=None, writer_name='html',
                 settings_overrides=overrides)

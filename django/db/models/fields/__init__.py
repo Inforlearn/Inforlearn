@@ -1,8 +1,11 @@
-import copy
 import datetime
 import os
 import re
 import time
+import math
+
+import django.utils.copycompat as copy
+
 try:
     import decimal
 except ImportError:
@@ -58,6 +61,13 @@ class Field(object):
     # creates, creation_counter is used for all user-specified fields.
     creation_counter = 0
     auto_creation_counter = -1
+
+    # Generic field type description, usually overriden by subclasses
+    def _description(self):
+        return _(u'Field of type: %(field_type)s') % {
+            'field_type': self.__class__.__name__
+        }
+    description = property(_description)
 
     def __init__(self, verbose_name=None, name=None, primary_key=False,
             max_length=None, unique=False, blank=False, null=False,
@@ -193,10 +203,18 @@ class Field(object):
 
     def get_db_prep_lookup(self, lookup_type, value):
         "Returns field's value prepared for database lookup."
-        if hasattr(value, 'as_sql'):
-            sql, params = value.as_sql()
+        if hasattr(value, 'as_sql') or hasattr(value, '_as_sql'):
+            # If the value has a relabel_aliases method, it will need to
+            # be invoked before the final SQL is evaluated
+            if hasattr(value, 'relabel_aliases'):
+                return value
+            if hasattr(value, 'as_sql'):
+                sql, params = value.as_sql()
+            else:
+                sql, params = value._as_sql()
             return QueryWrapper(('(%s)' % sql), params)
-        if lookup_type in ('regex', 'iregex', 'month', 'day', 'search'):
+
+        if lookup_type in ('regex', 'iregex', 'month', 'day', 'week_day', 'search'):
             return [value]
         elif lookup_type in ('exact', 'gt', 'gte', 'lt', 'lte'):
             return [self.get_db_prep_value(value)]
@@ -264,7 +282,7 @@ class Field(object):
         return first_choice + list(self.flatchoices)
 
     def _get_val_from_obj(self, obj):
-        if obj:
+        if obj is not None:
             return getattr(obj, self.attname)
         else:
             return self.get_default()
@@ -291,7 +309,7 @@ class Field(object):
         """Flattened version of choices tuple."""
         flat = []
         for choice, value in self.choices:
-            if type(value) in (list, tuple):
+            if isinstance(value, (list, tuple)):
                 flat.extend(value)
             else:
                 flat.append((choice,value))
@@ -305,11 +323,13 @@ class Field(object):
         "Returns a django.forms.Field instance for this database Field."
         defaults = {'required': not self.blank, 'label': capfirst(self.verbose_name), 'help_text': self.help_text}
         if self.has_default():
-            defaults['initial'] = self.get_default()
             if callable(self.default):
+                defaults['initial'] = self.default
                 defaults['show_hidden_initial'] = True
+            else:
+                defaults['initial'] = self.get_default()
         if self.choices:
-            # Fields with choices get special treatment. 
+            # Fields with choices get special treatment.
             include_blank = self.blank or not (self.has_default() or 'initial' in kwargs)
             defaults['choices'] = self.get_choices(include_blank=include_blank)
             defaults['coerce'] = self.to_python
@@ -322,7 +342,7 @@ class Field(object):
             for k in kwargs.keys():
                 if k not in ('coerce', 'empty_value', 'choices', 'required',
                              'widget', 'label', 'initial', 'help_text',
-                             'error_messages'):
+                             'error_messages', 'show_hidden_initial'):
                     del kwargs[k]
         defaults.update(kwargs)
         return form_class(**defaults)
@@ -332,6 +352,7 @@ class Field(object):
         return getattr(obj, self.attname)
 
 class AutoField(Field):
+    description = ugettext_lazy("Integer")
     empty_strings_allowed = False
     def __init__(self, *args, **kwargs):
         assert kwargs.get('primary_key', False) is True, "%ss must have primary_key=True." % self.__class__.__name__
@@ -362,6 +383,8 @@ class AutoField(Field):
         return None
 
 class BooleanField(Field):
+    empty_strings_allowed = False
+    description = ugettext_lazy("Boolean (Either True or False)")
     def __init__(self, *args, **kwargs):
         kwargs['blank'] = True
         if 'default' not in kwargs and not kwargs.get('null'):
@@ -393,11 +416,18 @@ class BooleanField(Field):
         return bool(value)
 
     def formfield(self, **kwargs):
-        defaults = {'form_class': forms.BooleanField}
+        # Unlike most fields, BooleanField figures out include_blank from
+        # self.null instead of self.blank.
+        if self.choices:
+            include_blank = self.null or not (self.has_default() or 'initial' in kwargs)
+            defaults = {'choices': self.get_choices(include_blank=include_blank)}
+        else:
+            defaults = {'form_class': forms.BooleanField}
         defaults.update(kwargs)
         return super(BooleanField, self).formfield(**defaults)
 
 class CharField(Field):
+    description = ugettext_lazy("String (up to %(max_length)s)")
     def get_internal_type(self):
         return "CharField"
 
@@ -412,6 +442,9 @@ class CharField(Field):
                     ugettext_lazy("This field cannot be null."))
         return smart_unicode(value)
 
+    def get_db_prep_value(self, value):
+        return self.to_python(value)
+
     def formfield(self, **kwargs):
         defaults = {'max_length': self.max_length}
         defaults.update(kwargs)
@@ -419,6 +452,7 @@ class CharField(Field):
 
 # TODO: Maybe move this into contrib, because it's specialized.
 class CommaSeparatedIntegerField(CharField):
+    description = ugettext_lazy("Comma-separated integers")
     def formfield(self, **kwargs):
         defaults = {
             'form_class': forms.RegexField,
@@ -434,6 +468,7 @@ class CommaSeparatedIntegerField(CharField):
 ansi_date_re = re.compile(r'^\d{4}-\d{1,2}-\d{1,2}$')
 
 class DateField(Field):
+    description = ugettext_lazy("Date (without time)")
     empty_strings_allowed = False
     def __init__(self, verbose_name=None, name=None, auto_now=False, auto_now_add=False, **kwargs):
         self.auto_now, self.auto_now_add = auto_now, auto_now_add
@@ -485,10 +520,10 @@ class DateField(Field):
                 curry(cls._get_next_or_previous_by_FIELD, field=self, is_next=False))
 
     def get_db_prep_lookup(self, lookup_type, value):
-        # For "__month" and "__day" lookups, convert the value to a string so
-        # the database backend always sees a consistent type.
-        if lookup_type in ('month', 'day'):
-            return [force_unicode(value)]
+        # For "__month", "__day", and "__week_day" lookups, convert the value
+        # to an int so the database backend always sees a consistent type.
+        if lookup_type in ('month', 'day', 'week_day'):
+            return [int(value)]
         return super(DateField, self).get_db_prep_lookup(lookup_type, value)
 
     def get_db_prep_value(self, value):
@@ -509,6 +544,7 @@ class DateField(Field):
         return super(DateField, self).formfield(**defaults)
 
 class DateTimeField(DateField):
+    description = ugettext_lazy("Date (with time)")
     def get_internal_type(self):
         return "DateTimeField"
 
@@ -569,6 +605,7 @@ class DateTimeField(DateField):
 
 class DecimalField(Field):
     empty_strings_allowed = False
+    description = ugettext_lazy("Decimal number")
     def __init__(self, verbose_name=None, name=None, max_digits=None, decimal_places=None, **kwargs):
         self.max_digits, self.decimal_places = max_digits, decimal_places
         Field.__init__(self, verbose_name, name, **kwargs)
@@ -605,9 +642,12 @@ class DecimalField(Field):
         from django.db.backends import util
         return util.format_number(value, self.max_digits, self.decimal_places)
 
-    def get_db_prep_value(self, value):
+    def get_db_prep_save(self, value):
         return connection.ops.value_to_db_decimal(self.to_python(value),
                 self.max_digits, self.decimal_places)
+
+    def get_db_prep_value(self, value):
+        return self.to_python(value)
 
     def formfield(self, **kwargs):
         defaults = {
@@ -619,6 +659,7 @@ class DecimalField(Field):
         return super(DecimalField, self).formfield(**defaults)
 
 class EmailField(CharField):
+    description = ugettext_lazy("E-mail address")
     def __init__(self, *args, **kwargs):
         kwargs['max_length'] = kwargs.get('max_length', 75)
         CharField.__init__(self, *args, **kwargs)
@@ -629,6 +670,7 @@ class EmailField(CharField):
         return super(EmailField, self).formfield(**defaults)
 
 class FilePathField(Field):
+    description = ugettext_lazy("File path")
     def __init__(self, verbose_name=None, name=None, path='', match=None, recursive=False, **kwargs):
         self.path, self.match, self.recursive = path, match, recursive
         kwargs['max_length'] = kwargs.get('max_length', 100)
@@ -649,6 +691,7 @@ class FilePathField(Field):
 
 class FloatField(Field):
     empty_strings_allowed = False
+    description = ugettext_lazy("Floating point number")
 
     def get_db_prep_value(self, value):
         if value is None:
@@ -658,6 +701,15 @@ class FloatField(Field):
     def get_internal_type(self):
         return "FloatField"
 
+    def to_python(self, value):
+        if value is None:
+            return value
+        try:
+            return float(value)
+        except (TypeError, ValueError):
+            raise exceptions.ValidationError(
+                _("This value must be a float."))
+
     def formfield(self, **kwargs):
         defaults = {'form_class': forms.FloatField}
         defaults.update(kwargs)
@@ -665,10 +717,17 @@ class FloatField(Field):
 
 class IntegerField(Field):
     empty_strings_allowed = False
+    description = ugettext_lazy("Integer")
     def get_db_prep_value(self, value):
         if value is None:
             return None
         return int(value)
+
+    def get_db_prep_lookup(self, lookup_type, value):
+        if (lookup_type == 'gte' or lookup_type == 'lt') \
+           and isinstance(value, float):
+                value = math.ceil(value)
+        return super(IntegerField, self).get_db_prep_lookup(lookup_type, value)
 
     def get_internal_type(self):
         return "IntegerField"
@@ -689,6 +748,7 @@ class IntegerField(Field):
 
 class IPAddressField(Field):
     empty_strings_allowed = False
+    description = ugettext_lazy("IP address")
     def __init__(self, *args, **kwargs):
         kwargs['max_length'] = 15
         Field.__init__(self, *args, **kwargs)
@@ -703,6 +763,7 @@ class IPAddressField(Field):
 
 class NullBooleanField(Field):
     empty_strings_allowed = False
+    description = ugettext_lazy("Boolean (Either True, False or None)")
     def __init__(self, *args, **kwargs):
         kwargs['null'] = True
         Field.__init__(self, *args, **kwargs)
@@ -742,6 +803,7 @@ class NullBooleanField(Field):
         return super(NullBooleanField, self).formfield(**defaults)
 
 class PositiveIntegerField(IntegerField):
+    description = ugettext_lazy("Integer")
     def get_internal_type(self):
         return "PositiveIntegerField"
 
@@ -751,6 +813,7 @@ class PositiveIntegerField(IntegerField):
         return super(PositiveIntegerField, self).formfield(**defaults)
 
 class PositiveSmallIntegerField(IntegerField):
+    description = ugettext_lazy("Integer")
     def get_internal_type(self):
         return "PositiveSmallIntegerField"
 
@@ -760,6 +823,7 @@ class PositiveSmallIntegerField(IntegerField):
         return super(PositiveSmallIntegerField, self).formfield(**defaults)
 
 class SlugField(CharField):
+    description = ugettext_lazy("String (up to %(max_length)s)")
     def __init__(self, *args, **kwargs):
         kwargs['max_length'] = kwargs.get('max_length', 50)
         # Set db_index=True unless it's been set manually.
@@ -776,12 +840,19 @@ class SlugField(CharField):
         return super(SlugField, self).formfield(**defaults)
 
 class SmallIntegerField(IntegerField):
+    description = ugettext_lazy("Integer")
     def get_internal_type(self):
         return "SmallIntegerField"
 
 class TextField(Field):
+    description = ugettext_lazy("Text")
     def get_internal_type(self):
         return "TextField"
+
+    def get_db_prep_value(self, value):
+        if isinstance(value, basestring) or value is None:
+            return value
+        return smart_unicode(value)
 
     def formfield(self, **kwargs):
         defaults = {'widget': forms.Textarea}
@@ -789,6 +860,7 @@ class TextField(Field):
         return super(TextField, self).formfield(**defaults)
 
 class TimeField(Field):
+    description = ugettext_lazy("Time")
     empty_strings_allowed = False
     def __init__(self, verbose_name=None, name=None, auto_now=False, auto_now_add=False, **kwargs):
         self.auto_now, self.auto_now_add = auto_now, auto_now_add
@@ -804,6 +876,11 @@ class TimeField(Field):
             return None
         if isinstance(value, datetime.time):
             return value
+        if isinstance(value, datetime.datetime):
+            # Not usually a good idea to pass in a datetime here (it loses
+            # information), but this can be a side-effect of interacting with a
+            # database backend (e.g. Oracle), so we'll be accommodating.
+            return value.time()
 
         # Attempt to parse a datetime:
         value = smart_str(value)
@@ -856,6 +933,7 @@ class TimeField(Field):
         return super(TimeField, self).formfield(**defaults)
 
 class URLField(CharField):
+    description = ugettext_lazy("URL")
     def __init__(self, verbose_name=None, name=None, verify_exists=True, **kwargs):
         kwargs['max_length'] = kwargs.get('max_length', 200)
         self.verify_exists = verify_exists
@@ -867,6 +945,7 @@ class URLField(CharField):
         return super(URLField, self).formfield(**defaults)
 
 class XMLField(TextField):
+    description = ugettext_lazy("XML text")
     def __init__(self, verbose_name=None, name=None, schema_path=None, **kwargs):
         self.schema_path = schema_path
         Field.__init__(self, verbose_name, name, **kwargs)

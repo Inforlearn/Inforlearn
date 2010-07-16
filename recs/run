@@ -1,0 +1,1 @@
+dumbo start recs.py -input test_input.txt -output test_result.txt

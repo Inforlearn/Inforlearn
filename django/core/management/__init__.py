@@ -1,10 +1,11 @@
 import os
 import sys
-from optparse import OptionParser
+from optparse import OptionParser, NO_DEFAULT
 import imp
 
 import django
 from django.core.management.base import BaseCommand, CommandError, handle_default_options
+from django.utils.importlib import import_module
 
 # For backwards compatibility: get_version() used to be in this module.
 get_version = django.get_version
@@ -63,8 +64,8 @@ def load_command_class(app_name, name):
     class instance. All errors raised by the import process
     (ImportError, AttributeError) are allowed to propagate.
     """
-    return getattr(__import__('%s.management.commands.%s' % (app_name, name),
-                   {}, {}, ['Command']), 'Command')()
+    module = import_module('%s.management.commands.%s' % (app_name, name))
+    return module.Command()
 
 def get_commands():
     """
@@ -104,13 +105,9 @@ def get_commands():
         # Find the project directory
         try:
             from django.conf import settings
-            project_directory = setup_environ(
-                __import__(
-                    settings.SETTINGS_MODULE, {}, {},
-                    (settings.SETTINGS_MODULE.split(".")[-1],)
-                ), settings.SETTINGS_MODULE
-            )
-        except (AttributeError, EnvironmentError, ImportError):
+            module = import_module(settings.SETTINGS_MODULE)
+            project_directory = setup_environ(module, settings.SETTINGS_MODULE)
+        except (AttributeError, EnvironmentError, ImportError, KeyError):
             project_directory = None
 
         # Find and load the management module for each installed app.
@@ -146,6 +143,7 @@ def call_command(name, *args, **options):
         call_command('shell', plain=True)
         call_command('sqlall', 'myapp')
     """
+    # Load the command object.
     try:
         app_name = get_commands()[name]
         if isinstance(app_name, BaseCommand):
@@ -155,7 +153,17 @@ def call_command(name, *args, **options):
             klass = load_command_class(app_name, name)
     except KeyError:
         raise CommandError, "Unknown command: %r" % name
-    return klass.execute(*args, **options)
+
+    # Grab out a list of defaults from the options. optparse does this for us
+    # when the script runs from the command line, but since call_command can
+    # be called programatically, we need to simulate the loading and handling
+    # of defaults (see #10080 for details).
+    defaults = dict([(o.dest, o.default)
+                     for o in klass.option_list
+                     if o.default is not NO_DEFAULT])
+    defaults.update(options)
+
+    return klass.execute(*args, **defaults)
 
 class LaxOptionParser(OptionParser):
     """
@@ -207,7 +215,7 @@ class LaxOptionParser(OptionParser):
                     # either way, add it to the args list so we can keep
                     # dealing with options
                     del rargs[0]
-                    raise error
+                    raise Exception
             except:
                 largs.append(arg)
 
@@ -307,20 +315,34 @@ def setup_environ(settings_mod, original_settings_path=None):
     # Add this project to sys.path so that it's importable in the conventional
     # way. For example, if this file (manage.py) lives in a directory
     # "myproject", this code would add "/path/to/myproject" to sys.path.
-    project_directory, settings_filename = os.path.split(settings_mod.__file__)
+    if '__init__.py' in settings_mod.__file__:
+        p = os.path.dirname(settings_mod.__file__)
+    else:
+        p = settings_mod.__file__
+    project_directory, settings_filename = os.path.split(p)
     if project_directory == os.curdir or not project_directory:
         project_directory = os.getcwd()
     project_name = os.path.basename(project_directory)
+
+    # Strip filename suffix to get the module name.
     settings_name = os.path.splitext(settings_filename)[0]
-    sys.path.append(os.path.join(project_directory, os.pardir))
-    project_module = __import__(project_name, {}, {}, [''])
-    sys.path.pop()
+
+    # Strip $py for Jython compiled files (like settings$py.class)
+    if settings_name.endswith("$py"):
+        settings_name = settings_name[:-3]
 
     # Set DJANGO_SETTINGS_MODULE appropriately.
     if original_settings_path:
         os.environ['DJANGO_SETTINGS_MODULE'] = original_settings_path
     else:
         os.environ['DJANGO_SETTINGS_MODULE'] = '%s.%s' % (project_name, settings_name)
+
+    # Import the project module. We add the parent directory to PYTHONPATH to
+    # avoid some of the path errors new users can have.
+    sys.path.append(os.path.join(project_directory, os.pardir))
+    project_module = import_module(project_name)
+    sys.path.pop()
+
     return project_directory
 
 def execute_from_command_line(argv=None):
