@@ -1,9 +1,12 @@
-{% load json %}{
+{% load json %}
+{
   "contact_count": {{actor_tiles_count|escapejson}},
   "contacts": [
-  {% for actor_ref in actor_tiles %}
-    {% include 'common/templates/user.json' %}
-    {% if not forloop.last %},{% endif %}
-  {% endfor %}
-  ]
+                {% for actor_ref in actor_tiles %}
+                  {% include 'common/templates/user.json' %}
+                  {% if not forloop.last %}
+                    ,
+                  {% endif %}
+                {% endfor %}
+              ]
 }

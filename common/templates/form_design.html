@@ -1,6 +1,7 @@
 {% load nonce %}
 <h2>Hiển thị</h2>
 {% include 'form_error.html' %}
+
 <form id="form-design" action="" method="post" enctype="multipart/form-data">
   {{request.user|noncefield:"update_design"}}
   <div id="picker" style="float: right;"></div>
@@ -26,7 +27,7 @@
 
   <div class="backgrounds">
     <ul>
-        {% for bg in backgrounds %}
+      {% for bg in backgrounds %}
         <li {% ifequal bg.path view.extra.bg_image %} 
               class="selected"
             {% endifequal %}>
@@ -39,19 +40,18 @@
                    value="{{bg.path}}" />
           </label>
         </li>
-        {% endfor %}
-        <input type="hidden" id="background"/>
-      </ul>
+      {% endfor %}
+      <input type="hidden" id="background"/>
+    </ul>
   </div>
   <div class="buttons">
     {% if redirect_to %}
-    <input type="hidden" name="redirect_to" value="{{redirect_to}}" />
+      <input type="hidden" name="redirect_to" value="{{redirect_to}}" />
     {% endif %}
     {% block buttons %}
-    <input type="submit" value="Lưu thay đổi"/>
-    hoặc <a href="?restore=1">Khôi phục trạng thái mặc định</a>
+      <input type="submit" value="Lưu thay đổi"/>
+      hoặc <a href="?restore=1">Khôi phục trạng thái mặc định</a>
     {% endblock %}
-  
   </div>
 </form>
 <script type="text/javascript" src="/js/badge.js"></script>

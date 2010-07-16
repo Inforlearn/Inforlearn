@@ -5,6 +5,7 @@ import logging
 import os
 import sys
 
+sys.setrecursionlimit(1500)
 logging.getLogger().setLevel(logging.INFO)
 
 import build

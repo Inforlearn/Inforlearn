@@ -4,17 +4,22 @@
 {% block people %}
 
 <div class="path">
-  <h1><a href="{% url_for view request %}/contacts">Bạn bè</a> / Những người theo dõi {{whose}} </h1>
+  <h1>
+    <a href="{% url_for view request %}/contacts">Bạn bè</a> / Những người theo dõi {{whose}}
+  </h1>
 </div>
 
 <div class="body">
   {% include 'form_error.html' %}
   <div id="followers" class='contacts'>
     {% ifequal request.user.nick view.nick %}
-      <h2>Người theo dõi bạn ({{actor_tiles_count}})</h2>
+      <h2>
+        Người theo dõi bạn ({{actor_tiles_count}})
+      </h2>
       <p class="foot-note">
-        Your followers allow you to see their updates. Those with a blue
-        background are ones that you have also added as your contact.
+        Bạn sẽ nhận được các cập nhật của những người trong danh sách này.
+        Những người có nền màu xanh là những người cũng ở trong danh sách bạn
+        bè của bạn.
       </p>
     {% endifequal %}
 

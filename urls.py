@@ -6,6 +6,14 @@ from common import patterns as common_patterns
 urlpatterns = patterns('',
 )
 
+# Export data from GAE
+urlpatterns += patterns('export.views',
+    (r'^export/channel_members$', 'channel_members'),
+    (r'^export/user_contacts', 'user_contacts'),
+    (r'^export/channel_admins$', 'channel_admins'),
+    (r'^export/entries$', 'entries'),
+)
+
 # FRONT
 urlpatterns += patterns('front.views',
     (r'^$', 'front_front'),
@@ -141,6 +149,7 @@ urlpatterns += patterns('common.views',
 # BLOB
 urlpatterns += patterns('blob.views',
     (common_patterns.AVATAR_PATH_RE, 'blob_image_jpg'),
+    (r'^archive/.*', 'get_archive'),
 )
 
 # INSTALL
