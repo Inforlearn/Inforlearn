@@ -104,7 +104,7 @@ def entries(request):
 #  else:
 #    if not users.is_current_user_admin():
 #      return HttpResponseRedirect('/')
-#    
+#      
   query = StreamEntry.all()
   data = []
   limit = 1000
@@ -120,7 +120,7 @@ def entries(request):
         if not content:  # has content of comment
           content = entry.extra.get("title")  # get content of message
         data.append(line_format % (content, entry.actor))
-    content = str("\n".join(x for x in data))
+    content = "\n".join(x for x in data)
   
   params = {"key_name": "archive/entries.zlib",
             "content": db.Blob(compress(content, 9))}

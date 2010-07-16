@@ -11,7 +11,6 @@ from django.utils.timesince import timesince
 from common.util import safe, display_nick, url_nick
 from common import clean
 from common import models
-from common import memcache
 
 register = template.Library()
 
@@ -137,11 +136,11 @@ def auto_background(value, arg=None):
   hour = datetime.datetime.now().hour + 7 # from utc to hanoi
   if hour >= 24:
     hour = hour - 24
-  if hour in range(5, 7):
+  if hour in range(5, 8):
     value = "1" + choice(["a"]) + ".jpg"
   elif hour in range(8, 16):
     value = "2" + choice(["a"]) + ".jpg"
-  elif hour in range(17, 19):
+  elif hour in range(16, 19):
     value = "3" + choice(["a"]) + ".jpg"
   else:
     value = "4" + choice(["a"]) + ".jpg"

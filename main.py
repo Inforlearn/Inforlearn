@@ -5,11 +5,18 @@ models.py, views.py.  And in fact, only 'settings' is referenced here
 directly -- everything else is controlled from there.
 
 """
+#! coding: utf-8
 
 # Standard Python imports.
 import logging
 import os
 import sys
+
+reload(sys); sys.setdefaultencoding('utf-8')
+
+os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
+from google.appengine.dist import use_library
+use_library('django', '1.1')
 
 logging.debug("Loading %s", __name__)
 

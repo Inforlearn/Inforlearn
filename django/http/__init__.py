@@ -1,6 +1,6 @@
 import os
 import re
-from Cookie import SimpleCookie, CookieError
+from Cookie import BaseCookie, SimpleCookie, CookieError
 from pprint import pformat
 from urllib import urlencode
 from urlparse import urljoin
@@ -72,7 +72,7 @@ class HttpRequest(object):
             current_uri = '%s://%s%s' % (self.is_secure() and 'https' or 'http',
                                          self.get_host(), self.path)
             location = urljoin(current_uri, location)
-        return location
+        return iri_to_uri(location)
 
     def is_secure(self):
         return os.environ.get("HTTPS") == "on"
@@ -183,13 +183,13 @@ class QueryDict(MultiValueDict):
         return result
 
     def __deepcopy__(self, memo):
-        import copy
+        import django.utils.copycompat as copy
         result = self.__class__('', mutable=True)
         memo[id(self)] = result
         for key, value in dict.items(self):
             dict.__setitem__(result, copy.deepcopy(key, memo), copy.deepcopy(value, memo))
         return result
-
+    
     def setlist(self, key, list_):
         self._assert_mutable()
         key = str_to_unicode(key, self.encoding)
@@ -248,20 +248,53 @@ class QueryDict(MultiValueDict):
             output.extend([urlencode({k: smart_str(v, self.encoding)}) for v in list_])
         return '&'.join(output)
 
+class CompatCookie(SimpleCookie):
+    """
+    Cookie class that handles some issues with browser compatibility.
+    """
+    def value_encode(self, val):
+        # Some browsers do not support quoted-string from RFC 2109,
+        # including some versions of Safari and Internet Explorer.
+        # These browsers split on ';', and some versions of Safari
+        # are known to split on ', '. Therefore, we encode ';' and ','
+
+        # SimpleCookie already does the hard work of encoding and decoding.
+        # It uses octal sequences like '\\012' for newline etc.
+        # and non-ASCII chars.  We just make use of this mechanism, to
+        # avoid introducing two encoding schemes which would be confusing
+        # and especially awkward for javascript.
+
+        # NB, contrary to Python docs, value_encode returns a tuple containing
+        # (real val, encoded_val)
+        val, encoded = super(CompatCookie, self).value_encode(val)
+
+        encoded = encoded.replace(";", "\\073").replace(",","\\054")
+        # If encoded now contains any quoted chars, we need double quotes
+        # around the whole string.
+        if "\\" in encoded and not encoded.startswith('"'):
+            encoded = '"' + encoded + '"'
+
+        return val, encoded
+
 def parse_cookie(cookie):
     if cookie == '':
         return {}
-    try:
-        c = SimpleCookie()
-        c.load(cookie)
-    except CookieError:
-        # Invalid cookie
-        return {}
-
+    if not isinstance(cookie, BaseCookie):
+        try:
+            c = CompatCookie()
+            c.load(cookie)
+        except CookieError:
+            # Invalid cookie
+            return {}
+    else:
+        c = cookie
     cookiedict = {}
     for key in c.keys():
         cookiedict[key] = c.get(key).value
     return cookiedict
+
+class BadHeaderError(ValueError):
+    pass
 
 class HttpResponse(object):
     """A basic HTTP response, with content and dictionary-accessed headers."""
@@ -283,7 +316,7 @@ class HttpResponse(object):
         else:
             self._container = [content]
             self._is_string = True
-        self.cookies = SimpleCookie()
+        self.cookies = CompatCookie()
         if status:
             self.status_code = status
 
@@ -303,12 +336,15 @@ class HttpResponse(object):
         for value in values:
             if isinstance(value, unicode):
                 try:
-                    yield value.encode('us-ascii')
+                    value = value.encode('us-ascii')
                 except UnicodeError, e:
                     e.reason += ', HTTP response headers must be in US-ASCII format'
                     raise
             else:
-                yield str(value)
+                value = str(value)
+            if '\n' in value or '\r' in value:
+                raise BadHeaderError("Header values can't contain newlines (got %r)" % (value))
+            yield value
 
     def __setitem__(self, header, value):
         header, value = self._convert_to_ascii(header, value)

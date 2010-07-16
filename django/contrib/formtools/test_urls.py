@@ -1,11 +1,9 @@
 """
-
-This is a urlconf to be loaded by tests.py. Add any urls needed
-for tests only.
-
+This is a URLconf to be loaded by tests.py. Add any URLs needed for tests only.
 """
-from django.conf.urls.defaults import patterns
-from django.contrib.formtools.tests import TestFormPreview, TestForm
+
+from django.conf.urls.defaults import *
+from django.contrib.formtools.tests import *
 
 urlpatterns = patterns('',
                        (r'^test1/', TestFormPreview(TestForm)),

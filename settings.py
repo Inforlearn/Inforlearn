@@ -17,7 +17,6 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
-
 # This stuff is always going to be the same for an App Engine instance
 DATABASE_ENGINE = 'appengine'  # 'appengine' is the only supported engine
 DATABASE_NAME = ''             # Not used with appengine
@@ -38,7 +37,6 @@ CACHE_BACKEND = 'memcached://'
 TIME_ZONE = 'UTC'
 
 DEFAULT_CHARSET = 'utf-8'
-
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
 LANGUAGE_CODE = 'en-us'
@@ -136,7 +134,7 @@ GAE_DOMAIN = 'inforlearn.appspot.com'
 
 # Enabling this means we expect to be spending most of our time on a 
 # Hosted domain
-HOSTED_DOMAIN_ENABLED = True
+HOSTED_DOMAIN_ENABLED = False
 
 # This is the domain you intend to serve your site from, when using hosted
 # domains. If SSL is enabled for login and join those requests will still 
@@ -184,7 +182,6 @@ SSL_LOGIN_ENABLED = False
 
 # The default theme to use
 DEFAULT_THEME = 'default'
-
 
 
 #

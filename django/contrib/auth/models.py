@@ -1,12 +1,14 @@
+import datetime
+import urllib
+
 from django.contrib import auth
 from django.core.exceptions import ImproperlyConfigured
 from django.db import models
 from django.db.models.manager import EmptyManager
 from django.contrib.contenttypes.models import ContentType
 from django.utils.encoding import smart_str
+from django.utils.hashcompat import md5_constructor, sha_constructor
 from django.utils.translation import ugettext_lazy as _
-import datetime
-import urllib
 
 UNUSABLE_PASSWORD = '!' # This will never be a valid hash
 
@@ -27,22 +29,11 @@ def get_hexdigest(algorithm, salt, raw_password):
         except ImportError:
             raise ValueError('"crypt" password algorithm not supported in this environment')
         return crypt.crypt(raw_password, salt)
-    # The rest of the supported algorithms are supported by hashlib, but
-    # hashlib is only available in Python 2.5.
-    try:
-        import hashlib
-    except ImportError:
-        if algorithm == 'md5':
-            import md5
-            return md5.new(salt + raw_password).hexdigest()
-        elif algorithm == 'sha1':
-            import sha
-            return sha.new(salt + raw_password).hexdigest()
-    else:
-        if algorithm == 'md5':
-            return hashlib.md5(salt + raw_password).hexdigest()
-        elif algorithm == 'sha1':
-            return hashlib.sha1(salt + raw_password).hexdigest()
+
+    if algorithm == 'md5':
+        return md5_constructor(salt + raw_password).hexdigest()
+    elif algorithm == 'sha1':
+        return sha_constructor(salt + raw_password).hexdigest()
     raise ValueError("Got unknown password algorithm type in password.")
 
 def check_password(raw_password, enc_password):
@@ -104,9 +95,25 @@ class Group(models.Model):
 
 class UserManager(models.Manager):
     def create_user(self, username, email, password=None):
-        "Creates and saves a User with the given username, e-mail and password."
+        """
+        Creates and saves a User with the given username, e-mail and password.
+        """
+
         now = datetime.datetime.now()
-        user = self.model(None, username, '', '', email.strip().lower(), 'placeholder', False, True, False, now, now)
+        
+        # Normalize the address by lowercasing the domain part of the email
+        # address.
+        try:
+            email_name, domain_part = email.strip().split('@', 1)
+        except ValueError:
+            pass
+        else:
+            email = '@'.join([email_name, domain_part.lower()])
+
+        user = self.model(username=username, email=email, is_staff=False,
+                         is_active=True, is_superuser=False, last_login=now,
+                         date_joined=now)
+
         if password:
             user.set_password(password)
         else:
@@ -120,6 +127,7 @@ class UserManager(models.Manager):
         u.is_active = True
         u.is_superuser = True
         u.save()
+        return u
 
     def make_random_password(self, length=10, allowed_chars='abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789'):
         "Generates a random password with the given length and given allowed_chars"
@@ -291,6 +299,7 @@ class User(models.Model):
                 app_label, model_name = settings.AUTH_PROFILE_MODULE.split('.')
                 model = models.get_model(app_label, model_name)
                 self._profile_cache = model._default_manager.get(user__id__exact=self.id)
+                self._profile_cache.user = self
             except (ImportError, ImproperlyConfigured):
                 raise SiteProfileNotAvailable
         return self._profile_cache

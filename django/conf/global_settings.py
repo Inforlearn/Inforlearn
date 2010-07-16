@@ -42,8 +42,9 @@ LANGUAGE_CODE = 'en-us'
 # should be the utf-8 encoded local name for the language.
 LANGUAGES = (
     ('ar', gettext_noop('Arabic')),
-    ('bn', gettext_noop('Bengali')),
     ('bg', gettext_noop('Bulgarian')),
+    ('bn', gettext_noop('Bengali')),
+    ('bs', gettext_noop('Bosnian')),
     ('ca', gettext_noop('Catalan')),
     ('cs', gettext_noop('Czech')),
     ('cy', gettext_noop('Welsh')),
@@ -52,40 +53,45 @@ LANGUAGES = (
     ('el', gettext_noop('Greek')),
     ('en', gettext_noop('English')),
     ('es', gettext_noop('Spanish')),
-    ('et', gettext_noop('Estonian')), 
     ('es-ar', gettext_noop('Argentinean Spanish')),
+    ('et', gettext_noop('Estonian')),
     ('eu', gettext_noop('Basque')),
     ('fa', gettext_noop('Persian')),
     ('fi', gettext_noop('Finnish')),
     ('fr', gettext_noop('French')),
+    ('fy-nl', gettext_noop('Frisian')),
     ('ga', gettext_noop('Irish')),
     ('gl', gettext_noop('Galician')),
-    ('hu', gettext_noop('Hungarian')),
     ('he', gettext_noop('Hebrew')),
+    ('hi', gettext_noop('Hindi')),
     ('hr', gettext_noop('Croatian')),
+    ('hu', gettext_noop('Hungarian')),
     ('is', gettext_noop('Icelandic')),
     ('it', gettext_noop('Italian')),
     ('ja', gettext_noop('Japanese')),
     ('ka', gettext_noop('Georgian')),
-    ('ko', gettext_noop('Korean')),
     ('km', gettext_noop('Khmer')),
     ('kn', gettext_noop('Kannada')),
-    ('lv', gettext_noop('Latvian')),
+    ('ko', gettext_noop('Korean')),
     ('lt', gettext_noop('Lithuanian')),
+    ('lv', gettext_noop('Latvian')),
     ('mk', gettext_noop('Macedonian')),
     ('nl', gettext_noop('Dutch')),
     ('no', gettext_noop('Norwegian')),
     ('pl', gettext_noop('Polish')),
-    ('pt', gettext_noop('Portugese')),
+    ('pt', gettext_noop('Portuguese')),
     ('pt-br', gettext_noop('Brazilian Portuguese')),
     ('ro', gettext_noop('Romanian')),
     ('ru', gettext_noop('Russian')),
     ('sk', gettext_noop('Slovak')),
     ('sl', gettext_noop('Slovenian')),
+    ('sq', gettext_noop('Albanian')),
     ('sr', gettext_noop('Serbian')),
+    ('sr-latn', gettext_noop('Serbian Latin')),
     ('sv', gettext_noop('Swedish')),
     ('ta', gettext_noop('Tamil')),
     ('te', gettext_noop('Telugu')),
+    ('th', gettext_noop('Thai')),
     ('tr', gettext_noop('Turkish')),
     ('uk', gettext_noop('Ukrainian')),
     ('zh-cn', gettext_noop('Simplified Chinese')),
@@ -223,9 +229,6 @@ IGNORABLE_404_ENDS = ('mail.pl', 'mailform.pl', 'mail.cgi', 'mailform.cgi', 'fav
 # loudly.
 SECRET_KEY = ''
 
-# Path to the "jing" executable -- needed to validate XMLFields
-JING_PATH = "/usr/bin/jing"
-
 # Default file storage mechanism that holds media.
 DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
 
@@ -299,11 +302,11 @@ DEFAULT_INDEX_TABLESPACE = ''
 # this middleware classes will be applied in the order given, and in the
 # response phase the middleware will be applied in reverse order.
 MIDDLEWARE_CLASSES = (
+    'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
 #     'django.middleware.http.ConditionalGetMiddleware',
 #     'django.middleware.gzip.GZipMiddleware',
-    'django.middleware.common.CommonMiddleware',
 )
 
 ############

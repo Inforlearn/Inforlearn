@@ -1,8 +1,10 @@
+#! coding: utf-8
 import sys
 
 from django import http
 from django.core import signals
 from django.utils.encoding import force_unicode
+from django.utils.importlib import import_module
 
 class BaseHandler(object):
     # Changes that are always applied to a response (in this order).
@@ -24,10 +26,11 @@ class BaseHandler(object):
         """
         from django.conf import settings
         from django.core import exceptions
-        self._request_middleware = []
         self._view_middleware = []
         self._response_middleware = []
         self._exception_middleware = []
+
+        request_middleware = []
         for middleware_path in settings.MIDDLEWARE_CLASSES:
             try:
                 dot = middleware_path.rindex('.')
@@ -35,7 +38,7 @@ class BaseHandler(object):
                 raise exceptions.ImproperlyConfigured, '%s isn\'t a middleware module' % middleware_path
             mw_module, mw_classname = middleware_path[:dot], middleware_path[dot+1:]
             try:
-                mod = __import__(mw_module, {}, {}, [''])
+                mod = import_module(mw_module)
             except ImportError, e:
                 raise exceptions.ImproperlyConfigured, 'Error importing middleware %s: "%s"' % (mw_module, e)
             try:
@@ -49,7 +52,7 @@ class BaseHandler(object):
                 continue
 
             if hasattr(mw_instance, 'process_request'):
-                self._request_middleware.append(mw_instance.process_request)
+                request_middleware.append(mw_instance.process_request)
             if hasattr(mw_instance, 'process_view'):
                 self._view_middleware.append(mw_instance.process_view)
             if hasattr(mw_instance, 'process_response'):
@@ -57,10 +60,17 @@ class BaseHandler(object):
             if hasattr(mw_instance, 'process_exception'):
                 self._exception_middleware.insert(0, mw_instance.process_exception)
 
+        # We only assign to this when initialization is complete as it is used
+        # as a flag for initialization being complete.
+        self._request_middleware = request_middleware
+
     def get_response(self, request):
         "Returns an HttpResponse object for the given HttpRequest"
         from django.core import exceptions, urlresolvers
         from django.conf import settings
+
+        # Reset the urlconf for this thread.
+        urlresolvers.set_urlconf(None)
 
         # Apply request middleware
         for middleware_method in self._request_middleware:
@@ -71,61 +81,69 @@ class BaseHandler(object):
         # Get urlconf from request object, if available.  Otherwise use default.
         urlconf = getattr(request, "urlconf", settings.ROOT_URLCONF)
 
+        # Set the urlconf for this thread to the one specified above.
+        urlresolvers.set_urlconf(urlconf)
+
         resolver = urlresolvers.RegexURLResolver(r'^/', urlconf)
         try:
-            callback, callback_args, callback_kwargs = resolver.resolve(
-                    request.path_info)
-
-            # Apply view middleware
-            for middleware_method in self._view_middleware:
-                response = middleware_method(request, callback, callback_args, callback_kwargs)
-                if response:
-                    return response
-
             try:
-                response = callback(request, *callback_args, **callback_kwargs)
-            except Exception, e:
-                # If the view raised an exception, run it through exception
-                # middleware, and if the exception middleware returns a
-                # response, use that. Otherwise, reraise the exception.
-                for middleware_method in self._exception_middleware:
-                    response = middleware_method(request, e)
+                callback, callback_args, callback_kwargs = resolver.resolve(
+                        request.path_info)
+
+                # Apply view middleware
+                for middleware_method in self._view_middleware:
+                    response = middleware_method(request, callback, callback_args, callback_kwargs)
                     if response:
                         return response
-                raise
 
-            # Complain if the view returned None (a common error).
-            if response is None:
                 try:
-                    view_name = callback.func_name # If it's a function
-                except AttributeError:
-                    view_name = callback.__class__.__name__ + '.__call__' # If it's a class
-                raise ValueError, "The view %s.%s didn't return an HttpResponse object." % (callback.__module__, view_name)
+                    response = callback(request, *callback_args, **callback_kwargs)
+                except Exception, e:
+                    # If the view raised an exception, run it through exception
+                    # middleware, and if the exception middleware returns a
+                    # response, use that. Otherwise, reraise the exception.
+                    for middleware_method in self._exception_middleware:
+                        response = middleware_method(request, e)
+                        if response:
+                            return response
+                    raise
 
-            return response
-        except http.Http404, e:
-            if settings.DEBUG:
-                from django.views import debug
-                return debug.technical_404_response(request, e)
-            else:
-                try:
-                    callback, param_dict = resolver.resolve404()
-                    return callback(request, **param_dict)
-                except:
+                # Complain if the view returned None (a common error).
+                if response is None:
                     try:
-                        return self.handle_uncaught_exception(request, resolver, sys.exc_info())
-                    finally:
-                        receivers = signals.got_request_exception.send(sender=self.__class__, request=request)
-        except exceptions.PermissionDenied:
-            return http.HttpResponseForbidden('<h1>Permission denied</h1>')
-        except SystemExit:
-            # Allow sys.exit() to actually exit. See tickets #1023 and #4701
-            raise
-        except: # Handle everything else, including SuspiciousOperation, etc.
-            # Get the exception info now, in case another exception is thrown later.
-            exc_info = sys.exc_info()
-            receivers = signals.got_request_exception.send(sender=self.__class__, request=request)
-            return self.handle_uncaught_exception(request, resolver, exc_info)
+                        view_name = callback.func_name # If it's a function
+                    except AttributeError:
+                        view_name = callback.__class__.__name__ + '.__call__' # If it's a class
+                    raise ValueError, "The view %s.%s didn't return an HttpResponse object." % (callback.__module__, view_name)
+
+                return response
+            except http.Http404, e:
+                if settings.DEBUG:
+                    from django.views import debug
+                    return debug.technical_404_response(request, e)
+                else:
+                    try:
+                        callback, param_dict = resolver.resolve404()
+                        return callback(request, **param_dict)
+                    except:
+                        try:
+                            return self.handle_uncaught_exception(request, resolver, sys.exc_info())
+                        finally:
+                            receivers = signals.got_request_exception.send(sender=self.__class__, request=request)
+            except exceptions.PermissionDenied:
+                return http.HttpResponseForbidden('<h1>Permission denied</h1>')
+            except SystemExit:
+                # Allow sys.exit() to actually exit. See tickets #1023 and #4701
+                raise
+            except: # Handle everything else, including SuspiciousOperation, etc.
+                # Get the exception info now, in case another exception is thrown later.
+                exc_info = sys.exc_info()
+                receivers = signals.got_request_exception.send(sender=self.__class__, request=request)
+                return self.handle_uncaught_exception(request, resolver, exc_info)
+        finally:
+            # Reset URLconf for this thread on the way out for complete
+            # isolation of request.urlconf
+            urlresolvers.set_urlconf(None)
 
     def handle_uncaught_exception(self, request, resolver, exc_info):
         """
@@ -155,6 +173,9 @@ class BaseHandler(object):
             request_repr = "Request repr() unavailable"
         message = "%s\n\n%s" % (self._get_traceback(exc_info), request_repr)
         mail_admins(subject, message, fail_silently=True)
+        # If Http500 handler is not installed, re-raise last exception
+        if resolver.urlconf_module is None:
+            raise exc_info[1], None, exc_info[2]
         # Return an HttpResponse that displays a friendly error message.
         callback, param_dict = resolver.resolve500()
         return callback(request, **param_dict)
