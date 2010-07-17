@@ -103,7 +103,6 @@
     {% endif %}
       <div class="hidden">
         <script type="text/javascript">
-          <!--//--><![CDATA[//><!--
           var images = new Array()
           function preload() {
               for (i = 0; i < preload.arguments.length; i++) {
@@ -111,10 +110,7 @@
                   images[i].src = preload.arguments[i]
               }
           }
-          preload(
-              "http://{{DOMAIN}}/themes/default/unchecked.png",
-          )
-          //--><!]]>
+          preload("http://{{DOMAIN}}/themes/default/unchecked.png");
         </script>
       </div>
     {{component.best.analytics.footer|safe}}

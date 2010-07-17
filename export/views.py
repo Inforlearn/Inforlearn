@@ -11,7 +11,7 @@ from common.models import Relation, StreamEntry, File
 from google.appengine.ext import db
 from zlib import compress
 
-line_format = "%s|%s"
+line_format = "%s | %s"
 
 def channel_members(request):
 #  user = users.get_current_user()
@@ -95,6 +95,29 @@ def channel_admins(request):
   file = File(**params)
   file.put()
   path = 'Download <a href="http://inforlearn.appspot.com/archive/channel_admins.zlib">here</a>'
+  return HttpResponse(path)
+
+def user_history(request):
+  " owner | actor "
+  query = StreamEntry.all()
+  data = []
+  limit = 1000
+  offset = 0
+  while True:
+    entries = query.fetch(limit, offset)
+    if entries == []:
+      break
+    offset += limit
+    for entry in entries:
+      if not entry.deleted_at and (entry.owner != entry.actor):  # if entry not marked as deleted
+        data.append(line_format % (entry.owner, entry.actor))
+    content = "\n".join(x for x in data)
+  
+  params = {"key_name": "archive/user_history.zlib",
+            "content": db.Blob(compress(content, 9))}
+  file = File(**params)
+  file.put()
+  path = 'Download <a href="http://inforlearn.appspot.com/archive/user_history.zlib">here</a>'
   return HttpResponse(path)
 
 def entries(request):

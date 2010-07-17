@@ -1624,7 +1624,7 @@ z-index:2;
 position:relative;
 text-align:right;
 font-size:0.9em;
-margin:0 5px 0 0;
+margin:0 5px -12px 0;
 }
 
 div#stream div.controls a:hover {
@@ -2040,7 +2040,6 @@ padding:5px 15px 15px;
 }
 
 div.box {
-background:#e7e7e7;
 margin:0 0 1em;
 padding:15px;
 }

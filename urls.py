@@ -11,8 +11,10 @@ urlpatterns += patterns('export.views',
     (r'^export/channel_members$', 'channel_members'),
     (r'^export/user_contacts', 'user_contacts'),
     (r'^export/channel_admins$', 'channel_admins'),
+    (r'^export/user_history$', 'user_history'),
     (r'^export/entries$', 'entries'),
 )
+
 
 # FRONT
 urlpatterns += patterns('front.views',

@@ -7,17 +7,21 @@
   
     {% if entry.entry %}
       <li class="comment" id="stream-comment-{{entry.uuid}}">
-        <div class="top"><div class="bottom">
-          {% include "common/templates/stream_comment.html" %}
-        </div></div>
+        <div class="top">
+          <div class="bottom">
+            {% include "common/templates/stream_comment.html" %}
+          </div>
+        </div>
       </li>
     {% endif %}
   
     {% ifequal entry.stream_ref.type 'presence' %}
       <li class="presence" id="stream-{{entry.uuid}}">
-        <div class="top"><div class="bottom s-{{entry.stream}}">
-          {% include "common/templates/stream_entry.html" %}
-        </div></div>
+        <div class="top">
+          <div class="bottom s-{{entry.stream}}">
+            {% include "common/templates/stream_entry.html" %}
+          </div>
+        </div>
       </li>
     {% endifequal %}
   {% endfor %}
