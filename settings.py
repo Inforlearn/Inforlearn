@@ -8,8 +8,7 @@ import os.path
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
-COMPRESS_CSS_FILTERS = None
-
+WILDCARD_USER_SUBDOMAINS_ENABLED = False
 
 ADMINS = (
 #    ('AloneRoad', 'AloneRoad@Gmail.com'),
@@ -98,7 +97,6 @@ INSTALLED_APPS = (
      'install',
      'confirm',
      'components',
-     'compress',
 )
 
 # We override the default test runner so that we can be Totally Awesome
@@ -163,7 +161,6 @@ else:
 # still set up your app to use some of the static subdomains below.
 # Subdomains are ignored unless HOSTED_DOMAIN_ENABLED is True.
 SUBDOMAINS_ENABLED = False
-WILDCARD_USER_SUBDOMAINS_ENABLED = False
 
 # These are defined as { subdomain : url_conf, ...}
 INSTALLED_SUBDOMAINS = {

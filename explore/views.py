@@ -3,11 +3,20 @@ from django import template
 from django.template import loader
 from common import api, util
 from common.display import prep_entry_list, prep_stream_dict
+from common.views import handle_view_action
 
 
 ENTRIES_PER_PAGE = 20
 
 def explore_recent(request, format="html"):
+  handled = handle_view_action(request, {'entry_remove': request.path,
+                                         'entry_remove_comment': request.path,
+                                         'entry_mark_as_spam': request.path,
+                                         'presence_set': request.path,
+                                         'settings_hide_comments': request.path,
+                                         'post': request.path,})
+  if handled:
+    return handled
 
   per_page = ENTRIES_PER_PAGE
   offset, prev = util.page_offset(request)
