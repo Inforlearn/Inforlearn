@@ -214,7 +214,7 @@ def actor_overview(request, nick, format='html'):
   )
   if handled:
     return handled
-
+  
   per_page = ENTRIES_PER_PAGE
   offset, prev = util.page_offset(request)
 
@@ -270,7 +270,8 @@ def actor_overview(request, nick, format='html'):
 
   if format == 'html':
     t = loader.get_template('actor/templates/overview.html')
-    return http.HttpResponse(t.render(c))
+    html = t.render(c)
+    return http.HttpResponse(html)
   elif format == 'json':
     t = loader.get_template('actor/templates/overview.json')
     return util.HttpJsonResponse(t.render(c), request)

@@ -7,12 +7,12 @@
     <h2>Bạn của {{view.display_nick}} ({{contacts_count}})</h2>
   {% endifequal %}
 
-	{% if contacts|length %}
+  {% if contacts|length %}
     <ul>
     {% for contact in contacts %}
       <li>
         {% with contact as actor %}
-        {% include 'common/templates/vcard_contacts.html' %}
+          {% include 'common/templates/vcard_contacts.html' %}
         {% endwith %}
       </li>
     {% endfor %}
@@ -27,7 +27,7 @@
       {% endifequal %}
     </p>
     {% endif %}
-	{% else %}
+  {% else %}
     {% ifequal request.user.nick view.nick %}
     <p>
     Hiện tại chưa có ai trong danh sách. Bạn có thể <a href="{{request.user.url}}/invite">mời một vài người bạn</a>.
@@ -37,6 +37,6 @@
       Bạn không thể là người bạn đầu tiên của {{view.display_nick}}.
     </p>
     {% endifequal %}
-	{% endif %}
+  {% endif %}
 </div>
 

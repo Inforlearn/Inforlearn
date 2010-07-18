@@ -1,6 +1,5 @@
 from django.core.management.base import NoArgsCommand
 from django.core.management.color import no_style
-from django.utils.importlib import import_module
 from optparse import make_option
 import sys
 
@@ -11,6 +10,9 @@ except NameError:
 
 class Command(NoArgsCommand):
     option_list = NoArgsCommand.option_list + (
+        make_option('--verbosity', action='store', dest='verbosity', default='1',
+            type='choice', choices=['0', '1', '2'],
+            help='Verbosity level; 0=minimal output, 1=normal output, 2=all output'),
         make_option('--noinput', action='store_false', dest='interactive', default=True,
             help='Tells Django to NOT prompt the user for input of any kind.'),
     )
@@ -31,7 +33,7 @@ class Command(NoArgsCommand):
         # dispatcher events.
         for app_name in settings.INSTALLED_APPS:
             try:
-                import_module('.management', app_name)
+                __import__(app_name + '.management', {}, {}, [''])
             except ImportError, exc:
                 # This is slightly hackish. We want to ignore ImportErrors
                 # if the "management" module itself is missing -- but we don't
@@ -39,7 +41,7 @@ class Command(NoArgsCommand):
                 # but raises an ImportError for some reason. The only way we
                 # can do this is to check the text of the exception. Note that
                 # we're a bit broad in how we check the text, because different
-                # Python implementations may not use the same text.
+                # Python implementations may not use the same text. 
                 # CPython uses the text "No module named management"
                 # PyPy uses "No module named myproject.myapp.management"
                 msg = exc.args[0]
@@ -72,12 +74,11 @@ class Command(NoArgsCommand):
                     if refto in seen_models:
                         sql.extend(connection.creation.sql_for_pending_references(refto, self.style, pending_references))
                 sql.extend(connection.creation.sql_for_pending_references(model, self.style, pending_references))
-                if verbosity >= 1 and sql:
+                if verbosity >= 1:
                     print "Creating table %s" % model._meta.db_table
                 for statement in sql:
                     cursor.execute(statement)
-                if sql:
-                    tables.append(connection.introspection.table_name_converter(model._meta.db_table))
+                tables.append(connection.introspection.table_name_converter(model._meta.db_table))
 
         # Create the m2m tables. This must be done after all tables have been created
         # to ensure that all referred tables will exist.
@@ -98,10 +99,10 @@ class Command(NoArgsCommand):
         # Send the post_syncdb signal, so individual apps can do whatever they need
         # to do at this point.
         emit_post_sync_signal(created_models, verbosity, interactive)
-
+        
         # The connection may have been closed by a syncdb handler.
         cursor = connection.cursor()
-
+        
         # Install custom SQL for the app (but only if this
         # is a model we've just created)
         for app in models.get_apps():

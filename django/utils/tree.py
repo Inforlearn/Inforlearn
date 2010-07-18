@@ -3,7 +3,7 @@ A class for storing a tree graph. Primarily used for filter constructs in the
 ORM.
 """
 
-from django.utils.copycompat import deepcopy
+from copy import deepcopy
 
 class Node(object):
     """

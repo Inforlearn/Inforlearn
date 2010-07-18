@@ -41,15 +41,13 @@ class CacheClass(BaseCache):
         fname = self._key_to_file(key)
         try:
             f = open(fname, 'rb')
-            try:
-                exp = pickle.load(f)
-                now = time.time()
-                if exp < now:
-                    self._delete(fname)
-                else:
-                    return pickle.load(f)
-            finally:
+            exp = pickle.load(f)
+            now = time.time()
+            if exp < now:
                 f.close()
+                self._delete(fname)
+            else:
+                return pickle.load(f)
         except (IOError, OSError, EOFError, pickle.PickleError):
             pass
         return default
@@ -68,12 +66,9 @@ class CacheClass(BaseCache):
                 os.makedirs(dirname)
 
             f = open(fname, 'wb')
-            try:
-                now = time.time()
-                pickle.dump(now + timeout, f, pickle.HIGHEST_PROTOCOL)
-                pickle.dump(value, f, pickle.HIGHEST_PROTOCOL)
-            finally:
-                f.close()
+            now = time.time()
+            pickle.dump(now + timeout, f, pickle.HIGHEST_PROTOCOL)
+            pickle.dump(value, f, pickle.HIGHEST_PROTOCOL)
         except (IOError, OSError):
             pass
 
@@ -97,16 +92,14 @@ class CacheClass(BaseCache):
         fname = self._key_to_file(key)
         try:
             f = open(fname, 'rb')
-            try:
-                exp = pickle.load(f)
-                now = time.time()
-                if exp < now:
-                    self._delete(fname)
-                    return False
-                else:
-                    return True
-            finally:
+            exp = pickle.load(f)
+            now = time.time()
+            if exp < now:
                 f.close()
+                self._delete(fname)
+                return False
+            else:
+                return True
         except (IOError, OSError, EOFError, pickle.PickleError):
             return False
 

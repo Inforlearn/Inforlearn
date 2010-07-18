@@ -19,18 +19,16 @@ def timesince(d, now=None):
     Adapted from http://blog.natbat.co.uk/archive/2003/Jun/14/time_since
     """
     chunks = (
-      (60 * 60 * 24 * 365, lambda n: ungettext(u'năm', u'năm', n)),
+      (60 * 60 * 24 * 365, lambda n: ungettext(u'năm', 'years', n)),
       (60 * 60 * 24 * 30, lambda n: ungettext(u'tháng', u'tháng', n)),
       (60 * 60 * 24 * 7, lambda n : ungettext(u'tuần', u'tuần', n)),
       (60 * 60 * 24, lambda n : ungettext(u'ngày', u'ngày', n)),
       (60 * 60, lambda n: ungettext(u'giờ', u'giờ', n)),
       (60, lambda n: ungettext(u'phút', u'phút', n))
     )
-    # Convert datetime.date to datetime.datetime for comparison.
-    if not isinstance(d, datetime.datetime):
+    # Convert datetime.date to datetime.datetime for comparison
+    if d.__class__ is not datetime.datetime:
         d = datetime.datetime(d.year, d.month, d.day)
-    if now and not isinstance(now, datetime.datetime):
-        now = datetime.datetime(now.year, now.month, now.day)
 
     if not now:
         if d.tzinfo:

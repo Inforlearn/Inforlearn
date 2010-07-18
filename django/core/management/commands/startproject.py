@@ -1,5 +1,4 @@
 from django.core.management.base import copy_helper, CommandError, LabelCommand
-from django.utils.importlib import import_module
 import os
 import re
 from random import choice
@@ -21,7 +20,7 @@ class Command(LabelCommand):
 
         # Check that the project_name cannot be imported.
         try:
-            import_module(project_name)
+            __import__(project_name)
         except ImportError:
             pass
         else:

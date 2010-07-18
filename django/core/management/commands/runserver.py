@@ -56,7 +56,8 @@ class Command(BaseCommand):
             translation.activate(settings.LANGUAGE_CODE)
 
             try:
-                handler = AdminMediaHandler(WSGIHandler(), admin_media_path)
+                path = admin_media_path or django.__path__[0] + '/contrib/admin/media'
+                handler = AdminMediaHandler(WSGIHandler(), path)
                 run(addr, int(port), handler)
             except WSGIServerException, e:
                 # Use helpful error messages instead of ugly tracebacks.

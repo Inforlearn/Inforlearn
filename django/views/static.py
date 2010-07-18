@@ -28,7 +28,7 @@ def serve(request, path, document_root=None, show_indexes=False):
     also set ``show_indexes`` to ``True`` if you'd like to serve a basic index
     of the directory.  This index view will use the template hardcoded below,
     but if you'd like to override it, you can create a template called
-    ``static/directory_index.html``.
+    ``static/directory_index``.
     """
 
     # Clean up given path to only allow serving files below document_root.
@@ -56,10 +56,10 @@ def serve(request, path, document_root=None, show_indexes=False):
         raise Http404, '"%s" does not exist' % fullpath
     # Respect the If-Modified-Since header.
     statobj = os.stat(fullpath)
-    mimetype = mimetypes.guess_type(fullpath)[0] or 'application/octet-stream'
     if not was_modified_since(request.META.get('HTTP_IF_MODIFIED_SINCE'),
                               statobj[stat.ST_MTIME], statobj[stat.ST_SIZE]):
-        return HttpResponseNotModified(mimetype=mimetype)
+        return HttpResponseNotModified()
+    mimetype = mimetypes.guess_type(fullpath)[0] or 'application/octet-stream'
     contents = open(fullpath, 'rb').read()
     response = HttpResponse(contents, mimetype=mimetype)
     response["Last-Modified"] = http_date(statobj[stat.ST_MTIME])
@@ -73,16 +73,13 @@ DEFAULT_DIRECTORY_INDEX_TEMPLATE = """
     <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
     <meta http-equiv="Content-Language" content="en-us" />
     <meta name="robots" content="NONE,NOARCHIVE" />
-    <title>Index of {{ directory }}</title>
+    <title>Index of {{ directory|escape }}</title>
   </head>
   <body>
-    <h1>Index of {{ directory }}</h1>
+    <h1>Index of {{ directory|escape }}</h1>
     <ul>
-      {% ifnotequal directory "/" %}
-      <li><a href="../">../</a></li>
-      {% endifnotequal %}
       {% for f in file_list %}
-      <li><a href="{{ f|urlencode }}">{{ f }}</a></li>
+      <li><a href="{{ f|urlencode }}">{{ f|escape }}</a></li>
       {% endfor %}
     </ul>
   </body>
@@ -91,8 +88,7 @@ DEFAULT_DIRECTORY_INDEX_TEMPLATE = """
 
 def directory_index(path, fullpath):
     try:
-        t = loader.select_template(['static/directory_index.html',
-                'static/directory_index'])
+        t = loader.get_template('static/directory_index')
     except TemplateDoesNotExist:
         t = Template(DEFAULT_DIRECTORY_INDEX_TEMPLATE, name='Default directory index template')
     files = []

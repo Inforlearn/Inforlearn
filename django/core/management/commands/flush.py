@@ -1,10 +1,12 @@
 from django.core.management.base import NoArgsCommand, CommandError
 from django.core.management.color import no_style
-from django.utils.importlib import import_module
 from optparse import make_option
 
 class Command(NoArgsCommand):
     option_list = NoArgsCommand.option_list + (
+        make_option('--verbosity', action='store', dest='verbosity', default='1',
+            type='choice', choices=['0', '1', '2'],
+            help='Verbosity level; 0=minimal output, 1=normal output, 2=all output'),
         make_option('--noinput', action='store_false', dest='interactive', default=True,
             help='Tells Django to NOT prompt the user for input of any kind.'),
     )
@@ -24,7 +26,7 @@ class Command(NoArgsCommand):
         # dispatcher events.
         for app_name in settings.INSTALLED_APPS:
             try:
-                import_module('.management', app_name)
+                __import__(app_name + '.management', {}, {}, [''])
             except ImportError:
                 pass
 

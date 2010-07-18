@@ -4,7 +4,7 @@ from django.utils.http import int_to_base36, base36_to_int
 
 class PasswordResetTokenGenerator(object):
     """
-    Strategy object used to generate and check tokens for the password
+    Stratgy object used to generate and check tokens for the password
     reset mechanism.
     """
     def make_token(self, user):
@@ -18,7 +18,7 @@ class PasswordResetTokenGenerator(object):
         """
         Check that a password reset token is correct for a given user.
         """
-        # Parse the token
+        # Parse the tokem
         try:
             ts_b36, hash = token.split("-")
         except ValueError:
@@ -52,7 +52,7 @@ class PasswordResetTokenGenerator(object):
         # We limit the hash to 20 chars to keep URL short
         from django.utils.hashcompat import sha_constructor
         hash = sha_constructor(settings.SECRET_KEY + unicode(user.id) +
-                               user.password + user.last_login.strftime('%Y-%m-%d %H:%M:%S') +
+                               user.password + unicode(user.last_login) +
                                unicode(timestamp)).hexdigest()[::2]
         return "%s-%s" % (ts_b36, hash)
 

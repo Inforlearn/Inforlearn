@@ -16,9 +16,9 @@ class Command(NoArgsCommand):
         from django.conf import settings, global_settings
 
         # Because settings are imported lazily, we need to explicitly load them.
-        settings._setup()
+        settings._import_settings()
 
-        user_settings = module_to_dict(settings._wrapped)
+        user_settings = module_to_dict(settings._target)
         default_settings = module_to_dict(global_settings)
 
         output = []
@@ -29,4 +29,4 @@ class Command(NoArgsCommand):
                 output.append("%s = %s  ###" % (key, user_settings[key]))
             elif user_settings[key] != default_settings[key]:
                 output.append("%s = %s" % (key, user_settings[key]))
-        return '\n'.join(output)
+        print '\n'.join(output)

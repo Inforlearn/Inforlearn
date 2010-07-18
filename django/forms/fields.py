@@ -2,6 +2,7 @@
 Field classes.
 """
 
+import copy
 import datetime
 import os
 import re
@@ -11,11 +12,6 @@ try:
     from cStringIO import StringIO
 except ImportError:
     from StringIO import StringIO
-
-import django.core.exceptions
-import django.utils.copycompat as copy
-from django.utils.translation import ugettext_lazy as _
-from django.utils.encoding import smart_unicode, smart_str
 
 # Python 2.3 fallbacks
 try:
@@ -27,8 +23,13 @@ try:
 except NameError:
     from sets import Set as set
 
+import django.core.exceptions
+from django.utils.translation import ugettext_lazy as _
+from django.utils.encoding import smart_unicode, smart_str
+
 from util import ErrorList, ValidationError
-from widgets import TextInput, PasswordInput, HiddenInput, MultipleHiddenInput, FileInput, CheckboxInput, Select, NullBooleanSelect, SelectMultiple, DateInput, DateTimeInput, TimeInput, SplitDateTimeWidget, SplitHiddenDateTimeWidget
+from widgets import TextInput, PasswordInput, HiddenInput, MultipleHiddenInput, FileInput, CheckboxInput, Select, NullBooleanSelect, SelectMultiple, DateTimeInput, TimeInput, SplitHiddenDateTimeWidget
+from django.core.files.uploadedfile import SimpleUploadedFile as UploadedFile
 
 __all__ = (
     'Field', 'CharField', 'IntegerField',
@@ -249,22 +250,16 @@ class DecimalField(Field):
         except DecimalException:
             raise ValidationError(self.error_messages['invalid'])
 
-        # Check for NaN, Inf and -Inf values. We can't compare directly for NaN,
-        # since it is never equal to itself. However, NaN is the only value that
-        # isn't equal to itself, so we can use this to identify NaN
-        if value != value or value == Decimal("Inf") or value == Decimal("-Inf"):
-            raise ValidationError(self.error_messages['invalid'])
-
         sign, digittuple, exponent = value.as_tuple()
         decimals = abs(exponent)
         # digittuple doesn't include any leading zeros.
         digits = len(digittuple)
-        if decimals > digits:
+        if decimals >= digits:
             # We have leading zeros up to or past the decimal point.  Count
-            # everything past the decimal point as a digit.  We do not count
-            # 0 before the decimal point as a digit since that would mean
-            # we would not allow max_digits = decimal_places.
-            digits = decimals
+            # everything past the decimal point as a digit.  We also add one
+            # for leading zeros before the decimal point (any number of leading
+            # whole zeros collapse to one digit).
+            digits = decimals + 1
         whole_digits = digits - decimals
 
         if self.max_value is not None and value > self.max_value:
@@ -288,7 +283,6 @@ DEFAULT_DATE_INPUT_FORMATS = (
 )
 
 class DateField(Field):
-    widget = DateInput
     default_error_messages = {
         'invalid': _(u'Enter a valid date.'),
     }
@@ -427,7 +421,7 @@ class RegexField(CharField):
 email_re = re.compile(
     r"(^[-!#$%&'*+/=?^_`{}|~0-9A-Z]+(\.[-!#$%&'*+/=?^_`{}|~0-9A-Z]+)*"  # dot-atom
     r'|^"([\001-\010\013\014\016-\037!#-\[\]-\177]|\\[\001-011\013\014\016-\177])*"' # quoted-string
-    r')@(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+[A-Z]{2,6}\.?$', re.IGNORECASE)  # domain
+    r')@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$', re.IGNORECASE)  # domain
 
 class EmailField(RegexField):
     default_error_messages = {
@@ -452,11 +446,9 @@ class FileField(Field):
         'invalid': _(u"No file was submitted. Check the encoding type on the form."),
         'missing': _(u"No file was submitted."),
         'empty': _(u"The submitted file is empty."),
-        'max_length': _(u'Ensure this filename has at most %(max)d characters (it has %(length)d).'),
     }
 
     def __init__(self, *args, **kwargs):
-        self.max_length = kwargs.pop('max_length', None)
         super(FileField, self).__init__(*args, **kwargs)
 
     def clean(self, data, initial=None):
@@ -473,9 +465,6 @@ class FileField(Field):
         except AttributeError:
             raise ValidationError(self.error_messages['invalid'])
 
-        if self.max_length is not None and len(file_name) > self.max_length:
-            error_values =  {'max': self.max_length, 'length': len(file_name)}
-            raise ValidationError(self.error_messages['max_length'] % error_values)
         if not file_name:
             raise ValidationError(self.error_messages['invalid'])
         if not file_size:
@@ -498,12 +487,7 @@ class ImageField(FileField):
             return None
         elif not data and initial:
             return initial
-
-        # Try to import PIL in either of the two ways it can end up installed.
-        try:
-            from PIL import Image
-        except ImportError:
-            import Image
+        from PIL import Image
 
         # We need to get a file object for PIL. We might have a path or we might
         # have to read the data into memory.
@@ -543,7 +527,7 @@ class ImageField(FileField):
 
 url_re = re.compile(
     r'^https?://' # http:// or https://
-    r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+[A-Z]{2,6}\.?|' #domain...
+    r'(?:(?:[A-Z0-9-]+\.)+[A-Z]{2,6}|' #domain...
     r'localhost|' #localhost...
     r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})' # ...or ip
     r'(?::\d+)?' # optional port
@@ -596,10 +580,9 @@ class BooleanField(Field):
     def clean(self, value):
         """Returns a Python boolean object."""
         # Explicitly check for the string 'False', which is what a hidden field
-        # will submit for False. Also check for '0', since this is what
-        # RadioSelect will provide. Because bool("True") == bool('1') == True,
-        # we don't need to handle that explicitly.
-        if value in ('False', '0'):
+        # will submit for False. Because bool("True") == True, we don't need to
+        # handle that explicitly.
+        if value == 'False':
             value = False
         else:
             value = bool(value)
@@ -618,13 +601,13 @@ class NullBooleanField(BooleanField):
     def clean(self, value):
         """
         Explicitly checks for the string 'True' and 'False', which is what a
-        hidden field will submit for True and False, and for '1' and '0', which
-        is what a RadioField will submit. Unlike the Booleanfield we need to
-        explicitly check for True, because we are not using the bool() function
+        hidden field will submit for True and False. Unlike the
+        Booleanfield we also need to check for True, because we are not using
+        the bool() function
         """
-        if value in (True, 'True', '1'):
+        if value in (True, 'True'):
             return True
-        elif value in (False, 'False', '0'):
+        elif value in (False, 'False'):
             return False
         else:
             return None
@@ -669,7 +652,7 @@ class ChoiceField(Field):
     def valid_value(self, value):
         "Check to see if the provided value is a valid choice"
         for k, v in self.choices:
-            if isinstance(v, (list, tuple)):
+            if type(v) in (tuple, list):
                 # This is an optgroup, so look inside the group for options
                 for k2, v2 in v:
                     if value == smart_unicode(k2):
@@ -684,7 +667,7 @@ class TypedChoiceField(ChoiceField):
         self.coerce = kwargs.pop('coerce', lambda val: val)
         self.empty_value = kwargs.pop('empty_value', '')
         super(TypedChoiceField, self).__init__(*args, **kwargs)
-
+        
     def clean(self, value):
         """
         Validate that the value is in self.choices and can be coerced to the
@@ -693,12 +676,12 @@ class TypedChoiceField(ChoiceField):
         value = super(TypedChoiceField, self).clean(value)
         if value == self.empty_value or value in EMPTY_VALUES:
             return self.empty_value
-
+        
         # Hack alert: This field is purpose-made to use with Field.to_python as
         # a coercion function so that ModelForms with choices work. However,
-        # Django's Field.to_python raises
-        # django.core.exceptions.ValidationError, which is a *different*
-        # exception than django.forms.util.ValidationError. So we need to catch
+        # Django's Field.to_python raises django.core.exceptions.ValidationError,
+        # which is a *different* exception than
+        # django.forms.utils.ValidationError. So unfortunatly we need to catch
         # both.
         try:
             value = self.coerce(value)
@@ -840,15 +823,9 @@ class FilePathField(ChoiceField):
         super(FilePathField, self).__init__(choices=(), required=required,
             widget=widget, label=label, initial=initial, help_text=help_text,
             *args, **kwargs)
-
-        if self.required:
-            self.choices = []
-        else:
-            self.choices = [("", "---------")]
-
+        self.choices = []
         if self.match is not None:
             self.match_re = re.compile(self.match)
-
         if recursive:
             for root, dirs, files in os.walk(self.path):
                 for f in files:
@@ -863,24 +840,22 @@ class FilePathField(ChoiceField):
                         self.choices.append((full_file, f))
             except OSError:
                 pass
-
         self.widget.choices = self.choices
 
 class SplitDateTimeField(MultiValueField):
-    widget = SplitDateTimeWidget
     hidden_widget = SplitHiddenDateTimeWidget
     default_error_messages = {
         'invalid_date': _(u'Enter a valid date.'),
         'invalid_time': _(u'Enter a valid time.'),
     }
 
-    def __init__(self, input_date_formats=None, input_time_formats=None, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         errors = self.default_error_messages.copy()
         if 'error_messages' in kwargs:
             errors.update(kwargs['error_messages'])
         fields = (
-            DateField(input_formats=input_date_formats, error_messages={'invalid': errors['invalid_date']}),
-            TimeField(input_formats=input_time_formats, error_messages={'invalid': errors['invalid_time']}),
+            DateField(error_messages={'invalid': errors['invalid_date']}),
+            TimeField(error_messages={'invalid': errors['invalid_time']}),
         )
         super(SplitDateTimeField, self).__init__(fields, *args, **kwargs)
 

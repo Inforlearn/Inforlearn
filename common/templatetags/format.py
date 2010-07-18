@@ -2,6 +2,7 @@
 # pylint: disable-msg=W0311
 import datetime
 import re
+from os import listdir
 from random import choice
 from markdown import markdown2
 from django import template
@@ -11,6 +12,7 @@ from django.utils.timesince import timesince
 from common.util import safe, display_nick, url_nick
 from common import clean
 from common import models
+from common.memcache import client as memcache
 
 register = template.Library()
 
@@ -123,6 +125,36 @@ emoticons = [
 ['[..]', "<img src='http://l.yimg.com/a/i/us/msg/emoticons/transformer.gif'>"]
 ]
 
+@register.filter(name="format_metadata")
+@safe
+def format_metadata(value, arg=None):
+  """  
+  ![text](link) -> text
+  [text](link) -> text
+  """
+  display_text = re.compile("\[.*\]")
+  image = re.compile("!\[.*\]\(.*\)")
+  matches = image.findall(value)
+  if matches:
+    value = value.replace(matches[0], display_text.findall(matches[0])[0][1:-1]) # remove '[' and ']'
+    
+  link = re.compile("\[.*\]\(.*\)")
+  matches = link.findall(value)
+  if matches:
+    value = value.replace(matches[0], display_text.findall(matches[0])[0][1:-1]) # remove '[' and ']'
+  return value
+
+@register.filter(name="random_tips")
+@safe
+def random_tips(value, arg=None):
+  files = listdir("channel/templates/tips")
+  filename = choice(files)
+  value = memcache.get(filename)
+  if not value:
+    value = open("channel/templates/tips/%s" % choice(files)).read()
+    memcache.set(filename, value)
+  return value
+
 @register.filter(name="format_emoticons")
 @safe
 def format_emoticons(value, arg=None):
@@ -152,7 +184,6 @@ def format_fancy(value, arg=None):
   value = italic_regex.sub(r'<i>\1</i>', value)
   value = bold_regex.sub(r'<b>\1</b>', value)
   return value
-
 
 @register.filter(name="format_links")
 @safe
@@ -203,14 +234,11 @@ def format_markdown(value, arg=None):
 @safe
 def format_comment(value, request=None):
   content = escape(value.extra.get('content', 'no title'))
-#  content = format_fancy(content)
   content = format_markdown(content)
   content = format_autolinks(content)
   content = format_actor_links(content, request)
   content = format_emoticons(content)
-#  if "<li>" in content:
-#    return content
-  return content#.strip().replace('\n', '<br/>')
+  return content.strip().replace('\n', '<br/>')
 
 @register.filter(name="truncate")
 def truncate(value, arg):

@@ -29,7 +29,6 @@ from django.core.cache import cache
 from django.utils.encoding import smart_str, iri_to_uri
 from django.utils.http import http_date
 from django.utils.hashcompat import md5_constructor
-from django.http import HttpRequest
 
 cc_delim_re = re.compile(r'\s*,\s*')
 
@@ -144,14 +143,8 @@ def _generate_cache_key(request, headerlist, key_prefix):
         value = request.META.get(header, None)
         if value is not None:
             ctx.update(value)
-    path = md5_constructor(iri_to_uri(request.path))
     return 'views.decorators.cache.cache_page.%s.%s.%s' % (
-               key_prefix, path.hexdigest(), ctx.hexdigest())
-
-def _generate_cache_header_key(key_prefix, request):
-    """Returns a cache key for the header cache."""
-    path = md5_constructor(iri_to_uri(request.path))
-    return 'views.decorators.cache.cache_header.%s.%s' % (key_prefix, path.hexdigest())
+               key_prefix, iri_to_uri(request.path), ctx.hexdigest())
 
 def get_cache_key(request, key_prefix=None):
     """
@@ -165,7 +158,8 @@ def get_cache_key(request, key_prefix=None):
     """
     if key_prefix is None:
         key_prefix = settings.CACHE_MIDDLEWARE_KEY_PREFIX
-    cache_key = _generate_cache_header_key(key_prefix, request)
+    cache_key = 'views.decorators.cache.cache_header.%s.%s' % (
+                    key_prefix, iri_to_uri(request.path))
     headerlist = cache.get(cache_key, None)
     if headerlist is not None:
         return _generate_cache_key(request, headerlist, key_prefix)
@@ -189,7 +183,8 @@ def learn_cache_key(request, response, cache_timeout=None, key_prefix=None):
         key_prefix = settings.CACHE_MIDDLEWARE_KEY_PREFIX
     if cache_timeout is None:
         cache_timeout = settings.CACHE_MIDDLEWARE_SECONDS
-    cache_key = _generate_cache_header_key(key_prefix, request)
+    cache_key = 'views.decorators.cache.cache_header.%s.%s' % (
+                    key_prefix, iri_to_uri(request.path))
     if response.has_header('Vary'):
         headerlist = ['HTTP_'+header.upper().replace('-', '_')
                       for header in cc_delim_re.split(response['Vary'])]

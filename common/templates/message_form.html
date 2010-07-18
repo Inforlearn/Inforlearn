@@ -20,9 +20,9 @@
       <p class="buttons">
         <input type="hidden" id="location" name="location" value="{{ request.user.extra.location }}"/>
           <div id="send-button">
-          <br/>
-          <a class="send-message-disable" onclick="">Gửi</a> 
-          &nbsp;(Ctrl+Enter)
+            <br/>
+            <a class="send-message-disable" onclick="">Gửi</a> 
+            &nbsp;(Ctrl+Enter)
           </div>
         <input type="hidden" name="nick" value="{{request.user.nick}}" />
         {% ifequal view.type 'user' %}
@@ -33,15 +33,38 @@
           <input type="hidden" name="channel_post" value="" />
           <input type="hidden" name="channel" value="{{view.nick}}" />
         {% endifequal %}
-      </p>
-      {% if not request.mobile %}
-        <p id="counter">256 ký tự</p>
-        <p id="icons">
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-          <script src="/js/shortcut.js" type="text/javascript"></script>
-          <script type="text/javascript">
-            shortcut.add("Ctrl+Space",function() {
-              ob  = $(".image_language");
+      
+        {% if not request.mobile %}
+          <p id="counter">256 ký tự</p>
+          <p id="icons">
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+            <script src="/js/shortcut.js" type="text/javascript"></script>
+            <script type="text/javascript">
+              shortcut.add("Ctrl+Space",function() {
+                ob  = $(".image_language");
+                  if(defaultLang == "vn"){
+                      defaultLang = "en";
+                      ob.attr("src", "/themes/{{DEFAULT_THEME|urlencode}}/unchecked.png");
+                      AVIMObj.setMethod(-1);
+                  }
+                  else{
+                      defaultLang = "vn";
+                      ob.attr("src", "/themes/{{DEFAULT_THEME|urlencode}}/checked.png");
+                      AVIMObj.setMethod(0);
+                  }
+              });
+            </script>
+            
+            <script type="text/javascript">
+            shortcut.add("Ctrl+Enter",function() {
+              document.message_form.submit();
+            });
+            </script>
+            
+            <script type="text/javascript">
+            var defaultLang = "vn";
+            function toggle_lang(){
+                ob  = $(".image_language");
                 if(defaultLang == "vn"){
                     defaultLang = "en";
                     ob.attr("src", "/themes/{{DEFAULT_THEME|urlencode}}/unchecked.png");
@@ -52,43 +75,20 @@
                     ob.attr("src", "/themes/{{DEFAULT_THEME|urlencode}}/checked.png");
                     AVIMObj.setMethod(0);
                 }
-            });
-          </script>
-          
-          <script type="text/javascript">
-          shortcut.add("Ctrl+Enter",function() {
-            document.message_form.submit();
-          });
-          </script>
-          
-          <script type="text/javascript">
-          var defaultLang = "vn";
-          function toggle_lang(){
-              ob  = $(".image_language");
-              if(defaultLang == "vn"){
-                  defaultLang = "en";
-                  ob.attr("src", "/themes/{{DEFAULT_THEME|urlencode}}/unchecked.png");
-                  AVIMObj.setMethod(-1);
-              }
-              else{
-                  defaultLang = "vn";
-                  ob.attr("src", "/themes/{{DEFAULT_THEME|urlencode}}/checked.png");
-                  AVIMObj.setMethod(0);
-              }
-          }
-          </script>
-          
-          Gõ tiếng Việt (Ctrl+Space):
-          <img class="image_language" 
-               title="Bật/Tắt bộ gõ tiếng Việt"
-               src="/themes/{{DEFAULT_THEME|urlencode}}/checked.png" 
-               style="vertical-align:middle; 
-                      display: inline; 
-                      height: 16px; 
-                      width: 16px;
-                      margin-left: 1px;
-                      margin-bottom: 7px;" 
-                      onclick="toggle_lang()">
+            }
+            </script>
+            
+            Gõ tiếng Việt (Ctrl+Space):
+            <img class="image_language" 
+                 title="Bật/Tắt bộ gõ tiếng Việt"
+                 src="/themes/{{DEFAULT_THEME|urlencode}}/checked.png" 
+                 style="vertical-align:middle; 
+                        display: inline; 
+                        height: 16px; 
+                        width: 16px;
+                        margin-left: 1px;
+                        margin-bottom: 7px;" 
+                        onclick="toggle_lang()">
         </p> 
       {% endif %}
     </form>

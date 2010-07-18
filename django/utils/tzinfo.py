@@ -1,8 +1,15 @@
 "Implementation of tzinfo classes for use with datetime.datetime."
 
+import locale
 import time
 from datetime import timedelta, tzinfo
-from django.utils.encoding import smart_unicode, smart_str, DEFAULT_LOCALE_ENCODING
+from django.utils.encoding import smart_unicode
+
+try:
+    DEFAULT_ENCODING = locale.getdefaultlocale()[1] or 'ascii'
+except:
+    # Any problems at all determining the locale and we fallback. See #5846.
+    DEFAULT_ENCODING = 'ascii'
 
 class FixedOffset(tzinfo):
     "Fixed offset in minutes east from UTC."
@@ -34,7 +41,7 @@ class LocalTimezone(tzinfo):
         self._tzname = self.tzname(dt)
 
     def __repr__(self):
-        return smart_str(self._tzname)
+        return self._tzname
 
     def utcoffset(self, dt):
         if self._isdst(dt):
@@ -50,8 +57,7 @@ class LocalTimezone(tzinfo):
 
     def tzname(self, dt):
         try:
-            return smart_unicode(time.tzname[self._isdst(dt)],
-                                 DEFAULT_LOCALE_ENCODING)
+            return smart_unicode(time.tzname[self._isdst(dt)], DEFAULT_ENCODING)
         except UnicodeDecodeError:
             return None
 

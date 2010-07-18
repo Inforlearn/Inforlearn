@@ -9,7 +9,6 @@ from django.http import Http404
 from django.core import urlresolvers
 from django.contrib.admindocs import utils
 from django.contrib.sites.models import Site
-from django.utils.importlib import import_module
 from django.utils.translation import ugettext as _
 from django.utils.safestring import mark_safe
 import inspect, os, re
@@ -22,14 +21,11 @@ class GenericSite(object):
     name = 'my site'
 
 def get_root_path():
+    from django.contrib import admin
     try:
-        return urlresolvers.reverse('admin:index')
+        return urlresolvers.reverse(admin.site.root, args=[''])
     except urlresolvers.NoReverseMatch:
-        from django.contrib import admin
-        try:
-            return urlresolvers.reverse(admin.site.root, args=[''])
-        except urlresolvers.NoReverseMatch:
-            return getattr(settings, "ADMIN_SITE_ROOT_URL", "/admin/")
+        return getattr(settings, "ADMIN_SITE_ROOT_URL", "/admin/")
 
 def doc_index(request):
     if not utils.docutils_is_available:
@@ -118,13 +114,13 @@ def view_index(request):
         return missing_docutils_page(request)
 
     if settings.ADMIN_FOR:
-        settings_modules = [import_module(m) for m in settings.ADMIN_FOR]
+        settings_modules = [__import__(m, {}, {}, ['']) for m in settings.ADMIN_FOR]
     else:
         settings_modules = [settings]
 
     views = []
     for settings_mod in settings_modules:
-        urlconf = import_module(settings_mod.ROOT_URLCONF)
+        urlconf = __import__(settings_mod.ROOT_URLCONF, {}, {}, [''])
         view_functions = extract_views_from_urlpatterns(urlconf.urlpatterns)
         if Site._meta.installed:
             site_obj = Site.objects.get(pk=settings_mod.SITE_ID)
@@ -132,7 +128,7 @@ def view_index(request):
             site_obj = GenericSite()
         for (func, regex) in view_functions:
             views.append({
-                'name': getattr(func, '__name__', func.__class__.__name__),
+                'name': func.__name__,
                 'module': func.__module__,
                 'site_id': settings_mod.SITE_ID,
                 'site': site_obj,
@@ -150,7 +146,7 @@ def view_detail(request, view):
 
     mod, func = urlresolvers.get_mod_func(view)
     try:
-        view_func = getattr(import_module(mod), func)
+        view_func = getattr(__import__(mod, {}, {}, ['']), func)
     except (ImportError, AttributeError):
         raise Http404
     title, body, metadata = utils.parse_docstring(view_func.__doc__)
@@ -182,7 +178,7 @@ model_index = staff_member_required(model_index)
 def model_detail(request, app_label, model_name):
     if not utils.docutils_is_available:
         return missing_docutils_page(request)
-
+        
     # Get the model class.
     try:
         app_mod = models.get_app(app_label)
@@ -217,22 +213,6 @@ def model_detail(request, app_label, model_name):
             'help_text': field.help_text,
         })
 
-    # Gather many-to-many fields.
-    for field in opts.many_to_many:
-        data_type = related_object_name = field.rel.to.__name__
-        app_label = field.rel.to._meta.app_label
-        verbose = _("related `%(app_label)s.%(object_name)s` objects") % {'app_label': app_label, 'object_name': data_type}
-        fields.append({
-            'name': "%s.all" % field.name,
-            "data_type": 'List',
-            'verbose': utils.parse_rst(_("all %s") % verbose , 'model', _('model:') + opts.module_name),
-        })
-        fields.append({
-            'name'      : "%s.count" % field.name,
-            'data_type' : 'Integer',
-            'verbose'   : utils.parse_rst(_("number of %s") % verbose , 'model', _('model:') + opts.module_name),
-        })
-
     # Gather model methods.
     for func_name, func in model.__dict__.items():
         if (inspect.isfunction(func) and len(inspect.getargspec(func)[0]) == 1):
@@ -252,7 +232,7 @@ def model_detail(request, app_label, model_name):
             })
 
     # Gather related objects
-    for rel in opts.get_all_related_objects() + opts.get_all_related_many_to_many_objects():
+    for rel in opts.get_all_related_objects():
         verbose = _("related `%(app_label)s.%(object_name)s` objects") % {'app_label': rel.opts.app_label, 'object_name': rel.opts.object_name}
         accessor = rel.get_accessor_name()
         fields.append({
@@ -277,13 +257,13 @@ model_detail = staff_member_required(model_detail)
 def template_detail(request, template):
     templates = []
     for site_settings_module in settings.ADMIN_FOR:
-        settings_mod = import_module(site_settings_module)
+        settings_mod = __import__(site_settings_module, {}, {}, [''])
         if Site._meta.installed:
             site_obj = Site.objects.get(pk=settings_mod.SITE_ID)
         else:
             site_obj = GenericSite()
         for dir in settings_mod.TEMPLATE_DIRS:
-            template_file = os.path.join(dir, template)
+            template_file = os.path.join(dir, "%s.html" % template)
             templates.append({
                 'file': template_file,
                 'exists': os.path.exists(template_file),
@@ -326,12 +306,43 @@ def get_return_data_type(func_name):
             return 'Integer'
     return ''
 
-def get_readable_field_data_type(field):
-    """Returns the description for a given field type, if it exists,
-    Fields' descriptions can contain format strings, which will be interpolated
-    against the values of field.__dict__ before being output."""
+# Maps Field objects to their human-readable data types, as strings.
+# Column-type strings can contain format strings; they'll be interpolated
+# against the values of Field.__dict__ before being output.
+# If a column type is set to None, it won't be included in the output.
+DATA_TYPE_MAPPING = {
+    'AutoField'                 : _('Integer'),
+    'BooleanField'              : _('Boolean (Either True or False)'),
+    'CharField'                 : _('String (up to %(max_length)s)'),
+    'CommaSeparatedIntegerField': _('Comma-separated integers'),
+    'DateField'                 : _('Date (without time)'),
+    'DateTimeField'             : _('Date (with time)'),
+    'DecimalField'              : _('Decimal number'),
+    'EmailField'                : _('E-mail address'),
+    'FileField'                 : _('File path'),
+    'FilePathField'             : _('File path'),
+    'FloatField'                : _('Floating point number'),
+    'ForeignKey'                : _('Integer'),
+    'ImageField'                : _('File path'),
+    'IntegerField'              : _('Integer'),
+    'IPAddressField'            : _('IP address'),
+    'ManyToManyField'           : '',
+    'NullBooleanField'          : _('Boolean (Either True, False or None)'),
+    'OneToOneField'             : _('Relation to parent model'),
+    'PhoneNumberField'          : _('Phone number'),
+    'PositiveIntegerField'      : _('Integer'),
+    'PositiveSmallIntegerField' : _('Integer'),
+    'SlugField'                 : _('String (up to %(max_length)s)'),
+    'SmallIntegerField'         : _('Integer'),
+    'TextField'                 : _('Text'),
+    'TimeField'                 : _('Time'),
+    'URLField'                  : _('URL'),
+    'USStateField'              : _('U.S. state (two uppercase letters)'),
+    'XMLField'                  : _('XML text'),
+}
 
-    return field.description % field.__dict__
+def get_readable_field_data_type(field):
+    return DATA_TYPE_MAPPING[field.get_internal_type()] % field.__dict__
 
 def extract_views_from_urlpatterns(urlpatterns, base=''):
     """

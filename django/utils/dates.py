@@ -4,8 +4,8 @@
 from django.utils.translation import ugettext_lazy as _
 
 WEEKDAYS = {
-    0:_(u'Thứ hai'), 1:_(u'Thứ ba'), 2:_(u'Thứ tư'), 3:_(u'Thứ  năm'), 4:_(u'Thứ sáu'),
-    5:_(u'Thứ bảy'), 6:_(u'Chủ nhật')
+    0:_(u'Thứ 2'), 1:_(u'Thứ 3'), 2:_(u'Thứ 4'), 3:_(u'Thứ 5'), 4:_(u'Thứ 6'),
+    5:_(u'Thứ 7'), 6:_(u'Chủ nhật')
 }
 WEEKDAYS_ABBR = {
     0:_('Mon'), 1:_('Tue'), 2:_('Wed'), 3:_('Thu'), 4:_('Fri'),

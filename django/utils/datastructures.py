@@ -1,13 +1,3 @@
-from types import GeneratorType
-
-from django.utils.copycompat import deepcopy
-
-# Python 2.3 doesn't have set as a builtin
-try:
-    set
-except NameError:
-    from sets import Set as set
-
 class MergeDict(object):
     """
     A simple class for creating new "virtual" dictionaries that actually look
@@ -42,32 +32,11 @@ class MergeDict(object):
                 return dict_.getlist(key)
         return []
 
-    def iteritems(self):
-        seen = set()
-        for dict_ in self.dicts:
-            for item in dict_.iteritems():
-                k, v = item
-                if k in seen:
-                    continue
-                seen.add(k)
-                yield item
-
-    def iterkeys(self):
-        for k, v in self.iteritems():
-            yield k
-
-    def itervalues(self):
-        for k, v in self.iteritems():
-            yield v
-
     def items(self):
-        return list(self.iteritems())
-
-    def keys(self):
-        return list(self.iterkeys())
-
-    def values(self):
-        return list(self.itervalues())
+        item_list = []
+        for dict_ in self.dicts:
+            item_list.extend(dict_.items())
+        return item_list
 
     def has_key(self, key):
         for dict_ in self.dicts:
@@ -76,7 +45,6 @@ class MergeDict(object):
         return False
 
     __contains__ = has_key
-    __iter__ = iterkeys
 
     def copy(self):
         """Returns a copy of this object."""
@@ -94,11 +62,6 @@ class SortedDict(dict):
     def __init__(self, data=None):
         if data is None:
             data = {}
-        elif isinstance(data, GeneratorType):
-            # Unfortunately we need to be able to read a generator twice.  Once
-            # to get the data into self with our super().__init__ call and a
-            # second time to setup keyOrder correctly
-            data = list(data)
         super(SortedDict, self).__init__(data)
         if isinstance(data, dict):
             self.keyOrder = data.keys()
@@ -109,20 +72,22 @@ class SortedDict(dict):
                     self.keyOrder.append(key)
 
     def __deepcopy__(self, memo):
+        from copy import deepcopy
         return self.__class__([(key, deepcopy(value, memo))
                                for key, value in self.iteritems()])
 
     def __setitem__(self, key, value):
-        if key not in self:
-            self.keyOrder.append(key)
         super(SortedDict, self).__setitem__(key, value)
+        if key not in self.keyOrder:
+            self.keyOrder.append(key)
 
     def __delitem__(self, key):
         super(SortedDict, self).__delitem__(key)
         self.keyOrder.remove(key)
 
     def __iter__(self):
-        return iter(self.keyOrder)
+        for k in self.keyOrder:
+            yield k
 
     def pop(self, k, *args):
         result = super(SortedDict, self).pop(k, *args)
@@ -143,7 +108,7 @@ class SortedDict(dict):
 
     def iteritems(self):
         for key in self.keyOrder:
-            yield key, self[key]
+            yield key, super(SortedDict, self).__getitem__(key)
 
     def keys(self):
         return self.keyOrder[:]
@@ -152,18 +117,18 @@ class SortedDict(dict):
         return iter(self.keyOrder)
 
     def values(self):
-        return map(self.__getitem__, self.keyOrder)
+        return [super(SortedDict, self).__getitem__(k) for k in self.keyOrder]
 
     def itervalues(self):
         for key in self.keyOrder:
-            yield self[key]
+            yield super(SortedDict, self).__getitem__(key)
 
     def update(self, dict_):
-        for k, v in dict_.iteritems():
-            self[k] = v
+        for k, v in dict_.items():
+            self.__setitem__(k, v)
 
     def setdefault(self, key, default):
-        if key not in self:
+        if key not in self.keyOrder:
             self.keyOrder.append(key)
         return super(SortedDict, self).setdefault(key, default)
 
@@ -248,7 +213,7 @@ class MultiValueDict(dict):
         return self.__class__(super(MultiValueDict, self).items())
 
     def __deepcopy__(self, memo=None):
-        import django.utils.copycompat as copy
+        import copy
         if memo is None:
             memo = {}
         result = self.__class__()
@@ -257,17 +222,6 @@ class MultiValueDict(dict):
             dict.__setitem__(result, copy.deepcopy(key, memo),
                              copy.deepcopy(value, memo))
         return result
-
-    def __getstate__(self):
-        obj_dict = self.__dict__.copy()
-        obj_dict['_data'] = dict([(k, self.getlist(k)) for k in self])
-        return obj_dict
-
-    def __setstate__(self, obj_dict):
-        data = obj_dict.pop('_data', {})
-        for k, v in data.items():
-            self.setlist(k, v)
-        self.__dict__.update(obj_dict)
 
     def get(self, key, default=None):
         """
@@ -329,18 +283,9 @@ class MultiValueDict(dict):
         """Returns a list of (key, list) pairs."""
         return super(MultiValueDict, self).items()
 
-    def iterlists(self):
-        """Yields (key, list) pairs."""
-        return super(MultiValueDict, self).iteritems()
-
     def values(self):
         """Returns a list of the last value on every key list."""
         return [self[key] for key in self.keys()]
-
-    def itervalues(self):
-        """Yield the last value on every key list."""
-        for key in self.iterkeys():
-            yield self[key]
 
     def copy(self):
         """Returns a copy of this object."""

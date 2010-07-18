@@ -22,15 +22,13 @@ if (version < (1,2,1) or (version[:3] == (1, 2, 1) and
     raise ImproperlyConfigured("MySQLdb-1.2.1p2 or newer is required; you have %s" % Database.__version__)
 
 from MySQLdb.converters import conversions
-from MySQLdb.constants import FIELD_TYPE, FLAG, CLIENT
+from MySQLdb.constants import FIELD_TYPE, FLAG
 
 from django.db.backends import *
-from django.db.backends.signals import connection_created
 from django.db.backends.mysql.client import DatabaseClient
 from django.db.backends.mysql.creation import DatabaseCreation
 from django.db.backends.mysql.introspection import DatabaseIntrospection
 from django.db.backends.mysql.validation import DatabaseValidation
-from django.utils.safestring import SafeString, SafeUnicode
 
 # Raise exceptions for database warnings if DEBUG is on
 from django.conf import settings
@@ -41,11 +39,12 @@ if settings.DEBUG:
 DatabaseError = Database.DatabaseError
 IntegrityError = Database.IntegrityError
 
-# MySQLdb-1.2.1 returns TIME columns as timedelta -- they are more like
-# timedelta in terms of actual behavior as they are signed and include days --
-# and Django expects time, so we still need to override that. We also need to
-# add special handling for SafeUnicode and SafeString as MySQLdb's type
-# checking is too tight to catch those (see Django ticket #6052).
+# MySQLdb-1.2.1 supports the Python boolean type, and only uses datetime
+# module for time-related columns; older versions could have used mx.DateTime
+# or strings if there were no datetime module. However, MySQLdb still returns
+# TIME columns as timedelta -- they are more like timedelta in terms of actual
+# behavior as they are signed and include days -- and Django expects time, so
+# we still need to override that.
 django_conversions = conversions.copy()
 django_conversions.update({
     FIELD_TYPE.TIME: util.typecast_time,
@@ -111,19 +110,12 @@ class CursorWrapper(object):
 class DatabaseFeatures(BaseDatabaseFeatures):
     empty_fetchmany_value = ()
     update_can_self_select = False
-    allows_group_by_pk = True
     related_fields_match_type = True
-    allow_sliced_subqueries = False
 
 class DatabaseOperations(BaseDatabaseOperations):
     def date_extract_sql(self, lookup_type, field_name):
         # http://dev.mysql.com/doc/mysql/en/date-and-time-functions.html
-        if lookup_type == 'week_day':
-            # DAYOFWEEK() returns an integer, 1-7, Sunday=1.
-            # Note: WEEKDAY() returns 0-6, Monday=0.
-            return "DAYOFWEEK(%s)" % field_name
-        else:
-            return "EXTRACT(%s FROM %s)" % (lookup_type.upper(), field_name)
+        return "EXTRACT(%s FROM %s)" % (lookup_type.upper(), field_name)
 
     def date_trunc_sql(self, lookup_type, field_name):
         fields = ['year', 'month', 'day', 'hour', 'minute', 'second']
@@ -140,14 +132,6 @@ class DatabaseOperations(BaseDatabaseOperations):
 
     def drop_foreignkey_sql(self):
         return "DROP FOREIGN KEY"
-
-    def force_no_ordering(self):
-        """
-        "ORDER BY NULL" prevents MySQL from implicitly ordering by grouped
-        columns. If no ordering would otherwise be applied, we don't want any
-        implicit sorting going on.
-        """
-        return ["NULL"]
 
     def fulltext_search_sql(self, field_name):
         return 'MATCH (%s) AGAINST (%%s IN BOOLEAN MODE)' % field_name
@@ -190,7 +174,7 @@ class DatabaseOperations(BaseDatabaseOperations):
     def value_to_db_datetime(self, value):
         if value is None:
             return None
-
+        
         # MySQL doesn't support tz-aware datetimes
         if value.tzinfo is not None:
             raise ValueError("MySQL backend does not support timezone-aware datetimes.")
@@ -201,11 +185,11 @@ class DatabaseOperations(BaseDatabaseOperations):
     def value_to_db_time(self, value):
         if value is None:
             return None
-
+            
         # MySQL doesn't support tz-aware datetimes
         if value.tzinfo is not None:
             raise ValueError("MySQL backend does not support timezone-aware datetimes.")
-
+        
         # MySQL doesn't support microseconds
         return unicode(value.replace(microsecond=0))
 
@@ -234,13 +218,13 @@ class DatabaseWrapper(BaseDatabaseWrapper):
         'iendswith': 'LIKE %s',
     }
 
-    def __init__(self, *args, **kwargs):
-        super(DatabaseWrapper, self).__init__(*args, **kwargs)
-
+    def __init__(self, **kwargs):
+        super(DatabaseWrapper, self).__init__(**kwargs)
         self.server_version = None
+
         self.features = DatabaseFeatures()
         self.ops = DatabaseOperations()
-        self.client = DatabaseClient(self)
+        self.client = DatabaseClient()
         self.creation = DatabaseCreation(self)
         self.introspection = DatabaseIntrospection(self)
         self.validation = DatabaseValidation()
@@ -255,34 +239,27 @@ class DatabaseWrapper(BaseDatabaseWrapper):
                 self.connection = None
         return False
 
-    def _cursor(self):
+    def _cursor(self, settings):
         if not self._valid_connection():
             kwargs = {
                 'conv': django_conversions,
                 'charset': 'utf8',
                 'use_unicode': True,
             }
-            settings_dict = self.settings_dict
-            if settings_dict['DATABASE_USER']:
-                kwargs['user'] = settings_dict['DATABASE_USER']
-            if settings_dict['DATABASE_NAME']:
-                kwargs['db'] = settings_dict['DATABASE_NAME']
-            if settings_dict['DATABASE_PASSWORD']:
-                kwargs['passwd'] = settings_dict['DATABASE_PASSWORD']
-            if settings_dict['DATABASE_HOST'].startswith('/'):
-                kwargs['unix_socket'] = settings_dict['DATABASE_HOST']
-            elif settings_dict['DATABASE_HOST']:
-                kwargs['host'] = settings_dict['DATABASE_HOST']
-            if settings_dict['DATABASE_PORT']:
-                kwargs['port'] = int(settings_dict['DATABASE_PORT'])
-            # We need the number of potentially affected rows after an
-            # "UPDATE", not the number of changed rows.
-            kwargs['client_flag'] = CLIENT.FOUND_ROWS
-            kwargs.update(settings_dict['DATABASE_OPTIONS'])
+            if settings.DATABASE_USER:
+                kwargs['user'] = settings.DATABASE_USER
+            if settings.DATABASE_NAME:
+                kwargs['db'] = settings.DATABASE_NAME
+            if settings.DATABASE_PASSWORD:
+                kwargs['passwd'] = settings.DATABASE_PASSWORD
+            if settings.DATABASE_HOST.startswith('/'):
+                kwargs['unix_socket'] = settings.DATABASE_HOST
+            elif settings.DATABASE_HOST:
+                kwargs['host'] = settings.DATABASE_HOST
+            if settings.DATABASE_PORT:
+                kwargs['port'] = int(settings.DATABASE_PORT)
+            kwargs.update(self.options)
             self.connection = Database.connect(**kwargs)
-            self.connection.encoders[SafeUnicode] = self.connection.encoders[unicode]
-            self.connection.encoders[SafeString] = self.connection.encoders[str]
-            connection_created.send(sender=self.__class__)
         cursor = CursorWrapper(self.connection.cursor())
         return cursor
 
