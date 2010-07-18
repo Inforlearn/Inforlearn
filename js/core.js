@@ -17,6 +17,7 @@ $j.fn.location = function() {
     return false
   })
 };
+
 var counter = {el:null, button:null, target:null, re:RegExp(/^\s*|\s*$/g), count:function() {
   var a = counter.el.value.replace(/\n/g, ""), b = a.length;
   chars_left = 256 - b;
@@ -34,6 +35,7 @@ var counter = {el:null, button:null, target:null, re:RegExp(/^\s*|\s*$/g), count
   }
   counter.target.nodeValue = str
 }};
+
 $j.fn.presence = function() {
   var a = $j("textarea#message", this), b = $j(this).find("input[@type=submit]"), c = null;
   b.attr("disabled", true);
@@ -93,6 +95,7 @@ $j.fn.presence = function() {
     }
   })
 };
+
 $j.fn.spy = function() {
   var a = this;
   window.setInterval(function() {
@@ -102,6 +105,7 @@ $j.fn.spy = function() {
     })
   }, 3E4)
 };
+
 $j.fn.toggleable = function(a) {
   a = a;
   var b = this;
@@ -115,6 +119,7 @@ $j.fn.toggleable = function(a) {
     }
   })
 };
+
 $j.fn.toggleSelection = function(a, b) {
   var c = $j(a);
   this.click(function() {
@@ -122,6 +127,7 @@ $j.fn.toggleSelection = function(a, b) {
     return false
   })
 };
+
 $j.fn.icons = function() {
   var a = $j("a#add-icons", this), b = null, c = null, d = this;
   a.toggle(function() {
@@ -177,6 +183,7 @@ $j.fn.icons = function() {
     $j(document.body).unbind("click")
   })
 };
+
 $j.fn.avatars = function() {
   var a = this, b = $j("img#current"), c = $j("button[@type='submit']");
   $j("label", a).click(function(d) {
@@ -189,6 +196,7 @@ $j.fn.avatars = function() {
     d.preventDefault()
   })
 };
+
 $j.fn.backgrounds = function() {
   var a = this, b = $j("input#background");
   $j("label", a).click(function() {
@@ -200,6 +208,7 @@ $j.fn.backgrounds = function() {
     b.attr("checked", "checked")
   })
 };
+
 $j.fn.ajaxify = function() {
   this.click(function() {
     var a = $j(this).parent();
@@ -216,6 +225,7 @@ $j.fn.confirm = function() {
     return window.confirm("B\u1ea1n ch\u1eafc ch\u1eafn mu\u1ed1n th\u1ef1c hi\u1ec7n thao t\u00e1c n\u00e0y?")
   })
 };
+
 $j.fn.setAccordion = function() {
   var a = this, b = a.find("li>a");
   a._current = null;
@@ -238,6 +248,7 @@ $j.fn.setAccordion = function() {
     return false
   })
 };
+
 $j.fn.toggleCheckbox = function() {
   var a = $j(this.form).find("input[@name=" + this.attr("name") + "]");
   this.click(function() {
@@ -248,6 +259,7 @@ $j.fn.toggleCheckbox = function() {
     this.checked = b ? true : false
   })
 };
+
 $j.fn.poll = function(a) {
   var b = window.location.href;
   window.setInterval(function() {
@@ -262,6 +274,7 @@ $j.fn.poll = function(a) {
     }})
   }, 2500)
 };
+
 $j.fn.setTabs = function() {
   var a = this;
   a.find("li>a").click(function() {
@@ -275,6 +288,7 @@ $j.fn.setTabs = function() {
   });
   a._current = this.find("div.current").attr("id")
 };
+
 $j.fn.forms = function() {
   $j("input[@type=submit]", this).parent().prepend("<span class='loader' title='\u0110ang g\u1eedi...'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Processing...</span>");
   this.bind("submit", function() {
