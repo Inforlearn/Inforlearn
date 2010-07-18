@@ -1,5 +1,5 @@
 body {
-font:75%/1.4em Arial, Helvetica, sans-serif;
+font:70%/1.4em Arial, Helvetica, sans-serif;
 text-align:center;
 color:#333;
 background-attachment:fixed;
@@ -1042,7 +1042,7 @@ margin:10px 10px 0 0;
 }
 
 #sidebar .vcard img.photo {
-border:solid 2px #fff;
+border:solid 1px #fff;
 width:30px;
 margin:0;
 padding:0;
@@ -1221,7 +1221,6 @@ line-height:1.2em;
 color:#fff;
 float:none;
 clear:none;
-margin:0 0 0 85px;
 }
 
 div#profile h1 span.nickname,div#content div.main h1 span.nickname {
@@ -1904,7 +1903,7 @@ position:relative;
 height:30px;
 width:30px;
 float:left;
-margin:3px 10px 5px -47px;
+margin:3px 10px 5px -37px;
 padding:2px;
 }
 
@@ -1939,7 +1938,7 @@ padding:0.2em;
 
 div#comments ul li p,div#comments ul li blockquote,div#comments ul li pre,div#comments ul li ul {
 margin:0 5px;
-padding:0.3em 0 0.2em;
+padding: 0.3em 0px 0px 1em;
 }
 
 div#comments ul li ul {
@@ -1965,7 +1964,7 @@ padding:0;
 div#comments ul li p.meta {
 font-size:0.9em;
 color:#666;
-padding:0 0 0.3em;
+padding: 0.3em 0px 5px 1em;
 }
 
 div#leave-comment label {
@@ -2645,8 +2644,7 @@ clear:both;
 }
 
 code {
-background:#ffc;
-font:1.2em courier new, monospace;
+font:1.0em courier new, monospace;
 overflow:auto;
 padding:0.5em;
 }

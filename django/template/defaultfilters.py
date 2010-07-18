@@ -1,12 +1,6 @@
 """Default variable filters."""
 
 import re
-
-try:
-    from decimal import Decimal, InvalidOperation, ROUND_HALF_UP
-except ImportError:
-    from django.utils._decimal import Decimal, InvalidOperation, ROUND_HALF_UP
-
 import random as random_module
 try:
     from functools import wraps
@@ -51,6 +45,7 @@ def stringfilter(func):
 # STRINGS         #
 ###################
 
+
 def addslashes(value):
     """
     Adds slashes before quotes. Useful for escaping strings in CSV, for
@@ -68,22 +63,20 @@ capfirst.is_safe=True
 capfirst = stringfilter(capfirst)
 
 _base_js_escapes = (
-    ('\\', r'\u005C'),
-    ('\'', r'\u0027'),
-    ('"', r'\u0022'),
-    ('>', r'\u003E'),
-    ('<', r'\u003C'),
-    ('&', r'\u0026'),
-    ('=', r'\u003D'),
-    ('-', r'\u002D'),
-    (';', r'\u003B'),
-    (u'\u2028', r'\u2028'),
-    (u'\u2029', r'\u2029')
+    ('\\', r'\x5C'),
+    ('\'', r'\x27'),
+    ('"', r'\x22'),
+    ('>', r'\x3E'),
+    ('<', r'\x3C'),
+    ('&', r'\x26'),
+    ('=', r'\x3D'),
+    ('-', r'\x2D'),
+    (';', r'\x3B')
 )
 
 # Escape every ASCII character with a value less than 32.
 _js_escapes = (_base_js_escapes +
-               tuple([('%c' % z, '\\u%04X' % z) for z in range(32)]))
+               tuple([('%c' % z, '\\x%02X' % z) for z in range(32)]))
 
 def escapejs(value):
     """Hex encodes characters for use in JavaScript strings."""
@@ -98,18 +91,6 @@ def fix_ampersands(value):
     return fix_ampersands(value)
 fix_ampersands.is_safe=True
 fix_ampersands = stringfilter(fix_ampersands)
-
-# Values for testing floatformat input against infinity and NaN representations,
-# which differ across platforms and Python versions.  Some (i.e. old Windows
-# ones) are not recognized by Decimal but we want to return them unchanged vs.
-# returning an empty string as we do for completley invalid input.  Note these
-# need to be built up from values that are not inf/nan, since inf/nan values do
-# not reload properly from .pyc files on Windows prior to some level of Python 2.5
-# (see Python Issue757815 and Issue1080440).
-pos_inf = 1e200 * 1e200
-neg_inf = -1e200 * 1e200
-nan = (1e200 * 1e200) / (1e200 * 1e200)
-special_floats = [str(pos_inf), str(neg_inf), str(nan)]
 
 def floatformat(text, arg=-1):
     """
@@ -138,44 +119,24 @@ def floatformat(text, arg=-1):
     * {{ num1|floatformat:"-3" }} displays "34.232"
     * {{ num2|floatformat:"-3" }} displays "34"
     * {{ num3|floatformat:"-3" }} displays "34.260"
-
-    If the input float is infinity or NaN, the (platform-dependent) string
-    representation of that value will be displayed.
     """
-
     try:
-        input_val = force_unicode(text)
-        d = Decimal(input_val)
-    except UnicodeEncodeError:
+        f = float(text)
+    except (ValueError, TypeError):
         return u''
-    except InvalidOperation:
-        if input_val in special_floats:
-            return input_val
-        try:
-            d = Decimal(force_unicode(float(text)))
-        except (ValueError, InvalidOperation, TypeError, UnicodeEncodeError):
-            return u''
     try:
-        p = int(arg)
+        d = int(arg)
     except ValueError:
-        return input_val
-
+        return force_unicode(f)
     try:
-        m = int(d) - d
-    except (ValueError, OverflowError, InvalidOperation):
-        return input_val
-
-    if not m and p < 0:
-        return mark_safe(u'%d' % (int(d)))
-
-    if p == 0:
-        exp = Decimal(1)
+        m = f - int(f)
+    except OverflowError:
+        return force_unicode(f)
+    if not m and d < 0:
+        return mark_safe(u'%d' % int(f))
     else:
-        exp = Decimal('1.0') / (Decimal(10) ** abs(p))
-    try:
-        return mark_safe(u'%s' % str(d.quantize(exp, ROUND_HALF_UP)))
-    except InvalidOperation:
-        return input_val
+        formatstr = u'%%.%df' % abs(d)
+        return mark_safe(formatstr % f)
 floatformat.is_safe = True
 
 def iriencode(value):
@@ -249,8 +210,7 @@ stringformat.is_safe = True
 
 def title(value):
     """Converts a string into titlecase."""
-    t = re.sub("([a-z])'([A-Z])", lambda m: m.group(0).lower(), value.title())
-    return re.sub("\d([A-Z])", lambda m: m.group(0).lower(), t)
+    return re.sub("([a-z])'([A-Z])", lambda m: m.group(0).lower(), value.title())
 title.is_safe = True
 title = stringfilter(title)
 
@@ -427,18 +387,10 @@ def safe(value):
     """
     Marks the value as a string that should not be auto-escaped.
     """
+    from django.utils.safestring import mark_safe
     return mark_safe(value)
 safe.is_safe = True
 safe = stringfilter(safe)
-
-def safeseq(value):
-    """
-    A "safe" filter for sequences. Marks each element in the sequence,
-    individually, as safe, after converting them to unicode. Returns a list
-    with the results.
-    """
-    return [mark_safe(force_unicode(obj)) for obj in value]
-safeseq.is_safe = True
 
 def removetags(value, tags):
     """Removes a space separated list of [X]HTML tags from the output."""
@@ -494,21 +446,19 @@ def first(value):
         return u''
 first.is_safe = False
 
-def join(value, arg, autoescape=None):
-    """
-    Joins a list with a string, like Python's ``str.join(list)``.
-    """
-    value = map(force_unicode, value)
-    if autoescape:
-        from django.utils.html import conditional_escape
-        value = [conditional_escape(v) for v in value]
+def join(value, arg):
+    """Joins a list with a string, like Python's ``str.join(list)``."""
     try:
-        data = arg.join(value)
+        data = arg.join(map(force_unicode, value))
     except AttributeError: # fail silently but nicely
         return value
-    return mark_safe(data)
+    safe_args = reduce(lambda lhs, rhs: lhs and isinstance(rhs, SafeData),
+            value, True)
+    if safe_args:
+        return mark_safe(data)
+    else:
+        return data
 join.is_safe = True
-join.needs_autoescape = True
 
 def last(value):
     "Returns the last item in a list"
@@ -520,19 +470,13 @@ last.is_safe = True
 
 def length(value):
     """Returns the length of the value - useful for lists."""
-    try:
-        return len(value)
-    except (ValueError, TypeError):
-        return ''
+    return len(value)
 length.is_safe = True
 
 def length_is(value, arg):
     """Returns a boolean of whether the value's length is the argument."""
-    try:
-        return len(value) == int(arg)
-    except (ValueError, TypeError):
-        return ''
-length_is.is_safe = False
+    return len(value) == int(arg)
+length_is.is_safe = True
 
 def random(value):
     """Returns a random item from the list."""
@@ -650,10 +594,7 @@ unordered_list.needs_autoescape = True
 
 def add(value, arg):
     """Adds the arg to the value."""
-    try:
-        return int(value) + int(arg)
-    except (ValueError, TypeError):
-        return value
+    return int(value) + int(arg)
 add.is_safe = False
 
 def get_digit(value, arg):
@@ -687,10 +628,7 @@ def date(value, arg=None):
         return u''
     if arg is None:
         arg = settings.DATE_FORMAT
-    try:
-        return format(value, arg)
-    except AttributeError:
-        return ''
+    return format(value, arg)
 date.is_safe = False
 
 def time(value, arg=None):
@@ -700,10 +638,7 @@ def time(value, arg=None):
         return u''
     if arg is None:
         arg = settings.TIME_FORMAT
-    try:
-        return time_format(value, arg)
-    except AttributeError:
-        return ''
+    return time_format(value, arg)
 time.is_safe = False
 
 def timesince(value, arg=None):
@@ -795,7 +730,7 @@ def filesizeformat(bytes):
     """
     try:
         bytes = float(bytes)
-    except (TypeError,ValueError,UnicodeDecodeError):
+    except TypeError:
         return u"0 bytes"
 
     if bytes < 1024:
@@ -904,7 +839,6 @@ register.filter(removetags)
 register.filter(random)
 register.filter(rjust)
 register.filter(safe)
-register.filter(safeseq)
 register.filter('slice', slice_)
 register.filter(slugify)
 register.filter(stringformat)

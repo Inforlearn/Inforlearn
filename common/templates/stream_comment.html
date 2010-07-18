@@ -10,9 +10,13 @@
     {{entry|format_comment}}
   {% endif %}
 </p>
+
 <p class="meta">
   Ý kiến bình luận của {% actor_link entry.actor_ref request %} trong chủ đề
-  <a href="{% url_for entry request %}" title="{{entry.extra.entry_title}}">{{entry.extra.entry_title}}</a>
+  <a href="{% url_for entry request %}"
+     title="{{entry.extra.entry_title}}">
+       {{entry.extra.entry_title|format_metadata}}
+  </a>
   {% if entry.owner_ref.is_channel %}
     trong nhóm {% actor_link entry.owner_ref request %}
   {% endif %}

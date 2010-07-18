@@ -4,13 +4,11 @@ import urlparse
 
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured, SuspiciousOperation
-from django.core.files import locks, File
-from django.core.files.move import file_move_safe
 from django.utils.encoding import force_unicode
-from django.utils.functional import LazyObject
-from django.utils.importlib import import_module
 from django.utils.text import get_valid_filename
 from django.utils._os import safe_join
+from django.core.files import locks, File
+from django.core.files.move import file_move_safe
 
 __all__ = ('Storage', 'FileSystemStorage', 'DefaultStorage', 'default_storage')
 
@@ -42,7 +40,7 @@ class Storage(object):
         # Get the proper name for the file, as it will actually be saved.
         if name is None:
             name = content.name
-
+        
         name = self.get_available_name(name)
         name = self._save(name, content)
 
@@ -63,15 +61,15 @@ class Storage(object):
         Returns a filename that's free on the target storage system, and
         available for new content to be written to.
         """
-        dir_name, file_name = os.path.split(name)
-        file_root, file_ext = os.path.splitext(file_name)
-        # If the filename already exists, keep adding an underscore (before the
-        # file extension, if one exists) to the filename until the generated
-        # filename doesn't exist.
+        # If the filename already exists, keep adding an underscore to the name
+        # of the file until the filename doesn't exist.
         while self.exists(name):
-            file_root += '_'
-            # file_ext includes the dot.
-            name = os.path.join(dir_name, file_root + file_ext)
+            try:
+                dot_index = name.rindex('.')
+            except ValueError: # filename has no dot
+                name += '_'
+            else:
+                name = name[:dot_index] + '_' + name[dot_index:]
         return name
 
     def path(self, name):
@@ -118,20 +116,12 @@ class Storage(object):
         """
         raise NotImplementedError()
 
-    # Needed by django.utils.functional.LazyObject (via DefaultStorage).
-    def get_all_members(self):
-        return self.__members__
-
 class FileSystemStorage(Storage):
     """
     Standard filesystem storage
     """
 
-    def __init__(self, location=None, base_url=None):
-        if location is None:
-            location = settings.MEDIA_ROOT
-        if base_url is None:
-            base_url = settings.MEDIA_URL
+    def __init__(self, location=settings.MEDIA_ROOT, base_url=settings.MEDIA_URL):
         self.location = os.path.abspath(location)
         self.base_url = base_url
 
@@ -182,10 +172,10 @@ class FileSystemStorage(Storage):
             else:
                 # OK, the file save worked. Break out of the loop.
                 break
-
+        
         if settings.FILE_UPLOAD_PERMISSIONS is not None:
             os.chmod(full_path, settings.FILE_UPLOAD_PERMISSIONS)
-
+        
         return name
 
     def delete(self, name):
@@ -222,16 +212,14 @@ class FileSystemStorage(Storage):
             raise ValueError("This file is not accessible via a URL.")
         return urlparse.urljoin(self.base_url, name).replace('\\', '/')
 
-def get_storage_class(import_path=None):
-    if import_path is None:
-        import_path = settings.DEFAULT_FILE_STORAGE
+def get_storage_class(import_path):
     try:
         dot = import_path.rindex('.')
     except ValueError:
         raise ImproperlyConfigured("%s isn't a storage module." % import_path)
     module, classname = import_path[:dot], import_path[dot+1:]
     try:
-        mod = import_module(module)
+        mod = __import__(module, {}, {}, [''])
     except ImportError, e:
         raise ImproperlyConfigured('Error importing storage module %s: "%s"' % (module, e))
     try:
@@ -239,8 +227,5 @@ def get_storage_class(import_path=None):
     except AttributeError:
         raise ImproperlyConfigured('Storage module "%s" does not define a "%s" class.' % (module, classname))
 
-class DefaultStorage(LazyObject):
-    def _setup(self):
-        self._wrapped = get_storage_class()()
-
+DefaultStorage = get_storage_class(settings.DEFAULT_FILE_STORAGE)
 default_storage = DefaultStorage()

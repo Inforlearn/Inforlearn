@@ -98,6 +98,9 @@ handlers:
 
 - url: /stats.*
   script: appstats/ui.py  
+  
+- url: /cachepy_stats 
+  script: cachepy/cachepy_stats.py 
 
 - url: .*
   script: "main.py"

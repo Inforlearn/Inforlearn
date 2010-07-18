@@ -58,11 +58,8 @@ class CacheClass(BaseCache):
             self._lock.reader_leaves()
         self._lock.writer_enters()
         try:
-            try:
-                del self._cache[key]
-                del self._expire_info[key]
-            except KeyError:
-                pass
+            del self._cache[key]
+            del self._expire_info[key]
             return default
         finally:
             self._lock.writer_leaves()
@@ -99,11 +96,8 @@ class CacheClass(BaseCache):
 
         self._lock.writer_enters()
         try:
-            try:
-                del self._cache[key]
-                del self._expire_info[key]
-            except KeyError:
-                pass
+            del self._cache[key]
+            del self._expire_info[key]
             return False
         finally:
             self._lock.writer_leaves()

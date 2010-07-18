@@ -37,14 +37,9 @@ class CommentNode(Node):
     def render(self, context):
         return ''
 
-class CsrfTokenNode(Node):
-    # This no-op tag exists to allow 1.1.X code to be compatible with Django 1.2
-    def render(self, context):
-        return u''
-
 class CycleNode(Node):
     def __init__(self, cyclevars, variable_name=None):
-        self.cycle_iter = itertools_cycle(cyclevars)
+        self.cycle_iter = itertools_cycle([Variable(v) for v in cyclevars])
         self.variable_name = variable_name
 
     def render(self, context):
@@ -75,26 +70,23 @@ class FilterNode(Node):
 
 class FirstOfNode(Node):
     def __init__(self, vars):
-        self.vars = vars
+        self.vars = map(Variable, vars)
 
     def render(self, context):
         for var in self.vars:
-            value = var.resolve(context, True)
+            try:
+                value = var.resolve(context)
+            except VariableDoesNotExist:
+                continue
             if value:
                 return smart_unicode(value)
         return u''
 
 class ForNode(Node):
-    child_nodelists = ('nodelist_loop', 'nodelist_empty')
-
-    def __init__(self, loopvars, sequence, is_reversed, nodelist_loop, nodelist_empty=None):
+    def __init__(self, loopvars, sequence, is_reversed, nodelist_loop):
         self.loopvars, self.sequence = loopvars, sequence
         self.is_reversed = is_reversed
         self.nodelist_loop = nodelist_loop
-        if nodelist_empty is None:
-            self.nodelist_empty = NodeList()
-        else:
-            self.nodelist_empty = nodelist_empty
 
     def __repr__(self):
         reversed_text = self.is_reversed and ' reversed' or ''
@@ -105,10 +97,16 @@ class ForNode(Node):
     def __iter__(self):
         for node in self.nodelist_loop:
             yield node
-        for node in self.nodelist_empty:
-            yield node
+
+    def get_nodes_by_type(self, nodetype):
+        nodes = []
+        if isinstance(self, nodetype):
+            nodes.append(self)
+        nodes.extend(self.nodelist_loop.get_nodes_by_type(nodetype))
+        return nodes
 
     def render(self, context):
+        nodelist = NodeList()
         if 'forloop' in context:
             parentloop = context['forloop']
         else:
@@ -123,10 +121,6 @@ class ForNode(Node):
         if not hasattr(values, '__len__'):
             values = list(values)
         len_values = len(values)
-        if len_values < 1:
-            context.pop()
-            return self.nodelist_empty.render(context)
-        nodelist = NodeList()
         if self.is_reversed:
             values = reversed(values)
         unpack = len(self.loopvars) > 1
@@ -163,12 +157,10 @@ class ForNode(Node):
         return nodelist.render(context)
 
 class IfChangedNode(Node):
-    child_nodelists = ('nodelist_true', 'nodelist_false')
-
     def __init__(self, nodelist_true, nodelist_false, *varlist):
         self.nodelist_true, self.nodelist_false = nodelist_true, nodelist_false
         self._last_seen = None
-        self._varlist = varlist
+        self._varlist = map(Variable, varlist)
         self._id = str(id(self))
 
     def render(self, context):
@@ -179,7 +171,7 @@ class IfChangedNode(Node):
             if self._varlist:
                 # Consider multiple parameters.  This automatically behaves
                 # like an OR evaluation of the multiple variables.
-                compare_to = [var.resolve(context, True) for var in self._varlist]
+                compare_to = [var.resolve(context) for var in self._varlist]
             else:
                 compare_to = self.nodelist_true.render(context)
         except VariableDoesNotExist:
@@ -188,17 +180,18 @@ class IfChangedNode(Node):
         if compare_to != self._last_seen:
             firstloop = (self._last_seen == None)
             self._last_seen = compare_to
+            context.push()
+            context['ifchanged'] = {'firstloop': firstloop}
             content = self.nodelist_true.render(context)
+            context.pop()
             return content
         elif self.nodelist_false:
             return self.nodelist_false.render(context)
         return ''
 
 class IfEqualNode(Node):
-    child_nodelists = ('nodelist_true', 'nodelist_false')
-
     def __init__(self, var1, var2, nodelist_true, nodelist_false, negate):
-        self.var1, self.var2 = var1, var2
+        self.var1, self.var2 = Variable(var1), Variable(var2)
         self.nodelist_true, self.nodelist_false = nodelist_true, nodelist_false
         self.negate = negate
 
@@ -206,15 +199,19 @@ class IfEqualNode(Node):
         return "<IfEqualNode>"
 
     def render(self, context):
-        val1 = self.var1.resolve(context, True)
-        val2 = self.var2.resolve(context, True)
+        try:
+            val1 = self.var1.resolve(context)
+        except VariableDoesNotExist:
+            val1 = None
+        try:
+            val2 = self.var2.resolve(context)
+        except VariableDoesNotExist:
+            val2 = None
         if (self.negate and val1 != val2) or (not self.negate and val1 == val2):
             return self.nodelist_true.render(context)
         return self.nodelist_false.render(context)
 
 class IfNode(Node):
-    child_nodelists = ('nodelist_true', 'nodelist_false')
-
     def __init__(self, bool_exprs, nodelist_true, nodelist_false, link_type):
         self.bool_exprs = bool_exprs
         self.nodelist_true, self.nodelist_false = nodelist_true, nodelist_false
@@ -228,6 +225,14 @@ class IfNode(Node):
             yield node
         for node in self.nodelist_false:
             yield node
+
+    def get_nodes_by_type(self, nodetype):
+        nodes = []
+        if isinstance(self, nodetype):
+            nodes.append(self)
+        nodes.extend(self.nodelist_true.get_nodes_by_type(nodetype))
+        nodes.extend(self.nodelist_false.get_nodes_by_type(nodetype))
+        return nodes
 
     def render(self, context):
         if self.link_type == IfNode.LinkTypes.or_:
@@ -357,30 +362,24 @@ class URLNode(Node):
         args = [arg.resolve(context) for arg in self.args]
         kwargs = dict([(smart_str(k,'ascii'), v.resolve(context))
                        for k, v in self.kwargs.items()])
-
+        
+        
         # Try to look up the URL twice: once given the view name, and again
-        # relative to what we guess is the "main" app. If they both fail,
-        # re-raise the NoReverseMatch unless we're using the
+        # relative to what we guess is the "main" app. If they both fail, 
+        # re-raise the NoReverseMatch unless we're using the 
         # {% url ... as var %} construct in which cause return nothing.
         url = ''
         try:
-            url = reverse(self.view_name, args=args, kwargs=kwargs, current_app=context.current_app)
-        except NoReverseMatch, e:
-            if settings.SETTINGS_MODULE:
-                project_name = settings.SETTINGS_MODULE.split('.')[0]
-                try:
-                    url = reverse(project_name + '.' + self.view_name,
-                              args=args, kwargs=kwargs, current_app=context.current_app)
-                except NoReverseMatch:
-                    if self.asvar is None:
-                        # Re-raise the original exception, not the one with
-                        # the path relative to the project. This makes a
-                        # better error message.
-                        raise e
-            else:
+            url = reverse(self.view_name, args=args, kwargs=kwargs)
+        except NoReverseMatch:
+            project_name = settings.SETTINGS_MODULE.split('.')[0]
+            try:
+                url = reverse(project_name + '.' + self.view_name,
+                              args=args, kwargs=kwargs)
+            except NoReverseMatch:
                 if self.asvar is None:
-                    raise e
-
+                    raise
+                    
         if self.asvar:
             context[self.asvar] = url
             return ''
@@ -397,15 +396,12 @@ class WidthRatioNode(Node):
         try:
             value = self.val_expr.resolve(context)
             maxvalue = self.max_expr.resolve(context)
-            max_width = int(self.max_width.resolve(context))
         except VariableDoesNotExist:
             return ''
-        except ValueError:
-            raise TemplateSyntaxError("widthratio final argument must be an number")
         try:
             value = float(value)
             maxvalue = float(maxvalue)
-            ratio = (value / maxvalue) * max_width
+            ratio = (value / maxvalue) * int(self.max_width)
         except (ValueError, ZeroDivisionError):
             return ''
         return str(int(round(ratio)))
@@ -509,21 +505,14 @@ def cycle(parser, token):
 
     if len(args) > 4 and args[-2] == 'as':
         name = args[-1]
-        values = [parser.compile_filter(arg) for arg in args[1:-2]]
-        node = CycleNode(values, name)
+        node = CycleNode(args[1:-2], name)
         if not hasattr(parser, '_namedCycleNodes'):
             parser._namedCycleNodes = {}
         parser._namedCycleNodes[name] = node
     else:
-        values = [parser.compile_filter(arg) for arg in args[1:]]
-        node = CycleNode(values)
+        node = CycleNode(args[1:])
     return node
 cycle = register.tag(cycle)
-
-def csrf_token(parser, token):
-    # This no-op tag exists to allow 1.1.X code to be compatible with Django 1.2
-    return CsrfTokenNode()
-register.tag(csrf_token)
 
 def debug(parser, token):
     """
@@ -566,7 +555,7 @@ do_filter = register.tag("filter", do_filter)
 #@register.tag
 def firstof(parser, token):
     """
-    Outputs the first variable passed that is not False, without escaping.
+    Outputs the first variable passed that is not False.
 
     Outputs nothing if all the passed variables are False.
 
@@ -577,11 +566,11 @@ def firstof(parser, token):
     This is equivalent to::
 
         {% if var1 %}
-            {{ var1|safe }}
+            {{ var1 }}
         {% else %}{% if var2 %}
-            {{ var2|safe }}
+            {{ var2 }}
         {% else %}{% if var3 %}
-            {{ var3|safe }}
+            {{ var3 }}
         {% endif %}{% endif %}{% endif %}
 
     but obviously much cleaner!
@@ -591,18 +580,12 @@ def firstof(parser, token):
 
         {% firstof var1 var2 var3 "fallback value" %}
 
-    If you want to escape the output, use a filter tag::
-
-        {% filter force_escape %}
-            {% firstof var1 var2 var3 "fallback value" %}
-        {% endfilter %}
-
     """
     bits = token.split_contents()[1:]
     if len(bits) < 1:
         raise TemplateSyntaxError("'firstof' statement requires at least one"
                                   " argument")
-    return FirstOfNode([parser.compile_filter(bit) for bit in bits])
+    return FirstOfNode(bits)
 firstof = register.tag(firstof)
 
 #@register.tag(name="for")
@@ -626,30 +609,6 @@ def do_for(parser, token):
         {% for key,value in dict.items %}
             {{ key }}: {{ value }}
         {% endfor %}
-
-    The ``for`` tag can take an optional ``{% empty %}`` clause that will
-    be displayed if the given array is empty or could not be found::
-
-        <ul>
-          {% for athlete in athlete_list %}
-            <li>{{ athlete.name }}</li>
-          {% empty %}
-            <li>Sorry, no athletes in this list.</li>
-          {% endfor %}
-        <ul>
-
-    The above is equivalent to -- but shorter, cleaner, and possibly faster
-    than -- the following::
-
-        <ul>
-          {% if althete_list %}
-            {% for athlete in athlete_list %}
-              <li>{{ athlete.name }}</li>
-            {% endfor %}
-          {% else %}
-            <li>Sorry, no athletes in this list.</li>
-          {% endif %}
-        </ul>
 
     The for loop sets a number of variables available within the loop:
 
@@ -687,14 +646,9 @@ def do_for(parser, token):
                                       " %s" % token.contents)
 
     sequence = parser.compile_filter(bits[in_index+1])
-    nodelist_loop = parser.parse(('empty', 'endfor',))
-    token = parser.next_token()
-    if token.contents == 'empty':
-        nodelist_empty = parser.parse(('endfor',))
-        parser.delete_first_token()
-    else:
-        nodelist_empty = None
-    return ForNode(loopvars, sequence, is_reversed, nodelist_loop, nodelist_empty)
+    nodelist_loop = parser.parse(('endfor',))
+    parser.delete_first_token()
+    return ForNode(loopvars, sequence, is_reversed, nodelist_loop)
 do_for = register.tag("for", do_for)
 
 def do_ifequal(parser, token, negate):
@@ -709,9 +663,7 @@ def do_ifequal(parser, token, negate):
         parser.delete_first_token()
     else:
         nodelist_false = NodeList()
-    val1 = parser.compile_filter(bits[1])
-    val2 = parser.compile_filter(bits[2])
-    return IfEqualNode(val1, val2, nodelist_true, nodelist_false, negate)
+    return IfEqualNode(bits[1], bits[2], nodelist_true, nodelist_false, negate)
 
 #@register.tag
 def ifequal(parser, token):
@@ -874,8 +826,7 @@ def ifchanged(parser, token):
         parser.delete_first_token()
     else:
         nodelist_false = NodeList()
-    values = [parser.compile_filter(bit) for bit in bits[1:]]
-    return IfChangedNode(nodelist_true, nodelist_false, *values)
+    return IfChangedNode(nodelist_true, nodelist_false, *bits[1:])
 ifchanged = register.tag(ifchanged)
 
 #@register.tag
@@ -988,7 +939,7 @@ def regroup(parser, token):
     that ``grouper``.  In this case, ``grouper`` would be ``Male``, ``Female``
     and ``Unknown``, and ``list`` is the list of people with those genders.
 
-    Note that ``{% regroup %}`` does not work when the list to be grouped is not
+    Note that `{% regroup %}`` does not work when the list to be grouped is not
     sorted by the key you are grouping by!  This means that if your list of
     people was not sorted by gender, you'd need to make sure it is sorted
     before using it, i.e.::
@@ -1108,7 +1059,7 @@ def url(parser, token):
 
     The URL will look like ``/clients/client/123/``.
     """
-    bits = token.split_contents()
+    bits = token.contents.split(' ')
     if len(bits) < 2:
         raise TemplateSyntaxError("'%s' takes at least one argument"
                                   " (path to a view)" % bits[0])
@@ -1116,7 +1067,7 @@ def url(parser, token):
     args = []
     kwargs = {}
     asvar = None
-
+        
     if len(bits) > 2:
         bits = iter(bits[2:])
         for bit in bits:
@@ -1144,7 +1095,7 @@ def widthratio(parser, token):
 
         <img src='bar.gif' height='10' width='{% widthratio this_value max_value 100 %}' />
 
-    Above, if ``this_value`` is 175 and ``max_value`` is 200, the image in
+    Above, if ``this_value`` is 175 and ``max_value`` is 200, the the image in
     the above example will be 88 pixels wide (because 175/200 = .875;
     .875 * 100 = 87.5 which is rounded up to 88).
     """
@@ -1152,10 +1103,12 @@ def widthratio(parser, token):
     if len(bits) != 4:
         raise TemplateSyntaxError("widthratio takes three arguments")
     tag, this_value_expr, max_value_expr, max_width = bits
-
+    try:
+        max_width = int(max_width)
+    except ValueError:
+        raise TemplateSyntaxError("widthratio final argument must be an integer")
     return WidthRatioNode(parser.compile_filter(this_value_expr),
-                          parser.compile_filter(max_value_expr),
-                          parser.compile_filter(max_width))
+                          parser.compile_filter(max_value_expr), max_width)
 widthratio = register.tag(widthratio)
 
 #@register.tag

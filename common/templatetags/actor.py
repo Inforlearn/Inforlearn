@@ -41,7 +41,7 @@ class ActorActionNode(template.Node):
     view = self.var_view.resolve(context)
     actor = self.var_actor.resolve(context)
     if self.pred(user, view, actor):
-      content = escape(self.content % actor.display_nick())
+      content = escape(self.content)
       return (('<a href="?%s=&amp;target=%s&amp;_nonce=%s' +
                '&amp;owner=%s" class="%s">%s</a>') % (
                    self.api_call, urllib.quote(actor.nick),
@@ -65,12 +65,12 @@ def actor_add_contact(parser, token):
   Parameters: user, view, actor.
   """
   return _actor_action(parser, token, is_not_contact, 'actor_add_contact',
-                       'add', u'Thêm %s vào danh sách liên lạc')
+                       'add', u'Thêm vào danh sách bạn bè')
 
 @register.tag
 def actor_add_contact_long(parser, token):
   return _actor_action(parser, token, is_not_contact, 'actor_add_contact',
-                       'add', u'+ Kết bạn với %s')
+                       'add', u'+ Kết bạn')
 
 
 @register.tag
@@ -80,4 +80,4 @@ def actor_remove_contact(parser, token):
   Parameters: user, view, actor.
   """
   return _actor_action(parser, token, is_contact, 'actor_remove_contact',
-                       'remove', u'Loại bỏ %s khỏi danh sách bạn bè')
+                       'remove', u'Loại bỏ')

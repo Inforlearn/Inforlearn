@@ -21,6 +21,7 @@
     {# base stylesheet #}
     {% if not request.mobile %}
       <link rel="stylesheet" type="text/css" href="http://{{DOMAIN}}/css/core.css?17" media="screen,projection" />
+      <link rel="stylesheet" type="text/css" href="http://{{DOMAIN}}/css/prototip.css" />
       <!--[if lte IE 6]>
         <link rel="stylesheet" type="text/css" href="http://{{DOMAIN}}/css/ie.css?13"/>
       <![endif]-->
@@ -85,6 +86,9 @@
     {% block head %}
     {% endblock %}
     
+    <script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/prototype/1.6.1/prototype.js'></script>
+    <script type='text/javascript' src='http://{{DOMAIN}}/js/prototip/prototip.js'></script>
+    
   </head>
   <body style="{% if not view.extra.bg_image %} background: url(/images/backgrounds/{{ bg_image|auto_background }}); background-attachment: fixed; background-position: center; {% endif %}" {% block bodytag %}{% if area %} id="{{area}}"{% endif %}{% if not request.user %}class="global"{% endif %}{% endblock %}>
       
@@ -110,7 +114,8 @@
                   images[i].src = preload.arguments[i]
               }
           }
-          preload("http://{{DOMAIN}}/themes/default/unchecked.png");
+          preload("http://{{DOMAIN}}/themes/default/unchecked.png",
+                  "http://inforlearn.appspot.com/images/prototip/styles/default/close_hover.png");
         </script>
       </div>
     {{component.best.analytics.footer|safe}}

@@ -124,9 +124,4 @@ def format_number(value, max_digits, decimal_places):
     Formats a number into a string with the requisite number of digits and
     decimal places.
     """
-    if isinstance(value, decimal.Decimal):
-        context = decimal.getcontext().copy()
-        context.prec = max_digits
-        return u'%s' % str(value.quantize(decimal.Decimal(".1") ** decimal_places, context=context))
-    else:
-        return u"%.*f" % (decimal_places, value)
+    return u"%.*f" % (decimal_places, value)

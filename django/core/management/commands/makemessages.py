@@ -1,24 +1,16 @@
 import re
 import os
 import sys
-import glob
-import warnings
 from itertools import dropwhile
 from optparse import make_option
-
 from django.core.management.base import CommandError, BaseCommand
-from django.utils.text import get_text_list
 
 try:
     set
 except NameError:
     from sets import Set as set     # For Python 2.3
 
-# Intentionally silence DeprecationWarnings about os.popen3 in Python 2.6. It's
-# still sensible for us to use it, since subprocess didn't exist in 2.3.
-warnings.filterwarnings('ignore', category=DeprecationWarning, message=r'os\.popen3')
-
-pythonize_re = re.compile(r'(?:^|\n)\s*//')
+pythonize_re = re.compile(r'\n\s*//')
 
 def handle_extensions(extensions=('html',)):
     """
@@ -77,29 +69,12 @@ def make_messages(locale=None, domain='django', verbosity='1', all=False, extens
             message = "usage: make-messages.py -l <language>\n   or: make-messages.py -a\n"
         raise CommandError(message)
 
-    # xgettext versions prior to 0.15 assumed Python source files were encoded
-    # in iso-8859-1, and produce utf-8 output.  In the case where xgettext is
-    # given utf-8 input (required for Django files with non-ASCII characters),
-    # this results in a utf-8 re-encoding of the original utf-8 that needs to be
-    # undone to restore the original utf-8.  So we check the xgettext version
-    # here once and set a flag to remember if a utf-8 decoding needs to be done
-    # on xgettext's output for Python files.  We default to assuming this isn't
-    # necessary if we run into any trouble determining the version.
-    xgettext_reencodes_utf8 = False
-    (stdin, stdout, stderr) = os.popen3('xgettext --version', 't')
-    match = re.search(r'(?P<major>\d+)\.(?P<minor>\d+)', stdout.read())
-    if match:
-        xversion = (int(match.group('major')), int(match.group('minor')))
-        if xversion < (0, 15):
-            xgettext_reencodes_utf8 = True
- 
     languages = []
     if locale is not None:
         languages.append(locale)
     elif all:
-        locale_dirs = filter(os.path.isdir, glob.glob('%s/*' % localedir)) 
-        languages = [os.path.basename(l) for l in locale_dirs]
-    
+        languages = [el for el in os.listdir(localedir) if not el.startswith('.')]
+
     for locale in languages:
         if verbosity > 0:
             print "processing language", locale
@@ -119,17 +94,13 @@ def make_messages(locale=None, domain='django', verbosity='1', all=False, extens
         all_files.sort()
         for dirpath, file in all_files:
             file_base, file_ext = os.path.splitext(file)
-            if domain == 'djangojs' and file_ext in extensions:
+            if domain == 'djangojs' and file_ext == '.js':
                 if verbosity > 1:
                     sys.stdout.write('processing file %s in %s\n' % (file, dirpath))
                 src = open(os.path.join(dirpath, file), "rU").read()
                 src = pythonize_re.sub('\n#', src)
                 thefile = '%s.py' % file
-                f = open(os.path.join(dirpath, thefile), "w")
-                try:
-                    f.write(src)
-                finally:
-                    f.close()
+                open(os.path.join(dirpath, thefile), "w").write(src)
                 cmd = 'xgettext -d %s -L Perl --keyword=gettext_noop --keyword=gettext_lazy --keyword=ngettext_lazy:1,2 --from-code UTF-8 -o - "%s"' % (domain, os.path.join(dirpath, thefile))
                 (stdin, stdout, stderr) = os.popen3(cmd, 't')
                 msgs = stdout.read()
@@ -145,26 +116,14 @@ def make_messages(locale=None, domain='django', verbosity='1', all=False, extens
                 else:
                     msgs = msgs.replace('charset=CHARSET', 'charset=UTF-8')
                 if msgs:
-                    f = open(potfile, 'ab')
-                    try:
-                        f.write(msgs)
-                    finally:
-                        f.close()
+                    open(potfile, 'ab').write(msgs)
                 os.unlink(os.path.join(dirpath, thefile))
             elif domain == 'django' and (file_ext == '.py' or file_ext in extensions):
                 thefile = file
                 if file_ext in extensions:
                     src = open(os.path.join(dirpath, file), "rU").read()
                     thefile = '%s.py' % file
-                    try:
-                        f = open(os.path.join(dirpath, thefile), "w")
-                        try:
-                            f.write(templatize(src))
-                        finally:
-                            f.close()
-                    except SyntaxError, msg:
-                        msg = "%s (file: %s)" % (msg, os.path.join(dirpath, file))
-                        raise SyntaxError(msg)
+                    open(os.path.join(dirpath, thefile), "w").write(templatize(src))
                 if verbosity > 1:
                     sys.stdout.write('processing file %s in %s\n' % (file, dirpath))
                 cmd = 'xgettext -d %s -L Python --keyword=gettext_noop --keyword=gettext_lazy --keyword=ngettext_lazy:1,2 --keyword=ugettext_noop --keyword=ugettext_lazy --keyword=ungettext_lazy:1,2 --from-code UTF-8 -o - "%s"' % (
@@ -174,10 +133,6 @@ def make_messages(locale=None, domain='django', verbosity='1', all=False, extens
                 errors = stderr.read()
                 if errors:
                     raise CommandError("errors happened while running xgettext on %s\n%s" % (file, errors))
-
-                if xgettext_reencodes_utf8:
-                    msgs = msgs.decode('utf-8').encode('iso-8859-1')
-
                 if thefile != file:
                     old = '#: '+os.path.join(dirpath, thefile)[2:]
                     new = '#: '+os.path.join(dirpath, file)[2:]
@@ -188,11 +143,7 @@ def make_messages(locale=None, domain='django', verbosity='1', all=False, extens
                 else:
                     msgs = msgs.replace('charset=CHARSET', 'charset=UTF-8')
                 if msgs:
-                    f = open(potfile, 'ab')
-                    try:
-                        f.write(msgs)
-                    finally:
-                        f.close()
+                    open(potfile, 'ab').write(msgs)
                 if thefile != file:
                     os.unlink(os.path.join(dirpath, thefile))
 
@@ -219,6 +170,9 @@ class Command(BaseCommand):
             help='Creates or updates the message files only for the given locale (e.g. pt_BR).'),
         make_option('--domain', '-d', default='django', dest='domain',
             help='The domain of the message files (default: "django").'),
+        make_option('--verbosity', '-v', action='store', dest='verbosity',
+            default='1', type='choice', choices=['0', '1', '2'],
+            help='Verbosity level; 0=minimal output, 1=normal output, 2=all output'),
         make_option('--all', '-a', action='store_true', dest='all',
             default=False, help='Reexamines all source code and templates for new translation strings and updates all message files for all available languages.'),
         make_option('--extension', '-e', dest='extensions',
@@ -238,14 +192,14 @@ class Command(BaseCommand):
         domain = options.get('domain')
         verbosity = int(options.get('verbosity'))
         process_all = options.get('all')
-        extensions = options.get('extensions')
+        extensions = options.get('extensions') or ['html']
 
         if domain == 'djangojs':
-            extensions = handle_extensions(extensions or ['js'])
+            extensions = []
         else:
-            extensions = handle_extensions(extensions or ['html'])
+            extensions = handle_extensions(extensions)
 
-        if verbosity > 1:
-            sys.stdout.write('examining files with the extensions: %s\n' % get_text_list(list(extensions), 'and'))
+        if '.js' in extensions:
+            raise CommandError("JavaScript files should be examined by using the special 'djangojs' domain only.")
 
         make_messages(locale, domain, verbosity, process_all, extensions)

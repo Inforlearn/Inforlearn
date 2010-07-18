@@ -12,11 +12,11 @@ import logging
 import os
 import sys
 
-reload(sys); sys.setdefaultencoding('utf-8')
+#reload(sys); sys.setdefaultencoding('utf-8')
 
-os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
-from google.appengine.dist import use_library
-use_library('django', '1.1')
+#os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
+#from google.appengine.dist import use_library
+#use_library('django', '1.1')
 
 logging.debug("Loading %s", __name__)
 

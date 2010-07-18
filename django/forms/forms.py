@@ -2,9 +2,10 @@
 Form classes
 """
 
-from django.utils.copycompat import deepcopy
+from copy import deepcopy
+
 from django.utils.datastructures import SortedDict
-from django.utils.html import conditional_escape
+from django.utils.html import escape
 from django.utils.encoding import StrAndUnicode, smart_unicode, force_unicode
 from django.utils.safestring import mark_safe
 
@@ -139,7 +140,7 @@ class BaseForm(StrAndUnicode):
         output, hidden_fields = [], []
         for name, field in self.fields.items():
             bf = BoundField(self, field, name)
-            bf_errors = self.error_class([conditional_escape(error) for error in bf.errors]) # Escape and cache in local variable.
+            bf_errors = self.error_class([escape(error) for error in bf.errors]) # Escape and cache in local variable.
             if bf.is_hidden:
                 if bf_errors:
                     top_errors.extend([u'(Hidden field %s) %s' % (name, force_unicode(e)) for e in bf_errors])
@@ -148,7 +149,7 @@ class BaseForm(StrAndUnicode):
                 if errors_on_separate_row and bf_errors:
                     output.append(error_row % force_unicode(bf_errors))
                 if bf.label:
-                    label = conditional_escape(force_unicode(bf.label))
+                    label = escape(force_unicode(bf.label))
                     # Only add the suffix if the label does not end in
                     # punctuation.
                     if self.label_suffix:
@@ -170,13 +171,6 @@ class BaseForm(StrAndUnicode):
                 last_row = output[-1]
                 # Chop off the trailing row_ender (e.g. '</td></tr>') and
                 # insert the hidden fields.
-                if not last_row.endswith(row_ender):
-                    # This can happen in the as_p() case (and possibly others
-                    # that users write): if there are only top errors, we may
-                    # not be able to conscript the last row for our purposes,
-                    # so insert a new, empty row.
-                    last_row = normal_row % {'errors': '', 'label': '', 'field': '', 'help_text': ''}
-                    output.append(last_row)
                 output[-1] = last_row[:-len(row_ender)] + str_hidden + row_ender
             else:
                 # If there aren't any rows in the output, just append the
@@ -203,15 +197,6 @@ class BaseForm(StrAndUnicode):
         are none.
         """
         return self.errors.get(NON_FIELD_ERRORS, self.error_class())
-
-    def _raw_value(self, fieldname):
-        """
-        Returns the raw_value for a particular field name. This is just a
-        convenient wrapper around widget.value_from_datadict.
-        """
-        field = self.fields[fieldname]
-        prefix = self.add_prefix(fieldname)
-        return field.widget.value_from_datadict(self.data, self.files, prefix)
 
     def full_clean(self):
         """
@@ -242,13 +227,13 @@ class BaseForm(StrAndUnicode):
                     value = getattr(self, 'clean_%s' % name)()
                     self.cleaned_data[name] = value
             except ValidationError, e:
-                self._errors[name] = self.error_class(e.messages)
+                self._errors[name] = e.messages
                 if name in self.cleaned_data:
                     del self.cleaned_data[name]
         try:
             self.cleaned_data = self.clean()
         except ValidationError, e:
-            self._errors[NON_FIELD_ERRORS] = self.error_class(e.messages)
+            self._errors[NON_FIELD_ERRORS] = e.messages
         if self._errors:
             delattr(self, 'cleaned_data')
 
@@ -311,20 +296,6 @@ class BaseForm(StrAndUnicode):
                 return True
         return False
 
-    def hidden_fields(self):
-        """
-        Returns a list of all the BoundField objects that are hidden fields.
-        Useful for manual form layout in templates.
-        """
-        return [field for field in self if field.is_hidden]
-
-    def visible_fields(self):
-        """
-        Returns a list of BoundField objects that aren't hidden fields.
-        The opposite of the hidden_fields() method.
-        """
-        return [field for field in self if not field.is_hidden]
-
 class Form(BaseForm):
     "A collection of Fields, plus their associated data."
     # This is a separate class from BaseForm in order to abstract the way
@@ -342,7 +313,6 @@ class BoundField(StrAndUnicode):
         self.name = name
         self.html_name = form.add_prefix(name)
         self.html_initial_name = form.add_initial_prefix(name)
-        self.html_initial_id = form.add_initial_prefix(self.auto_id)
         if self.field.label is None:
             self.label = pretty_name(name)
         else:
@@ -374,25 +344,19 @@ class BoundField(StrAndUnicode):
         attrs = attrs or {}
         auto_id = self.auto_id
         if auto_id and 'id' not in attrs and 'id' not in widget.attrs:
-            if not only_initial:
-                attrs['id'] = auto_id
-            else:
-                attrs['id'] = self.html_initial_id
+            attrs['id'] = auto_id
         if not self.form.is_bound:
             data = self.form.initial.get(self.name, self.field.initial)
             if callable(data):
                 data = data()
         else:
-            if isinstance(self.field, FileField) and self.data is None:
-                data = self.form.initial.get(self.name, self.field.initial)
-            else:
-                data = self.data
+            data = self.data
         if not only_initial:
             name = self.html_name
         else:
             name = self.html_initial_name
         return widget.render(name, data, attrs=attrs)
-
+        
     def as_text(self, attrs=None, **kwargs):
         """
         Returns a string of HTML for representing this as an <input type="text">.
@@ -424,7 +388,7 @@ class BoundField(StrAndUnicode):
 
         If attrs are given, they're used as HTML attributes on the <label> tag.
         """
-        contents = contents or conditional_escape(self.label)
+        contents = contents or escape(self.label)
         widget = self.field.widget
         id_ = widget.attrs.get('id') or self.auto_id
         if id_:

@@ -20,7 +20,7 @@ class MainView():
             handler.response.out.write(body)
 
         def render_main(handler, values=None):
-            path = os.path.join(os.path.dirname(__file__), 'main.html')
+            path = os.path.join(os.path.dirname(__file__), 'templates/main.html')
             handler.response.out.write(template.render(path, values))
 
         """ We never have an error if we have an urly to show """

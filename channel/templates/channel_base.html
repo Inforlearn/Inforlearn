@@ -1,5 +1,5 @@
 {% extends 'common/templates/base_wide.html' %}
-{% load nonce avatar vcard %}
+{% load nonce avatar vcard format %}
 {% block title %}Nhóm{% endblock %}
 
 {% block content %}
@@ -11,18 +11,7 @@
   {% if not request.mobile %}
     <div id="sidebar">
       <div class="tip">
-        <p>
-          <b>Gửi tin vào một nhóm?</b><br/>
-          Ví dụ: <br/><b>#Bugs Không gõ được tiếng Việt</b>
-          <br/>&nbsp;&nbsp;&nbsp;&nbsp;Tin nhắn <b>Không gõ được tiếng Việt</b> sẽ được gửi vào nhóm <b>#Bugs</b>
-          <br/>&nbsp;&nbsp;&nbsp;&nbsp;Tương tự như vậy, ở bất cứ ô gửi tin nào, bạn chỉ cần thêm <b>#GroupID</b> trước nội dung muốn đưa lên.
-        </p>
-        {% if component.loaded.sms_service %}
-          <p>
-            This is available via the SMS on<br />
-            <strong>30300</strong><br />
-          </p>
-        {% endif %}
+        {{content|random_tips}}
       </div>
       
       {% include 'channel/templates/sidebar_ourpicks.html' %}

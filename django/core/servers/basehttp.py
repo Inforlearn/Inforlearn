@@ -11,12 +11,10 @@ from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 import mimetypes
 import os
 import re
-import stat
 import sys
 import urllib
 
 from django.utils.http import http_date
-from django.utils._os import safe_join
 
 __version__ = "0.1"
 __all__ = ['WSGIServer','WSGIRequestHandler']
@@ -307,15 +305,14 @@ class ServerHandler(object):
             env.setdefault('SERVER_SOFTWARE',self.server_software)
 
     def finish_response(self):
-        """
-        Send any iterable data, then close self and the iterable
+        """Send any iterable data, then close self and the iterable
 
-        Subclasses intended for use in asynchronous servers will want to
-        redefine this method, such that it sets up callbacks in the event loop
-        to iterate over the data, and to call 'self.close()' once the response
-        is finished.
+        Subclasses intended for use in asynchronous servers will
+        want to redefine this method, such that it sets up callbacks
+        in the event loop to iterate over the data, and to call
+        'self.close()' once the response is finished.
         """
-        if not self.result_is_file() or not self.sendfile():
+        if not self.result_is_file() and not self.sendfile():
             for data in self.result:
                 self.write(data)
             self.finish_content()
@@ -622,24 +619,10 @@ class AdminMediaHandler(object):
         self.application = application
         if not media_dir:
             import django
-            self.media_dir = \
-                os.path.join(django.__path__[0], 'contrib', 'admin', 'media')
+            self.media_dir = django.__path__[0] + '/contrib/admin/media'
         else:
             self.media_dir = media_dir
         self.media_url = settings.ADMIN_MEDIA_PREFIX
-
-    def file_path(self, url):
-        """
-        Returns the path to the media file on disk for the given URL.
-
-        The passed URL is assumed to begin with ADMIN_MEDIA_PREFIX.  If the
-        resultant file path is outside the media directory, then a ValueError
-        is raised.
-        """
-        # Remove ADMIN_MEDIA_PREFIX.
-        relative_url = url[len(self.media_url):]
-        relative_path = urllib.url2pathname(relative_url)
-        return safe_join(self.media_dir, relative_path)
 
     def __call__(self, environ, start_response):
         import os.path
@@ -651,43 +634,27 @@ class AdminMediaHandler(object):
             return self.application(environ, start_response)
 
         # Find the admin file and serve it up, if it exists and is readable.
-        try:
-            file_path = self.file_path(environ['PATH_INFO'])
-        except ValueError: # Resulting file path was not valid.
-            status = '404 NOT FOUND'
-            headers = {'Content-type': 'text/plain'}
-            output = ['Page not found: %s' % environ['PATH_INFO']]
-            start_response(status, headers.items())
-            return output
+        relative_url = environ['PATH_INFO'][len(self.media_url):]
+        file_path = os.path.join(self.media_dir, relative_url)
         if not os.path.exists(file_path):
             status = '404 NOT FOUND'
             headers = {'Content-type': 'text/plain'}
-            output = ['Page not found: %s' % environ['PATH_INFO']]
+            output = ['Page not found: %s' % file_path]
         else:
             try:
                 fp = open(file_path, 'rb')
             except IOError:
                 status = '401 UNAUTHORIZED'
                 headers = {'Content-type': 'text/plain'}
-                output = ['Permission denied: %s' % environ['PATH_INFO']]
+                output = ['Permission denied: %s' % file_path]
             else:
-                # This is a very simple implementation of conditional GET with
-                # the Last-Modified header. It makes media files a bit speedier
-                # because the files are only read off disk for the first
-                # request (assuming the browser/client supports conditional
-                # GET).
-                mtime = http_date(os.stat(file_path)[stat.ST_MTIME])
-                headers = {'Last-Modified': mtime}
-                if environ.get('HTTP_IF_MODIFIED_SINCE', None) == mtime:
-                    status = '304 NOT MODIFIED'
-                    output = []
-                else:
-                    status = '200 OK'
-                    mime_type = mimetypes.guess_type(file_path)[0]
-                    if mime_type:
-                        headers['Content-Type'] = mime_type
-                    output = [fp.read()]
-                    fp.close()
+                status = '200 OK'
+                headers = {}
+                mime_type = mimetypes.guess_type(file_path)[0]
+                if mime_type:
+                    headers['Content-Type'] = mime_type
+                output = [fp.read()]
+                fp.close()
         start_response(status, headers.items())
         return output
 

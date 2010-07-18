@@ -3,10 +3,7 @@
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.utils.datastructures import SortedDict
-from django.utils.importlib import import_module
-from django.utils.module_loading import module_has_submodule
 
-import imp
 import sys
 import os
 import threading
@@ -72,33 +69,19 @@ class AppCache(object):
         """
         self.handled[app_name] = None
         self.nesting_level += 1
-        app_module = import_module(app_name)
-        try:
-            models = import_module('.models', app_name)
-        except ImportError:
-            self.nesting_level -= 1
-            # If the app doesn't have a models module, we can just ignore the
-            # ImportError and return no models for it.
-            if not module_has_submodule(app_module, 'models'):
-                return None
-            # But if the app does have a models module, we need to figure out
-            # whether to suppress or propagate the error. If can_postpone is
-            # True then it may be that the package is still being imported by
-            # Python and the models module isn't available yet. So we add the
-            # app to the postponed list and we'll try it again after all the
-            # recursion has finished (in populate). If can_postpone is False
-            # then it's time to raise the ImportError.
-            else:
-                if can_postpone:
-                    self.postponed.append(app_name)
-                    return None
-                else:
-                    raise
-
+        mod = __import__(app_name, {}, {}, ['models'])
         self.nesting_level -= 1
-        if models not in self.app_store:
-            self.app_store[models] = len(self.app_store)
-        return models
+        if not hasattr(mod, 'models'):
+            if can_postpone:
+                # Either the app has no models, or the package is still being
+                # imported by Python and the model module isn't available yet.
+                # We will check again once all the recursion has finished (in
+                # populate).
+                self.postponed.append(app_name)
+            return None
+        if mod.models not in self.app_store:
+            self.app_store[mod.models] = len(self.app_store)
+        return mod.models
 
     def app_cache_ready(self):
         """
@@ -145,27 +128,19 @@ class AppCache(object):
         self._populate()
         return self.app_errors
 
-    def get_models(self, app_mod=None, include_deferred=False):
+    def get_models(self, app_mod=None):
         """
         Given a module containing models, returns a list of the models.
         Otherwise returns a list of all installed models.
-
-        By default, models created to satisfy deferred attribute
-        queries are *not* included in the list of models. However, if
-        you specify include_deferred, they will be.
         """
         self._populate()
         if app_mod:
-            app_list = [self.app_models.get(app_mod.__name__.split('.')[-2], SortedDict())]
+            return self.app_models.get(app_mod.__name__.split('.')[-2], SortedDict()).values()
         else:
-            app_list = self.app_models.itervalues()
-        model_list = []
-        for app in app_list:
-            model_list.extend(
-                [model for model in app.values()
-                if (not model._deferred or include_deferred)]
-            )
-        return model_list
+            model_list = []
+            for app_entry in self.app_models.itervalues():
+                model_list.extend(app_entry.values())
+            return model_list
 
     def get_model(self, app_label, model_name, seed_cache=True):
         """

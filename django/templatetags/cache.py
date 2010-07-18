@@ -3,7 +3,6 @@ from django.template import resolve_variable
 from django.core.cache import cache
 from django.utils.encoding import force_unicode
 from django.utils.http import urlquote
-from django.utils.hashcompat import md5_constructor
 
 register = Library()
 
@@ -18,14 +17,13 @@ class CacheNode(Node):
         try:
             expire_time = self.expire_time_var.resolve(context)
         except VariableDoesNotExist:
-            raise TemplateSyntaxError('"cache" tag got an unknown variable: %r' % self.expire_time_var.var)
+            raise TemplateSyntaxError('"cache" tag got an unknkown variable: %r' % self.expire_time_var.var)
         try:
             expire_time = int(expire_time)
         except (ValueError, TypeError):
             raise TemplateSyntaxError('"cache" tag got a non-integer timeout value: %r' % expire_time)
         # Build a unicode key for this fragment and all vary-on's.
-        args = md5_constructor(u':'.join([urlquote(resolve_variable(var, context)) for var in self.vary_on]))
-        cache_key = 'template.cache.%s.%s' % (self.fragment_name, args.hexdigest())
+        cache_key = u':'.join([self.fragment_name] + [urlquote(resolve_variable(var, context)) for var in self.vary_on])
         value = cache.get(cache_key)
         if value is None:
             value = self.nodelist.render(context)
