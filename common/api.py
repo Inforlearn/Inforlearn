@@ -2848,10 +2848,7 @@ def post(api_user, _task_ref=None, **kw):
     * nick - the actor posting this entry
     * uuid - a unique identifier for this entry
   
-  RETURNS: entry_ref
-
-  
-  
+  RETURNS: entry_ref  
   """
   # grab the params we're interested in
   message = kw.get('message', '').strip()

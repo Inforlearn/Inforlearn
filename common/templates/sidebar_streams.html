@@ -15,16 +15,16 @@
     <ul>
     {% for stream in streams.values %}
       <li>
-        <h4>
+        <h4 style="display: inline;">
         {{stream|stream_icon}}
         {% if stream.extra.display_url %}
           <a href="{{stream.extra.display_url|escape}}">{{stream.title}}</a>
         {% else %}
           {% ifequal stream.title "presence" %}
-            Tin nhắn gửi từ {{stream.owner_ref.display_nick}}
+            Tin nhắn
           {% else %}
             {% ifequal stream.title "comments" %}
-              Bình luận gửi từ {{stream.owner_ref.display_nick}}
+              Bình luận
             {% else %}
               {{stream.title}}
             {% endifequal %}
@@ -34,13 +34,13 @@
         {% if request.user %}
         {% ifnotequal request.user.nick view.nick %}
           {% if stream.subscribed %}
-          <a
-            href="{{view.url}}?subscription_remove={{stream.key.name|urlencode}}&amp;{{request.user|nonceparam:"subscription_remove"}}&amp;target=inbox/{{request.user.nick|urlencode}}/overview"
-             class="unsubscribe">Ngừng theo dõi</a>
+	        <a href="{{view.url}}?subscription_remove={{stream.key.name|urlencode}}&amp;{{request.user|nonceparam:"subscription_remove"}}&amp;target=inbox/{{request.user.nick|urlencode}}/overview"
+	             class="unsubscribe"
+	             style="font-size: 1em;">Ngừng theo dõi</a>
           {% else %}
-          <a
-            href="{{view.url}}?subscription_request={{stream.key.name|urlencode}}&amp;{{request.user|nonceparam:"subscription_request"}}&amp;target=inbox/{{request.user.nick|urlencode}}/overview"
-            class="subscribe">Theo dõi</a>
+            <a href="{{view.url}}?subscription_request={{stream.key.name|urlencode}}&amp;{{request.user|nonceparam:"subscription_request"}}&amp;target=inbox/{{request.user.nick|urlencode}}/overview"
+                 class="subscribe"
+                 style="font-size: 1em;">Theo dõi</a>
           {% endif %}
         {% endifnotequal %}
         {% endif %}

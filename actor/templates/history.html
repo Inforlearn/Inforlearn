@@ -2,15 +2,13 @@
 {% load nonce avatar vcard actor %}
 {% block title %}
   {% ifequal request.user.nick view.nick %}
-    Những kinh nghiệm/bình luận được gửi lên từ tài khoản của bạn
+    Những tin được gửi lên từ tài khoản của bạn
   {% else %}
-    Những kinh nghiệm/bình luận được gửi lên từ {{ view.display_nick }}
+    Những tin được gửi lên từ {{ view.display_nick }}
   {% endifequal %}
 {% endblock %}
 
-
 {% block content %}
-
   {% ifequal request.user.nick view.nick %}
     {% include 'common/templates/message_form.html' %}
   {% else %}

@@ -22,7 +22,7 @@ _message_table__ = {
        'Người này đã được thêm vào danh sách liên hệ của bạn.'),
   'actor_remove' :
       (None,
-       'Xóa thành công'),
+       'Người vừa rồi đã được xóa khỏi danh sách.'),
   'actor_remove_contact':
       (None,
        'Đã xóa khỏi danh sách liên lạc.'),
@@ -49,7 +49,7 @@ _message_table__ = {
        'Đánh dấu là spam.'),
   'entry_remove' :
       (None,
-       'Đã xóa xong.'),
+       'Tin nhắn đã được xóa.'),
   'entry_remove_comment':
       (None,
        'Đã xóa ý kiến vừa rồi.'),
@@ -79,7 +79,7 @@ _message_table__ = {
        'API token revoked.'),
   'presence_set':
       (None,
-       'Vị trí của bạn đã được cập nhật lại'),
+       'Vị trí của bạn đã được cập nhật lại.'),
   'post':
       (None,
        'Tin nhắn đã gửi thành công :)'),
@@ -94,7 +94,7 @@ _message_table__ = {
        'Comments preferenced stored.'),
   'settings_update_account':
       (None,
-       'profile updated'),
+       'Hồ sơ của bạn đã được cập nhật lại.'),
   'subscription_remove':
       (None,
        'Unsubscribed.'),

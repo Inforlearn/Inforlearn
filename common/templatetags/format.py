@@ -269,8 +269,7 @@ def entry_icon(value, arg=None):
   icon = value.extra.get('icon', None)
   if not icon:
     return ""
-
-  return '<img src="/themes/%s/icons/%s.gif" alt="%s" class="icon" />' % (settings.DEFAULT_THEME, icon, icon)
+  return '<img src="/themes/%s/icons/%s.gif" alt="%s" class="icon" style="margin-left: -5px;"/>' % (settings.DEFAULT_THEME, icon, icon)
 
 @register.filter(name="linked_entry_title")
 @safe

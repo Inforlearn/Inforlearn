@@ -57,7 +57,7 @@ def join_join(request):
       api.post(actor_ref,
                nick=actor_ref.nick,
                message=u'Gia nhập %s!' % (settings.SITE_NAME),
-               icon='jaiku-new-user')
+               icon='new-user')
 
       # send off email confirmation
       api.activation_request_email(actor_ref, actor_ref.nick, email)
