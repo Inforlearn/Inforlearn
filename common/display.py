@@ -57,7 +57,7 @@ ICONS = {
   '200': ('jaiku-presence', 'presence', ''),
   '201': ('jaiku-comment', 'comment', ''),
   '202': ('jaiku-message', 'message', ''),
-  '203': ('jaiku-new-user', 'new user', ''),
+  '203': ('new-user', 'new user', ''),
   '204': ('jaiku-sms', 'sms', ''),
   '205': ('jaiku-contact-added', 'contact added', ''),
   '300': ('web-speechbubble', 'speech bubble', ''),

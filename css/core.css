@@ -694,7 +694,7 @@ padding-left:0;
 
 div.notice {
 position:relative;
-margin:-35px 120px 0 8px;
+margin:-35px 120px 3px 8px;
 padding:0.7em 0.7em 0.1em;
 }
 
@@ -2241,7 +2241,6 @@ margin:0.5em 0;
 }
 
 div#sidebar div#mobile h2,div#sidebar div.first h2 {
-line-height:1em;
 padding-top:0;
 }
 
@@ -2850,7 +2849,13 @@ font-size:1em;
 }
 
 div#form-message p#counter.overlimit,ul.stream li a,ul.stream li a:visited {
-color:#444;
+color:#000;
+}
+
+ul.stream li a:hover {
+-webkit-transition-duration: 0.3s;
+-webkit-transition-property: color, background;
+color: #009BC7;
 }
 
 #sidebar ul.stream li.presence,ul.stream li.presence,ul.stream li.comment {
