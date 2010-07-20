@@ -1,5 +1,10 @@
+input[type="text"], input[type="password"] {
+border: 1px solid #CCC;
+color: #444;
+}
+
 body {
-font:70%/1.4em Arial, Helvetica, sans-serif;
+font:70%/1.4em "Trebuchet MS", Arial, Helvetica, sans-serif;
 text-align:center;
 color:#333;
 background-attachment:fixed;
@@ -24,7 +29,7 @@ margin:0 auto;
 
 /* --- Header ------------------------------------------ */
 div#header-container {
-margin-bottom:40px;
+margin-bottom:25px;
 color:#666;
 padding:0;
 }
@@ -38,13 +43,13 @@ margin:0 auto;
 }
 
 #frontpage div#header-container {
-margin-bottom:40px;
+margin-bottom:25px;
 }
 
 div#header div#helper-nav {
-font-size:0.96em;
+font-size:1em;
 float:right;
-margin:0.6em 0px 0.6em 0;
+margin:0.6em 8px 0.6em 0;
 }
 
 body.single div#header div#helper-nav {
@@ -58,7 +63,7 @@ margin:0;
 
 div#header a#logo {
 position:absolute;
-display:none;
+right: 0;
 top:0.5em;
 }
 
@@ -111,6 +116,7 @@ list-style-type:none;
 overflow:hidden;
 font-size:1.2em;
 padding:0;
+margin-left: 8px;
 }
 
 ul#main-nav li {
@@ -129,6 +135,10 @@ padding:0.5em 0.75em;
 
 ul#main-nav li a:hover {
 background-color:transparent;
+}
+
+#site-logo li a:hover {
+text-shadow: 0px 0px 1px #fff;
 }
 
 ul#main-nav li:hover,ul#main-nav li.hover {
@@ -450,7 +460,7 @@ div#streams img.icon {
 float:left;
 height:16px;
 width:16px;
-margin:0 7px;
+margin: 0px 7px 0px 0px;
 }
 
 div#streams ul li h4 {
@@ -692,12 +702,12 @@ padding-left:0;
 
 div.notice {
 position:relative;
-margin:-35px 8px 3px 8px;
-padding:0.7em 0.7em 0.1em;
+margin: -25px 8px 0px;
+padding: 4px 1em 0.1em;
 }
 
 div.notice p {
-margin-bottom:0.7em;
+margin-bottom:3px;
 }
 
 p.notice {
@@ -1197,7 +1207,7 @@ padding:4px;
 div#profile p {
 border-top:dashed 1px #fff;
 padding-top:0.5em;
-margin:0 0 0.5em 85px;
+margin:20px 0 0.5em 85px;
 }
 
 div#profile p.message {
@@ -1363,6 +1373,7 @@ div#sidebar div.tip {
 float:none;
 width:auto;
 margin:1em 0;
+font-size: 1.1em;
 }
 
 div#group-intro p.description {
@@ -1384,7 +1395,7 @@ padding-top:0;
 
 div.groups ul li {
 overflow:hidden;
-width:245px;
+width:500px;
 margin:0;
 padding:0 15px 0.5em 0;
 }
@@ -1434,7 +1445,7 @@ padding:0 10px 0 0;
 
 div#content div#current-stream a:hover {
 color:#009BC7;
-text-decoration:none;
+text-decoration:underline;
 }
 
 div#current-stream img.icon {
@@ -1447,6 +1458,7 @@ margin-bottom:0.2em;
 color:#333;
 font-size:1.3em;
 padding:0.2em 0 0;
+min-height: 45px;
 }
 
 div#content div#current-stream p {
@@ -1912,7 +1924,7 @@ overflow:hidden;
 
 div#comments ul li a {
 text-decoration:none;
-color:#444;
+color: #444;
 }
 
 div#comments ul li p.meta a,div#comments ul li p.meta a.confirm-delete {
@@ -2760,7 +2772,7 @@ margin-bottom:0;
 }
 
 div#intro h3 a:link,div#intro h3 a:visited,div.groups ul p a,div#content div#current-stream a,ul.stream li h3 a.url {
-color:#333;
+color:#4183C4;
 }
 
 div#start-mobile,div#current-stream div.bottom h2,div#current-stream div.bottom p {

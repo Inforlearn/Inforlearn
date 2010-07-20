@@ -1,4 +1,4 @@
-#Sun Jul 18 11:54:26 ICT 2010
+#Tue Jul 20 14:06:23 ICT 2010
 eclipse.preferences.version=1
 encoding//actor/tests.py=utf-8
 encoding//actor/views.py=utf-8
@@ -26,5 +26,6 @@ encoding//flat/views.py=utf-8
 encoding//install/tests.py=utf-8
 encoding//join/views.py=utf-8
 encoding//recs/recs.py=utf-8
+encoding//recs/reformat_as_csv.py=utf-8
 encoding//tools/update-file_uploader=utf-8
 encoding/settings.py=utf-8

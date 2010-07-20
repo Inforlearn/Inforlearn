@@ -335,7 +335,7 @@ MARKDOWN_ENABLED = True
 COMMENT_QUICKLINKS_ENABLED = True
 # If enabled, adds support for using access keys 1-9 to insert @nicks into
 # comment box. Requires COMMENT_QUICKLINKS_ENABLED.
-COMMENT_QUICKLINKS_ACCESSKEYS_ENABLED = True
+COMMENT_QUICKLINKS_ACCESSKEYS_ENABLED = False
 
 PROFILE_DB = False
 

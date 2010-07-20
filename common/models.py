@@ -341,6 +341,18 @@ class Image(CachingModel):
   #               because we haven't been storing the path :/
 class File(CachingModel):
   content = models.BlobProperty()     # the image itself
+
+class Recommendation(CachingModel):
+  """ Recommendation items fetch from results of Map/Reduce pre-computing
+  actor: user or channel
+  items: list of items and percent
+  type: - user:users
+        - user:channels
+        - channel:channels
+  """
+  actor = models.StringProperty()
+  items = models.BlobProperty()
+  type = models.StringProperty()
   
 class InboxEntry(CachingModel):
   """This is the inbox index for an entry.
