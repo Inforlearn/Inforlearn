@@ -24,28 +24,19 @@
           </p>
         </div>
       {% endif %}
-<!--
-      {% block logo %}
-        <a href="/" id="logo">
-          <img src="/themes/{{DEFAULT_THEME|urlencode}}/logo.png" 
-               height="73" 
-               width="89" 
-               alt="{{SITE_NAME}}" />
-        </a>
-      {% endblock %}
--->        
+      
       {% if not request.mobile %}
         {% block mainnav %}
         <ul id="main-nav" style="margin-bottom: 0;">
-            <div id="site-logo">
-	            <li style="background: #9C0;">
-	              <span>
-	                <a href="/" style="color: #fff; text-shadow: 0px 0px 1px #fff;">
-	                  <b>Inforlearn.com</b>
-	                </a>
-	              </span>
-	            </li>
-	         </div>      
+                <div id="site-logo">
+                <li>
+                  <span>
+                    <a href="/" style="color: #fff;background: #9C0;">
+                      <b>Inforlearn.com</b>
+                    </a>
+                  </span>
+                </li>
+             </div>  
           {% if request.user %} {# The logged-in navigation #}
             <li {% ifequal area "home" %}class="current"{% endifequal %} >
               <span><a href="{{request.user.url}}/overview">Nhà tôi</a></span>

@@ -385,12 +385,12 @@ color:#666;
 a:link,a:visited {
 -webkit-transition-duration:.3s;
 -webkit-transition-property:color, background;
-color:#009bc7;
+color: #4183C4;
 }
 
 a:hover,a:link:hover,a:visited:hover {
 background:#009bc7;
-color:#fff;
+color:#009bc7;
 }
 
 #self .vcard p.phone {

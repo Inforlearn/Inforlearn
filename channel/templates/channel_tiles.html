@@ -7,7 +7,7 @@
   
       <h3><a href="{% url_for channel request %}">{{channel.display_nick}}</a></h3>
       {% if channel.extra.description %}
-        <p>{{channel.extra.description|truncatewords:16}}</p>
+        <p>{{channel.extra.description}}</p>
       {% endif %}
       {% if channel.extra.member_count %}
         <p class="members">

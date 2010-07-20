@@ -1,0 +1,111 @@
+[INFO     2010-07-20 15:21:31,049 bulkloader.py] Logging to bulkloader-log-20100720.152131
+[INFO     2010-07-20 15:21:31,052 bulkloader.py] Throttling transfers:
+[INFO     2010-07-20 15:21:31,052 bulkloader.py] Bandwidth: 250000 bytes/second
+[INFO     2010-07-20 15:21:31,052 bulkloader.py] HTTP connections: 8/second
+[INFO     2010-07-20 15:21:31,052 bulkloader.py] Entities inserted/fetched/modified: 20/second
+[INFO     2010-07-20 15:21:31,053 bulkloader.py] Batch Size: 10
+[INFO     2010-07-20 15:21:31,085 bulkloader.py] Opening database: bulkloader-progress-20100720.152131.sql3
+[INFO     2010-07-20 15:21:31,444 bulkloader.py] Opening database: bulkloader-results-20100720.152131.sql3
+[DEBUG    2010-07-20 15:21:31,734 adaptive_thread_pool.py] [WorkerThread-0] WorkerThread: started
+[DEBUG    2010-07-20 15:21:31,735 adaptive_thread_pool.py] [WorkerThread-1] WorkerThread: started
+[DEBUG    2010-07-20 15:21:31,735 adaptive_thread_pool.py] [WorkerThread-2] WorkerThread: started
+[DEBUG    2010-07-20 15:21:31,735 adaptive_thread_pool.py] [WorkerThread-3] WorkerThread: started
+[DEBUG    2010-07-20 15:21:31,735 adaptive_thread_pool.py] [WorkerThread-4] WorkerThread: started
+[DEBUG    2010-07-20 15:21:31,735 adaptive_thread_pool.py] [WorkerThread-5] WorkerThread: started
+[DEBUG    2010-07-20 15:21:31,736 adaptive_thread_pool.py] [WorkerThread-6] WorkerThread: started
+[DEBUG    2010-07-20 15:21:31,736 adaptive_thread_pool.py] [WorkerThread-7] WorkerThread: started
+[DEBUG    2010-07-20 15:21:31,736 adaptive_thread_pool.py] [WorkerThread-8] WorkerThread: started
+[DEBUG    2010-07-20 15:21:31,736 adaptive_thread_pool.py] [WorkerThread-9] WorkerThread: started
+[DEBUG    2010-07-20 15:21:31,737 bulkloader.py] Configuring remote_api. url_path = /remote_api, servername = inforlearn.appspot.com
+[DEBUG    2010-07-20 15:21:31,749 bulkloader.py] Bulkloader using app_id: inforlearn
+[INFO     2010-07-20 15:21:31,750 bulkloader.py] Connecting to inforlearn.appspot.com/remote_api
+[DEBUG    2010-07-20 15:21:46,124 bulkloader.py] [Thread-12] DataSourceThread: started
+[INFO     2010-07-20 15:21:46,124 bulkloader.py] Downloading kinds: ['__Stat_PropertyType_PropertyName_Kind__']
+[DEBUG    2010-07-20 15:21:46,125 bulkloader.py] [Thread-11] ExportProgressThread: started
+[DEBUG    2010-07-20 15:21:46,240 bulkloader.py] [Thread-12] DataSourceThread: exiting
+[DEBUG    2010-07-20 15:21:46,255 bulkloader.py] Waiting for worker threads to finish...
+[DEBUG    2010-07-20 15:21:46,277 adaptive_thread_pool.py] [WorkerThread-0] Got work item __Stat_PropertyType_PropertyName_Kind__-ASC[None to None]
+[DEBUG    2010-07-20 15:21:47,245 bulkloader.py] bulkloader-results-20100720.152131.sql3 insert: delta=0.011
+[DEBUG    2010-07-20 15:21:47,245 bulkloader.py] Entities transferred total: 10
+[DEBUG    2010-07-20 15:21:47,353 bulkloader.py] delete: delta=0.001
+[DEBUG    2010-07-20 15:21:47,511 bulkloader.py] [WorkerThread-0] __Stat_PropertyType_PropertyName_Kind__-ASC[None to None] Transferred 10 entities in 0.9 seconds
+[DEBUG    2010-07-20 15:21:47,512 adaptive_thread_pool.py] Increasing active thread count to 2
+[DEBUG    2010-07-20 15:21:47,513 adaptive_thread_pool.py] [WorkerThread-6] Got work item __Stat_PropertyType_PropertyName_Kind__-DESC(datastore_types.Key.from_path(u'__Stat_PropertyType_PropertyName_Kind__', u'Date/Time_created_at_StreamEntry', _app=u'inforlearn') to None]
+[INFO     2010-07-20 15:21:47,872 bulkloader.py] __Stat_PropertyType_PropertyName_Kind__: No descending index on __key__, performing serial download
+[DEBUG    2010-07-20 15:21:48,434 bulkloader.py] bulkloader-results-20100720.152131.sql3 insert: delta=0.014
+[DEBUG    2010-07-20 15:21:48,435 bulkloader.py] Entities transferred total: 20
+[DEBUG    2010-07-20 15:21:48,542 bulkloader.py] delete: delta=0.001
+[DEBUG    2010-07-20 15:21:48,700 bulkloader.py] [WorkerThread-6] __Stat_PropertyType_PropertyName_Kind__-ASC(datastore_types.Key.from_path(u'__Stat_PropertyType_PropertyName_Kind__', u'Date/Time_created_at_StreamEntry', _app=u'inforlearn') to None] Transferred 10 entities in 0.8 seconds
+[DEBUG    2010-07-20 15:21:48,700 adaptive_thread_pool.py] Increasing active thread count to 3
+[DEBUG    2010-07-20 15:21:48,701 adaptive_thread_pool.py] [WorkerThread-9] Got work item __Stat_PropertyType_PropertyName_Kind__-DESC(datastore_types.Key.from_path(u'__Stat_PropertyType_PropertyName_Kind__', u'Date/Time_timestamp___Stat_Total__', _app=u'inforlearn') to None]
+[DEBUG    2010-07-20 15:21:50,059 bulkloader.py] bulkloader-results-20100720.152131.sql3 insert: delta=0.006
+[DEBUG    2010-07-20 15:21:50,059 bulkloader.py] Entities transferred total: 30
+[DEBUG    2010-07-20 15:21:50,163 bulkloader.py] delete: delta=0.000
+[DEBUG    2010-07-20 15:21:50,343 bulkloader.py] [WorkerThread-9] __Stat_PropertyType_PropertyName_Kind__-ASC(datastore_types.Key.from_path(u'__Stat_PropertyType_PropertyName_Kind__', u'Date/Time_timestamp___Stat_Total__', _app=u'inforlearn') to None] Transferred 10 entities in 1.3 seconds
+[DEBUG    2010-07-20 15:21:50,344 adaptive_thread_pool.py] Increasing active thread count to 4
+[DEBUG    2010-07-20 15:21:50,344 adaptive_thread_pool.py] [WorkerThread-4] Got work item __Stat_PropertyType_PropertyName_Kind__-DESC(datastore_types.Key.from_path(u'__Stat_PropertyType_PropertyName_Kind__', u'Integer_count___Stat_Kind__', _app=u'inforlearn') to None]
+[DEBUG    2010-07-20 15:21:50,966 bulkloader.py] bulkloader-results-20100720.152131.sql3 insert: delta=0.022
+[DEBUG    2010-07-20 15:21:50,966 bulkloader.py] Entities transferred total: 40
+[DEBUG    2010-07-20 15:21:51,074 bulkloader.py] delete: delta=0.000
+[DEBUG    2010-07-20 15:21:51,249 bulkloader.py] [WorkerThread-4] __Stat_PropertyType_PropertyName_Kind__-ASC(datastore_types.Key.from_path(u'__Stat_PropertyType_PropertyName_Kind__', u'Integer_count___Stat_Kind__', _app=u'inforlearn') to None] Transferred 10 entities in 0.5 seconds
+[DEBUG    2010-07-20 15:21:51,250 adaptive_thread_pool.py] Increasing active thread count to 5
+[DEBUG    2010-07-20 15:21:51,250 adaptive_thread_pool.py] [WorkerThread-4] Got work item __Stat_PropertyType_PropertyName_Kind__-DESC(datastore_types.Key.from_path(u'__Stat_PropertyType_PropertyName_Kind__', u'NULL_deleted_at_Actor', _app=u'inforlearn') to None]
+[DEBUG    2010-07-20 15:21:51,913 bulkloader.py] bulkloader-results-20100720.152131.sql3 insert: delta=0.016
+[DEBUG    2010-07-20 15:21:51,913 bulkloader.py] Entities transferred total: 50
+[DEBUG    2010-07-20 15:21:52,018 bulkloader.py] delete: delta=0.001
+[DEBUG    2010-07-20 15:21:52,200 bulkloader.py] [WorkerThread-4] __Stat_PropertyType_PropertyName_Kind__-ASC(datastore_types.Key.from_path(u'__Stat_PropertyType_PropertyName_Kind__', u'NULL_deleted_at_Actor', _app=u'inforlearn') to None] Transferred 10 entities in 0.5 seconds
+[DEBUG    2010-07-20 15:21:52,201 adaptive_thread_pool.py] Increasing active thread count to 6
+[DEBUG    2010-07-20 15:21:52,202 adaptive_thread_pool.py] [WorkerThread-4] Got work item __Stat_PropertyType_PropertyName_Kind__-DESC(datastore_types.Key.from_path(u'__Stat_PropertyType_PropertyName_Kind__', u'String_actor_Image', _app=u'inforlearn') to None]
+[DEBUG    2010-07-20 15:21:52,749 bulkloader.py] bulkloader-results-20100720.152131.sql3 insert: delta=0.007
+[DEBUG    2010-07-20 15:21:52,749 bulkloader.py] Entities transferred total: 60
+[DEBUG    2010-07-20 15:21:52,851 bulkloader.py] delete: delta=0.001
+[DEBUG    2010-07-20 15:21:53,008 bulkloader.py] [WorkerThread-4] __Stat_PropertyType_PropertyName_Kind__-ASC(datastore_types.Key.from_path(u'__Stat_PropertyType_PropertyName_Kind__', u'String_actor_Image', _app=u'inforlearn') to None] Transferred 10 entities in 0.4 seconds
+[DEBUG    2010-07-20 15:21:53,009 adaptive_thread_pool.py] Increasing active thread count to 7
+[DEBUG    2010-07-20 15:21:53,010 adaptive_thread_pool.py] [WorkerThread-4] Got work item __Stat_PropertyType_PropertyName_Kind__-DESC(datastore_types.Key.from_path(u'__Stat_PropertyType_PropertyName_Kind__', u'String_from_actor_Invite', _app=u'inforlearn') to None]
+[DEBUG    2010-07-20 15:21:53,944 bulkloader.py] bulkloader-results-20100720.152131.sql3 insert: delta=0.014
+[DEBUG    2010-07-20 15:21:53,944 bulkloader.py] Entities transferred total: 70
+[DEBUG    2010-07-20 15:21:54,050 bulkloader.py] delete: delta=0.001
+[DEBUG    2010-07-20 15:21:54,218 bulkloader.py] [WorkerThread-4] __Stat_PropertyType_PropertyName_Kind__-ASC(datastore_types.Key.from_path(u'__Stat_PropertyType_PropertyName_Kind__', u'String_from_actor_Invite', _app=u'inforlearn') to None] Transferred 10 entities in 0.8 seconds
+[DEBUG    2010-07-20 15:21:54,219 adaptive_thread_pool.py] Increasing active thread count to 8
+[DEBUG    2010-07-20 15:21:54,220 adaptive_thread_pool.py] [WorkerThread-8] Got work item __Stat_PropertyType_PropertyName_Kind__-DESC(datastore_types.Key.from_path(u'__Stat_PropertyType_PropertyName_Kind__', u'String_owner_Stream', _app=u'inforlearn') to None]
+[DEBUG    2010-07-20 15:21:54,627 bulkloader.py] bulkloader-results-20100720.152131.sql3 insert: delta=0.009
+[DEBUG    2010-07-20 15:21:54,627 bulkloader.py] Entities transferred total: 80
+[DEBUG    2010-07-20 15:21:54,738 bulkloader.py] delete: delta=0.000
+[DEBUG    2010-07-20 15:21:54,904 bulkloader.py] [WorkerThread-8] __Stat_PropertyType_PropertyName_Kind__-ASC(datastore_types.Key.from_path(u'__Stat_PropertyType_PropertyName_Kind__', u'String_owner_Stream', _app=u'inforlearn') to None] Transferred 10 entities in 0.3 seconds
+[DEBUG    2010-07-20 15:21:54,905 adaptive_thread_pool.py] Increasing active thread count to 9
+[DEBUG    2010-07-20 15:21:54,906 adaptive_thread_pool.py] [WorkerThread-0] Got work item __Stat_PropertyType_PropertyName_Kind__-DESC(datastore_types.Key.from_path(u'__Stat_PropertyType_PropertyName_Kind__', u'String_size_Image', _app=u'inforlearn') to None]
+[DEBUG    2010-07-20 15:21:55,482 bulkloader.py] bulkloader-results-20100720.152131.sql3 insert: delta=0.018
+[DEBUG    2010-07-20 15:21:55,482 bulkloader.py] Entities transferred total: 90
+[DEBUG    2010-07-20 15:21:55,592 bulkloader.py] delete: delta=0.000
+[DEBUG    2010-07-20 15:21:55,740 bulkloader.py] [WorkerThread-0] __Stat_PropertyType_PropertyName_Kind__-ASC(datastore_types.Key.from_path(u'__Stat_PropertyType_PropertyName_Kind__', u'String_size_Image', _app=u'inforlearn') to None] Transferred 10 entities in 0.4 seconds
+[DEBUG    2010-07-20 15:21:55,741 adaptive_thread_pool.py] Increasing active thread count to 10
+[DEBUG    2010-07-20 15:21:55,741 adaptive_thread_pool.py] [WorkerThread-0] Got work item __Stat_PropertyType_PropertyName_Kind__-DESC(datastore_types.Key.from_path(u'__Stat_PropertyType_PropertyName_Kind__', u'String_title_Stream', _app=u'inforlearn') to None]
+[DEBUG    2010-07-20 15:21:56,302 bulkloader.py] bulkloader-results-20100720.152131.sql3 insert: delta=0.012
+[DEBUG    2010-07-20 15:21:56,302 bulkloader.py] Entities transferred total: 97
+[DEBUG    2010-07-20 15:21:56,403 bulkloader.py] delete: delta=0.000
+[DEBUG    2010-07-20 15:21:56,496 bulkloader.py] [WorkerThread-0] __Stat_PropertyType_PropertyName_Kind__-ASC(datastore_types.Key.from_path(u'__Stat_PropertyType_PropertyName_Kind__', u'String_title_Stream', _app=u'inforlearn') to None] Transferred 7 entities in 0.4 seconds
+[DEBUG    2010-07-20 15:21:56,534 adaptive_thread_pool.py] Waiting for Anonymous_WorkerThread to exit
+[DEBUG    2010-07-20 15:21:56,535 adaptive_thread_pool.py] [WorkerThread-7] WorkerThread: exiting
+[DEBUG    2010-07-20 15:21:56,539 adaptive_thread_pool.py] [WorkerThread-3] WorkerThread: exiting
+[DEBUG    2010-07-20 15:21:56,539 adaptive_thread_pool.py] [WorkerThread-6] WorkerThread: exiting
+[DEBUG    2010-07-20 15:21:56,540 adaptive_thread_pool.py] [WorkerThread-9] WorkerThread: exiting
+[DEBUG    2010-07-20 15:21:56,559 adaptive_thread_pool.py] [WorkerThread-0] WorkerThread: exiting
+[DEBUG    2010-07-20 15:21:56,560 adaptive_thread_pool.py] Waiting for Anonymous_WorkerThread to exit
+[DEBUG    2010-07-20 15:21:56,562 adaptive_thread_pool.py] [WorkerThread-5] WorkerThread: exiting
+[DEBUG    2010-07-20 15:21:56,568 adaptive_thread_pool.py] [WorkerThread-4] WorkerThread: exiting
+[DEBUG    2010-07-20 15:21:56,576 adaptive_thread_pool.py] [WorkerThread-2] WorkerThread: exiting
+[DEBUG    2010-07-20 15:21:56,577 adaptive_thread_pool.py] [WorkerThread-1] WorkerThread: exiting
+[DEBUG    2010-07-20 15:21:56,577 adaptive_thread_pool.py] Waiting for Anonymous_WorkerThread to exit
+[DEBUG    2010-07-20 15:21:56,577 adaptive_thread_pool.py] [WorkerThread-8] WorkerThread: exiting
+[DEBUG    2010-07-20 15:21:56,577 adaptive_thread_pool.py] Waiting for Anonymous_WorkerThread to exit
+[DEBUG    2010-07-20 15:21:56,578 adaptive_thread_pool.py] Waiting for Anonymous_WorkerThread to exit
+[DEBUG    2010-07-20 15:21:56,578 adaptive_thread_pool.py] Waiting for Anonymous_WorkerThread to exit
+[DEBUG    2010-07-20 15:21:56,578 adaptive_thread_pool.py] Waiting for Anonymous_WorkerThread to exit
+[DEBUG    2010-07-20 15:21:56,578 adaptive_thread_pool.py] Waiting for Anonymous_WorkerThread to exit
+[DEBUG    2010-07-20 15:21:56,578 adaptive_thread_pool.py] Waiting for Anonymous_WorkerThread to exit
+[DEBUG    2010-07-20 15:21:56,578 adaptive_thread_pool.py] Waiting for Anonymous_WorkerThread to exit
+[DEBUG    2010-07-20 15:21:56,579 bulkloader.py] Waiting for progress_thread to terminate...
+[DEBUG    2010-07-20 15:21:56,610 bulkloader.py] [Thread-11] ExportProgressThread: exiting
+[DEBUG    2010-07-20 15:21:56,619 bulkloader.py] ... done.
+[INFO     2010-07-20 15:21:56,712 bulkloader.py] Have 97 entities, 0 previously transferred
+[INFO     2010-07-20 15:21:56,712 bulkloader.py] 97 entities (45325 bytes) transferred in 25.7 seconds

@@ -1,0 +1,81 @@
+[INFO     2010-07-20 13:41:23,609 bulkloader.py] Logging to bulkloader-log-20100720.134123
+[INFO     2010-07-20 13:41:23,613 bulkloader.py] Throttling transfers:
+[INFO     2010-07-20 13:41:23,613 bulkloader.py] Bandwidth: 250000 bytes/second
+[INFO     2010-07-20 13:41:23,613 bulkloader.py] HTTP connections: 8/second
+[INFO     2010-07-20 13:41:23,613 bulkloader.py] Entities inserted/fetched/modified: 20/second
+[INFO     2010-07-20 13:41:23,614 bulkloader.py] Batch Size: 10
+[INFO     2010-07-20 13:41:23,614 bulkloader.py] Opening database: bulkloader-progress-20100720.134123.sql3
+[INFO     2010-07-20 13:41:24,034 bulkloader.py] Opening database: bulkloader-results-20100720.134123.sql3
+[DEBUG    2010-07-20 13:41:24,352 adaptive_thread_pool.py] [WorkerThread-1] WorkerThread: started
+[DEBUG    2010-07-20 13:41:24,352 adaptive_thread_pool.py] [WorkerThread-0] WorkerThread: started
+[DEBUG    2010-07-20 13:41:24,352 adaptive_thread_pool.py] [WorkerThread-2] WorkerThread: started
+[DEBUG    2010-07-20 13:41:24,352 adaptive_thread_pool.py] [WorkerThread-3] WorkerThread: started
+[DEBUG    2010-07-20 13:41:24,353 adaptive_thread_pool.py] [WorkerThread-4] WorkerThread: started
+[DEBUG    2010-07-20 13:41:24,353 adaptive_thread_pool.py] [WorkerThread-5] WorkerThread: started
+[DEBUG    2010-07-20 13:41:24,353 adaptive_thread_pool.py] [WorkerThread-6] WorkerThread: started
+[DEBUG    2010-07-20 13:41:24,354 adaptive_thread_pool.py] [WorkerThread-7] WorkerThread: started
+[DEBUG    2010-07-20 13:41:24,354 adaptive_thread_pool.py] [WorkerThread-8] WorkerThread: started
+[DEBUG    2010-07-20 13:41:24,354 adaptive_thread_pool.py] [WorkerThread-9] WorkerThread: started
+[DEBUG    2010-07-20 13:41:24,354 bulkloader.py] Configuring remote_api. url_path = /remote_api, servername = inforlearn.appspot.com
+[DEBUG    2010-07-20 13:41:24,356 bulkloader.py] Bulkloader using app_id: =inforlearn
+[INFO     2010-07-20 13:41:24,356 bulkloader.py] Connecting to inforlearn.appspot.com/remote_api
+[DEBUG    2010-07-20 13:41:34,009 bulkloader.py] [Thread-12] DataSourceThread: started
+[INFO     2010-07-20 13:41:34,009 bulkloader.py] Downloading kinds: ['File']
+[DEBUG    2010-07-20 13:41:34,009 bulkloader.py] [Thread-11] ExportProgressThread: started
+[DEBUG    2010-07-20 13:41:34,162 bulkloader.py] [Thread-12] DataSourceThread: exiting
+[DEBUG    2010-07-20 13:41:34,171 adaptive_thread_pool.py] [WorkerThread-1] Got work item File-ASC[None to None]
+[DEBUG    2010-07-20 13:41:34,176 bulkloader.py] Waiting for worker threads to finish...
+[ERROR    2010-07-20 13:41:34,656 adaptive_thread_pool.py] [WorkerThread-1] WorkerThread:
+Traceback (most recent call last):
+  File "/home/Workspace/Inforlearn/.google_appengine/google/appengine/tools/adaptive_thread_pool.py", line 150, in WorkOnItems
+    status, instruction = item.PerformWork(self.__thread_pool)
+  File "/home/Workspace/Inforlearn/.google_appengine/google/appengine/tools/bulkloader.py", line 695, in PerformWork
+    transfer_time = self._TransferItem(thread_pool)
+  File "/home/Workspace/Inforlearn/.google_appengine/google/appengine/tools/bulkloader.py", line 1082, in _TransferItem
+    self, retry_parallel=self.first)
+  File "/home/Workspace/Inforlearn/.google_appengine/google/appengine/tools/bulkloader.py", line 1344, in GetEntities
+    results = self._QueryForPbs(query)
+  File "/home/Workspace/Inforlearn/.google_appengine/google/appengine/tools/bulkloader.py", line 1315, in _QueryForPbs
+    raise datastore._ToDatastoreError(e)
+BadRequestError: Application Id (app) format is invalid: '=inforlearn'
+[DEBUG    2010-07-20 13:41:34,661 adaptive_thread_pool.py] [WorkerThread-1] WorkerThread: exiting
+[INFO     2010-07-20 13:41:34,661 adaptive_thread_pool.py] [WorkerThread-0] Backing off due to errors: 1.0 seconds
+[INFO     2010-07-20 13:41:34,677 bulkloader.py] An error occurred. Shutting down...
+[DEBUG    2010-07-20 13:41:34,679 adaptive_thread_pool.py] Waiting for Anonymous_WorkerThread to exit
+[DEBUG    2010-07-20 13:41:34,679 adaptive_thread_pool.py] [WorkerThread-9] WorkerThread: exiting
+[DEBUG    2010-07-20 13:41:34,680 adaptive_thread_pool.py] [WorkerThread-2] WorkerThread: exiting
+[DEBUG    2010-07-20 13:41:34,680 adaptive_thread_pool.py] [WorkerThread-3] WorkerThread: exiting
+[DEBUG    2010-07-20 13:41:34,681 adaptive_thread_pool.py] [WorkerThread-4] WorkerThread: exiting
+[DEBUG    2010-07-20 13:41:34,681 adaptive_thread_pool.py] [WorkerThread-5] WorkerThread: exiting
+[DEBUG    2010-07-20 13:41:34,682 adaptive_thread_pool.py] [WorkerThread-6] WorkerThread: exiting
+[DEBUG    2010-07-20 13:41:34,682 adaptive_thread_pool.py] [WorkerThread-7] WorkerThread: exiting
+[DEBUG    2010-07-20 13:41:34,682 adaptive_thread_pool.py] [WorkerThread-8] WorkerThread: exiting
+[DEBUG    2010-07-20 13:41:34,912 adaptive_thread_pool.py] [WorkerThread-0] WorkerThread: exiting
+[DEBUG    2010-07-20 13:41:34,913 adaptive_thread_pool.py] Waiting for Anonymous_WorkerThread to exit
+[DEBUG    2010-07-20 13:41:34,914 adaptive_thread_pool.py] Waiting for Anonymous_WorkerThread to exit
+[DEBUG    2010-07-20 13:41:34,914 adaptive_thread_pool.py] Waiting for Anonymous_WorkerThread to exit
+[DEBUG    2010-07-20 13:41:34,914 adaptive_thread_pool.py] Waiting for Anonymous_WorkerThread to exit
+[DEBUG    2010-07-20 13:41:34,915 adaptive_thread_pool.py] Waiting for Anonymous_WorkerThread to exit
+[DEBUG    2010-07-20 13:41:34,915 adaptive_thread_pool.py] Waiting for Anonymous_WorkerThread to exit
+[DEBUG    2010-07-20 13:41:34,915 adaptive_thread_pool.py] Waiting for Anonymous_WorkerThread to exit
+[DEBUG    2010-07-20 13:41:34,915 adaptive_thread_pool.py] Waiting for Anonymous_WorkerThread to exit
+[DEBUG    2010-07-20 13:41:34,916 adaptive_thread_pool.py] Waiting for Anonymous_WorkerThread to exit
+[ERROR    2010-07-20 13:41:34,916 adaptive_thread_pool.py] Error in WorkerThread-1: Application Id (app) format is invalid: '=inforlearn'
+[DEBUG    2010-07-20 13:41:34,917 adaptive_thread_pool.py] Traceback (most recent call last):
+  File "/home/Workspace/Inforlearn/.google_appengine/google/appengine/tools/adaptive_thread_pool.py", line 150, in WorkOnItems
+    status, instruction = item.PerformWork(self.__thread_pool)
+  File "/home/Workspace/Inforlearn/.google_appengine/google/appengine/tools/bulkloader.py", line 695, in PerformWork
+    transfer_time = self._TransferItem(thread_pool)
+  File "/home/Workspace/Inforlearn/.google_appengine/google/appengine/tools/bulkloader.py", line 1082, in _TransferItem
+    self, retry_parallel=self.first)
+  File "/home/Workspace/Inforlearn/.google_appengine/google/appengine/tools/bulkloader.py", line 1344, in GetEntities
+    results = self._QueryForPbs(query)
+  File "/home/Workspace/Inforlearn/.google_appengine/google/appengine/tools/bulkloader.py", line 1315, in _QueryForPbs
+    raise datastore._ToDatastoreError(e)
+BadRequestError: Application Id (app) format is invalid: '=inforlearn'
+
+[DEBUG    2010-07-20 13:41:34,918 bulkloader.py] Waiting for progress_thread to terminate...
+[DEBUG    2010-07-20 13:41:34,927 bulkloader.py] [Thread-11] ExportProgressThread: exiting
+[DEBUG    2010-07-20 13:41:34,927 bulkloader.py] ... done.
+[INFO     2010-07-20 13:41:34,928 bulkloader.py] Have 0 entities, 0 previously transferred
+[INFO     2010-07-20 13:41:34,929 bulkloader.py] 0 entities (4061 bytes) transferred in 11.3 seconds
