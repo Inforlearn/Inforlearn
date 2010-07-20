@@ -20,7 +20,7 @@ from google.appengine.ext import db
 from google.appengine.api import images
 from google.appengine.api.labs import taskqueue
 
-from common.models import Stream, StreamEntry, InboxEntry, Actor, Relation
+from common.models import Stream, StreamEntry, InboxEntry, Actor, Relation, Recommendation
 from common.models import Subscription, Invite, OAuthConsumer, OAuthRequestToken
 from common.models import OAuthAccessToken, Image, Activation
 from common.models import KeyValue, Presence
@@ -5241,3 +5241,25 @@ def _crop_to_square(size, dimensions):
     bottom_y = top_y + sq
   return (float(left_x) / w, float(top_y) / h,
           float(right_x) / w, float(bottom_y) / h)
+  
+  
+def get_recommended_items(actor_name, type):
+  """
+  recommended/user:users/AloneRoad
+  
+  actor_name: user@example.com
+  type: 
+  - user:users
+  - user:channels
+  - channel:channels
+  """
+  key_name = "recommended/%s/%s" % (type, actor_name)
+  data = Recommendation.get_by_key_name(key_name)
+  if not data:
+    return []
+  data = data.items
+  return eval(data)
+  
+def get_actor_details(actor_nick):
+  key_name = Actor.key_from(nick=actor_nick)
+  return Actor.get_by_key_name(key_name)
