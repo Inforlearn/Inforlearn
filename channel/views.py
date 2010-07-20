@@ -80,6 +80,8 @@ def channel_index(request, format='html'):
   for c in followed_channels:
     c.i_am_member = True
 
+#  print api.get_recommended_items(request.user.nick, "user:users")
+#  print api.get_actor_details("AloneRoad@example.com").type
   try:
     # for the Our Picks section of the sidebar
     ourpicks_channels = api.actor_get_channels_member(request.user, api.ROOT.nick)
