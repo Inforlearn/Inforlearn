@@ -1,2 +1,0 @@
-python unzip user_history.zlib user_history.txt
-dumbo start recs.py -input user_history.txt -output similarity.txt

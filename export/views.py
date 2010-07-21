@@ -76,7 +76,7 @@ def channel_admins(request):
 #  else:
 #    if not users.is_current_user_admin():
 #      return HttpResponseRedirect('/')
-#    
+#        
   query = Relation.gql("WHERE relation = :1", "channeladmin")
   data = []
   limit = 1000

@@ -344,15 +344,9 @@ class File(CachingModel):
 
 class Recommendation(CachingModel):
   """ Recommendation items fetch from results of Map/Reduce pre-computing
-  actor: user or channel
   items: list of items and percent
-  type: - user:users
-        - user:channels
-        - channel:channels
   """
-  actor = models.StringProperty()
   items = models.BlobProperty()
-  type = models.StringProperty()
   
 class InboxEntry(CachingModel):
   """This is the inbox index for an entry.

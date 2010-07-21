@@ -481,7 +481,7 @@ def actor_contacts(request, nick=None, format='html'):
         pass
     for x in actors:
       actors[x].rel = 'contact'
-    whose = u"của %s" % view.display_nick()
+    whose = view.display_nick()
 
   # here comes lots of munging data into shape
   actor_tiles = [actors[x] for x in contact_nicks if x in actors]
@@ -543,7 +543,7 @@ def actor_followers(request, nick=None, format='html'):
         actors[actor].my_contact = True
     whose = u'bạn'
   else:
-    whose = u"của %s" % view.display_nick()
+    whose = view.display_nick()
 
   # here comes lots of munging data into shape
   actor_tiles = [actors[x] for x in follower_nicks if x in actors]
@@ -561,6 +561,45 @@ def actor_followers(request, nick=None, format='html'):
   if format == 'html':
     t = loader.get_template('actor/templates/followers.html')
     return http.HttpResponse(t.render(c))
+
+@alternate_nick
+def recommended_users(request, nick=None, format="html"):
+  nick = clean.nick(nick)
+
+  view = api.actor_lookup_nick(request.user, nick)
+
+  if not view:
+    raise exception.UserDoesNotExistError(nick, request.user)
+
+  handled = common_views.handle_view_action(
+      request,
+      { 'actor_add_contact': request.path,
+        'actor_remove_contact': request.path, })
+  if handled:
+    return handled
+
+  if request.user and request.user.nick == view.nick:
+    whose = u'bạn'
+  else:
+    whose = view.display_nick()
+
+  area = 'people'
+
+#  nick = nick.split("@")[0] + "@inforlearn.appspot.com"
+  contacts = api.actor_get_contacts(request.user, request.user.nick, limit=1000)
+
+  users = api.get_recommended_items(nick, "user:users")
+  if users is not None:
+    actor_tiles_count = len(users) 
+    users = [api.get_actor_details(user[1]) for user in users if user[1] not in contacts]
+  
+  c = template.RequestContext(request, locals())
+
+  # TODO: Other output formats.
+  if format == 'html':
+    t = loader.get_template('actor/templates/recommended_users.html')
+    return http.HttpResponse(t.render(c))
+
 
 @alternate_nick
 def actor_settings(request, nick, page='index'):
