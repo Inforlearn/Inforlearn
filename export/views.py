@@ -11,7 +11,7 @@ from common.models import Relation, StreamEntry, File
 from google.appengine.ext import db
 from zlib import compress
 
-line_format = "%s | %s"
+line_format = "%s\t%s"
 
 def channel_members(request):
 #  user = users.get_current_user()

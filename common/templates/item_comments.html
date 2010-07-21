@@ -58,7 +58,7 @@
           
           <script type="text/javascript">
             shortcut.add("Ctrl+Space",function() {
-              ob  = $(".image_language");
+              ob  = $j(".image_language");
                 if(defaultLang == "vn"){
                     defaultLang = "en";
                     ob.attr("src", "/themes/{{DEFAULT_THEME|urlencode}}/unchecked.png");
@@ -81,7 +81,7 @@
           <script type="text/javascript">
             var defaultLang = "vn";
             function toggle_lang(){
-              ob = $(".image_language");
+              ob = $j(".image_language");
               if(defaultLang == "vn"){
                 defaultLang = "en";
                 ob.attr("src", "/themes/{{DEFAULT_THEME|urlencode}}/unchecked.png");
