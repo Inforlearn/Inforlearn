@@ -5245,7 +5245,8 @@ def _crop_to_square(size, dimensions):
   
 def get_recommended_items(actor_name, type):
   """
-  recommended/user:users/AloneRoad
+  key_name: 
+    user:users/AloneRoad
   
   actor_name: user@example.com
   type: 
@@ -5253,7 +5254,7 @@ def get_recommended_items(actor_name, type):
   - user:channels
   - channel:channels
   """
-  key_name = "recommended/%s/%s" % (type, actor_name)
+  key_name = type + "/" + actor_name
   data = Recommendation.get_by_key_name(key_name)
   if not data:
     return []
@@ -5261,5 +5262,5 @@ def get_recommended_items(actor_name, type):
   return eval(data)
   
 def get_actor_details(actor_nick):
-  key_name = Actor.key_from(nick=actor_nick)
+  key_name = "actor/%s" % actor_nick
   return Actor.get_by_key_name(key_name)

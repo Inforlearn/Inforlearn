@@ -1,2 +1,0 @@
-../.google_appengine/appcfg.py upload_data --config_file=bulkloader.yaml --filename=items.csv --kind=Recommendation --url=http://inforlearn.appspot.com/remote_api
-

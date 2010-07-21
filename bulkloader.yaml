@@ -15,14 +15,6 @@ transformers:
       external_name: key
       export_transform: transform.key_id_or_name_as_string
 
-    - property: actor
-      external_name: actor
-      # Type: String Stats: 22 properties of this type in this kind.
-      
-    - property: type
-      external_name: type
-      # Type: String Stats: 22 properties of this type in this kind.
-
     - property: items
       external_name: items
       # Type: Blob Stats: 5 properties of this type in this kind.

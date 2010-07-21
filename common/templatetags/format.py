@@ -27,7 +27,11 @@ bold_regex = re.compile(r'\*([^*]+)\*')
 italic_regex = re.compile(r'_([^_]+)_')
 emoticons_style = "style='display: inline; vertical-align: middle; margin-bottom: 7px;'"
 emoticons = [
+[":))", "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/21.gif'>"],
+[':)]', "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/100.gif'>"],
+[":((", "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/20.gif'>"],
 [":)", "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/1.gif'"],
+[':(|)', " <img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/51.gif'>"],
 [":(", "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/2.gif'>"],
 [";)", "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/3.gif'>"],
 [":D", "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/4.gif'>"],
@@ -46,8 +50,6 @@ emoticons = [
 [":-S", "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/17.gif'>"],
 ["#:-S", "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/18.gif'>"],
 [">:)", "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/19.gif'>"],
-[":((", "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/20.gif'>"],
-[":))", "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/21.gif'>"],
 [":|", "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/22.gif'>"],
 ["/:)", "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/23.gif'>"],
 ["=))", "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/24.gif'>"],
@@ -55,7 +57,6 @@ emoticons = [
 [":-B", "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/26.gif'>"],
 ["=;", "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/27.gif'>"],
 [':-c', " <img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/101.gif'>"],
-[':)]', "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/100.gif'>"],
 ['~X(', "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/102.gif'>"],
 [':-h', "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/103.gif'>"],
 [':-t', "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/104.gif'>"],
@@ -92,7 +93,6 @@ emoticons = [
 ['%-(', "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/107.gif'>"],
 [':@)', "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/49.gif'>"],
 ['3:-O', " <img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/50.gif'>"],
-[':(|)', " <img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/51.gif'>"],
 ['~:>', " <img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/52.gif'>"],
 ['@};-', " <img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/53.gif'>"],
 ['%%-', "<img src='http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/54.gif'>"],

@@ -125,14 +125,14 @@ def channel_history(request, nick, format='html'):
   if you are an admin you should have the options to modify the channel
   """
   nick = clean.channel(nick)
-
+  
   view = api.actor_lookup_nick(request.user, nick)
   if not view:
     return http.HttpResponseRedirect('/channel/create?channel=%s' % nick)
 
   admins = api.channel_get_admins(request.user, channel=view.nick)
   members = api.channel_get_members(request.user, channel=view.nick)
-
+  
   handled = common_views.handle_view_action(
       request,
       {'channel_join': request.path,
@@ -212,6 +212,10 @@ def channel_history(request, nick, format='html'):
   entries = display.prep_entry_list(entries, streams, actors)
   admins = [actors[x] for x in admins if actors[x]]
   members = [actors[x] for x in members if actors[x]]
+
+#  transform_nick = view.nick.split('@')[0] + "@inforlearn.appspot.com"
+  items = api.get_recommended_items(view.nick, "channel:channels")  
+  items = [api.get_actor_details(item[1]) for item in items[:10]]
 
   # END inbox generation chaos
 
