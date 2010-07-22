@@ -80,6 +80,7 @@ urlpatterns += patterns('',
 # CHANNEL
 urlpatterns += patterns('channel.views',
     (r'^channel/browse', 'channel_browse'),
+    (r'^channel/recommendation', 'channel_recommendation_list'),
     (r'^channel/create$', 'channel_create'),
     (r'^channel/(?P<nick>\w+)/presence/(?P<item>[\da-f]+)/(?P<format>json|xml|atom)$', 'channel_item'),
     (r'^channel/(?P<nick>\w+)/presence/(?P<item>[\da-f]+)$', 'channel_item'),

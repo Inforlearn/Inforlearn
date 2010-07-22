@@ -42,7 +42,7 @@ def explore_recent(request, format="html"):
   entries = prep_entry_list(entries, streams, actors)
 
   # END inbox generation chaos
-  channels = api.channel_browse(request.user, 10)
+  channels = api.channel_browse(request.user, 20)
 
   area = 'explore'
   sidebar_green_top = True
