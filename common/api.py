@@ -5264,3 +5264,12 @@ def get_recommended_items(actor_name, type):
 def get_actor_details(actor_nick):
   key_name = "actor/%s" % actor_nick
   return Actor.get_by_key_name(key_name)
+
+def _actor_get_channels(actor_nick):
+  limit = 1000
+  query = Relation.gql('WHERE target = :1 AND relation = :2',
+                       actor_nick,
+                       'channelmember')
+  rv = query.fetch(limit)
+  result = [x.owner for x in rv]
+  return result

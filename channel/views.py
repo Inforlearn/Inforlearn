@@ -11,6 +11,7 @@ from common import display
 from common import exception
 from common import util
 from common import views as common_views
+from operator import itemgetter
 
 
 CHANNEL_HISTORY_PER_PAGE = 20
@@ -51,6 +52,8 @@ def channel_index(request, format='html'):
   if you are not logged in, it should suggest that you log in to create or
   join channels and give a list of public channels
   """
+  view = api.actor_lookup_nick(request.user, request.user.nick)
+
   if not request.user:
     return channel_index_signedout(request, format='html')
 
@@ -68,8 +71,9 @@ def channel_index(request, format='html'):
 
   channel_nicks = owned_nicks + followed_nicks
   channels = api.channel_get_channels(request.user, channel_nicks)
-
+  
   owned_channels = [channels[x] for x in owned_nicks if channels[x]]
+
   for c in owned_channels:
     c.i_am_admin = True
 
@@ -80,16 +84,26 @@ def channel_index(request, format='html'):
   for c in followed_channels:
     c.i_am_member = True
 
-#  print api.get_recommended_items(request.user.nick, "user:users")
-#  print api.get_actor_details("AloneRoad@example.com").type
-  try:
-    # for the Our Picks section of the sidebar
-    ourpicks_channels = api.actor_get_channels_member(request.user, api.ROOT.nick)
-    ourpicks_channels = api.channel_get_channels(request.user, ourpicks_channels)
-    ourpicks_channels = [x for x in ourpicks_channels.values() if x]
-  except exception.ApiNotFound:
-    pass
-
+  current_channels = api.actor_get_channels_member(request.user, request.user.nick, limit=1000)
+  
+#  user_nick = request.user.nick.split("@")[0] + "@inforlearn.appspot.com"
+  users = api.get_recommended_items(request.user.nick, "user:users")  
+  recommended_channels = []
+  for user in users:
+    _channels = api._actor_get_channels(user[1])
+    for channel in _channels:
+      if channel not in current_channels:
+        channel_details = api.get_actor_details(channel)
+        recommended_channels.append({"rank": channel_details.rank, 
+                                     "details": channel_details})
+        
+  # TODO: find other way to sort for more clear and simple
+  # TODO: "Xem thêm" sẽ hiển thị toàn bộ danh sách gợi ý này, còn toàn bộ 
+  # nhóm sẽ chuyển sang mục "Khám phá"
+  # TODO: "Nhóm" nên sử dụng ảnh nền cá nhân
+  recommended_channels.sort(key=itemgetter("rank"), reverse=True)
+  ourpicks_channels = [x["details"] for x in recommended_channels[:3]]
+  
   area = 'channel'
   c = template.RequestContext(request, locals())
 
@@ -97,6 +111,34 @@ def channel_index(request, format='html'):
     t = loader.get_template('channel/templates/index.html')
     return http.HttpResponse(t.render(c))
 
+
+def channel_recommendation_list(request, format="html"):
+  current_channels = api.actor_get_channels_member(request.user, request.user.nick, limit=1000)
+  users = api.get_recommended_items(request.user.nick, "user:users")  
+  recommended_channels = []
+  for user in users:
+    _channels = api._actor_get_channels(user[1])
+    for channel in _channels:
+      if channel not in current_channels:
+        channel_details = api.get_actor_details(channel)
+        recommended_channels.append({"rank": channel_details.rank, 
+                                     "details": channel_details})
+        
+  # TODO: find other way to sort for more clear and simple
+  # TODO: "Xem thêm" sẽ hiển thị toàn bộ danh sách gợi ý này, còn toàn bộ 
+  recommended_channels.sort(key=itemgetter("rank"), reverse=True)
+  actors = [x["details"] for x in recommended_channels[:20]]
+  
+  channels = api.channel_browse(request.user, 10) # top channels
+  
+  area = 'channel'
+  c = template.RequestContext(request, locals())
+  
+
+  # TODO(tyler): Other output formats.
+  if format == 'html':
+    t = loader.get_template('channel/templates/recommendation.html')
+    return http.HttpResponse(t.render(c))
 
 def channel_index_signedout(request, format='html'):
   # for the Our Picks section of the sidebar
@@ -344,6 +386,20 @@ def channel_browse(request, format='html'):
   ourpicks_channels = api.actor_get_channels_member(request.user, api.ROOT.nick)
   ourpicks_channels = api.channel_get_channels(request.user, ourpicks_channels)
   ourpicks_channels = [x for x in ourpicks_channels.values() if x]
+
+# TODO:
+#  current_channels = api.actor_get_channels_member(request.user, request.user.nick, limit=1000)
+#  users = api.get_recommended_items(request.user, "user:users")  
+#  recommended_channels = []
+#  for user in users:
+#    _channels = api.actor_get_channels_member(request.user, request.user.nick, limit=1000)
+#    if len(recommended_channels) > 10:
+#      break
+#    for channel in _channels:
+#      if channel not in current_channels:
+#        recommended_channels.append(api.get_actor_details(channel))
+
+
 
   area = 'channel'
   c = template.RequestContext(request, locals())
