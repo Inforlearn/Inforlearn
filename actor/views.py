@@ -588,10 +588,16 @@ def recommended_users(request, nick=None, format="html"):
 #  nick = nick.split("@")[0] + "@inforlearn.appspot.com"
   contacts = api.actor_get_contacts(request.user, request.user.nick, limit=1000)
 
-  users = api.get_recommended_items(nick, "user:users")
-  if users is not None:
+  _users = api.get_recommended_items(nick, "user:users")
+  if _users is not None:
+    users = []
+    for user in _users:
+      if user[1] not in contacts:
+        details = api.get_actor_details(user[1])
+        if details:
+          users.append(details)
+    
     actor_tiles_count = len(users) 
-    users = [api.get_actor_details(user[1]) for user in users if user[1] not in contacts]
   
   c = template.RequestContext(request, locals())
 

@@ -5263,7 +5263,9 @@ def get_recommended_items(actor_name, type):
   
 def get_actor_details(actor_nick):
   key_name = "actor/%s" % actor_nick
-  return Actor.get_by_key_name(key_name)
+  actor = Actor.get_by_key_name(key_name)
+  if not actor.is_deleted():
+    return actor
 
 def _actor_get_channels(actor_nick):
   limit = 1000
@@ -5273,3 +5275,5 @@ def _actor_get_channels(actor_nick):
   rv = query.fetch(limit)
   result = [x.owner for x in rv]
   return result
+
+    

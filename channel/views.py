@@ -52,10 +52,10 @@ def channel_index(request, format='html'):
   if you are not logged in, it should suggest that you log in to create or
   join channels and give a list of public channels
   """
-  view = api.actor_lookup_nick(request.user, request.user.nick)
-
   if not request.user:
     return channel_index_signedout(request, format='html')
+
+  view = api.actor_lookup_nick(request.user, request.user.nick)
 
   owned_nicks = api.actor_get_channels_admin(
       request.user,
@@ -83,7 +83,7 @@ def channel_index(request, format='html'):
   ]
   for c in followed_channels:
     c.i_am_member = True
-
+  
   current_channels = api.actor_get_channels_member(request.user, request.user.nick, limit=1000)
   
 #  user_nick = request.user.nick.split("@")[0] + "@inforlearn.appspot.com"
@@ -94,6 +94,8 @@ def channel_index(request, format='html'):
     for channel in _channels:
       if channel not in current_channels:
         channel_details = api.get_actor_details(channel)
+        if not channel_details:
+          continue
         recommended_channels.append({"rank": channel_details.rank, 
                                      "details": channel_details})
         
@@ -121,6 +123,8 @@ def channel_recommendation_list(request, format="html"):
     for channel in _channels:
       if channel not in current_channels:
         channel_details = api.get_actor_details(channel)
+        if not channel_details:
+          continue
         recommended_channels.append({"rank": channel_details.rank, 
                                      "details": channel_details})
         
@@ -256,8 +260,14 @@ def channel_history(request, nick, format='html'):
   members = [actors[x] for x in members if actors[x]]
 
 #  transform_nick = view.nick.split('@')[0] + "@inforlearn.appspot.com"
-  items = api.get_recommended_items(view.nick, "channel:channels")  
-  items = [api.get_actor_details(item[1]) for item in items[:10]]
+  _items = api.get_recommended_items(view.nick, "channel:channels")  
+  items = []
+  for item in _items:
+    details = api.get_actor_details(item[1])
+    if details:
+      items.append(details)
+    if len(items) > 10:
+      break
 
   # END inbox generation chaos
 
