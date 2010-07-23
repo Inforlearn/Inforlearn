@@ -2,7 +2,12 @@
 {% block title %}Khám phá{% endblock %}
 
 {% block content %}
-  <h1>Mọi người trao đổi những gì :)</h1>
+  <div id="form-message" class="main">
+    <h1>
+      Mọi người đang trao đổi những gì :) 
+    </h1>
+    <br>
+  </div>
   <div id='stream'>
     {% include 'common/templates/stream.html' %}
     {% include 'common/templates/paging.html' %}

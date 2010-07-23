@@ -964,7 +964,7 @@ margin:0;
 padding:0;
 }
 
-li,dd,blockquote {
+dd,blockquote {
 margin-left:2em;
 }
 
@@ -1462,7 +1462,6 @@ min-height: 45px;
 }
 
 div#content div#current-stream p {
-font-size:0.9em;
 color:#333;
 margin:0;
 padding:0 0 0.5em 15px;
@@ -1648,9 +1647,6 @@ padding-left:17px;
 
 ul.stream li {
 word-wrap:break-word;
-overflow:hidden;
-clear:left;
-border-top:solid 1px #f1f1f1;
 margin:0;
 padding:0;
 }
@@ -1723,7 +1719,7 @@ padding:0.5em 0 0 5px;
 
 ul.stream li p {
 line-height:1.4em;
-font-size:0.96em;
+font-size:1.1em;
 margin:0;
 padding:0 0 0 5px;
 }
@@ -1918,18 +1914,13 @@ padding:2px;
 }
 
 div#comments ul li pre {
-font-size:1.1em;
+font-size:1.5em;
 overflow:hidden;
 }
 
 div#comments ul li a {
 text-decoration:none;
 color: #444;
-}
-
-div#comments ul li p.meta a,div#comments ul li p.meta a.confirm-delete {
-text-decoration:none;
-color:#000;
 }
 
 div#comments ul li a:hover,div#comments ul li a.confirm-delete:hover {
@@ -1951,13 +1942,17 @@ margin:0 5px;
 padding: 0.3em 0px 0px 1em;
 }
 
+div#comments ul li p {
+font-size:1.1em;
+}
+
 div#comments ul li ul {
 list-style-type:square;
-margin-left:1.8em;
+margin-left:2.5em;
 }
 
 div#comments ul li ol {
-margin-left:1.8em;
+margin-top:5px;
 }
 
 div#comments ul li ul ul {
@@ -2209,9 +2204,23 @@ display:block;
 }
 
 /* --- Headings ---------------------------------------- */
-h1,h2,h3,h4,h5,h6,p,pre,blockquote,ul,ol,dl,address,code {
+h1,h2,h3,h4,h5,h6,p,pre,blockquote,dl,address,code {
 margin:0 0 1em;
 padding:0;
+}
+
+div#stream li ul {
+margin: 0 0 0 2em;
+padding: 0;
+}
+
+div#stream ul li ol {
+margin-left: -1.5em;
+}
+
+div#current-stream ol {
+margin-top: 5px;
+margin-down: 5px;
 }
 
 h1 {

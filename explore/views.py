@@ -9,6 +9,7 @@ from common.views import handle_view_action
 ENTRIES_PER_PAGE = 20
 
 def explore_recent(request, format="html"):
+  green_top = True
   handled = handle_view_action(request, {'entry_remove': request.path,
                                          'entry_remove_comment': request.path,
                                          'entry_mark_as_spam': request.path,
