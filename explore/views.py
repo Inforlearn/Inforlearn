@@ -20,6 +20,7 @@ def explore_recent(request, format="html"):
     return handled
 
   per_page = ENTRIES_PER_PAGE
+
   offset, prev = util.page_offset(request)
 
   inbox = api.inbox_get_explore(request.user, limit=(per_page + 1),
