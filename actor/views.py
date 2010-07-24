@@ -215,7 +215,7 @@ def actor_overview(request, nick, format='html'):
   if handled:
     return handled
   
-  per_page = ENTRIES_PER_PAGE
+  per_page = 100#ENTRIES_PER_PAGE
   offset, prev = util.page_offset(request)
 
   inbox = api.inbox_get_actor_overview(request.user,
