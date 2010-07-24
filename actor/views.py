@@ -482,6 +482,8 @@ def actor_contacts(request, nick=None, format='html'):
     for x in actors:
       actors[x].rel = 'contact'
     whose = view.display_nick()
+  else:
+    whose = view.display_nick()
 
   # here comes lots of munging data into shape
   actor_tiles = [actors[x] for x in contact_nicks if x in actors]
