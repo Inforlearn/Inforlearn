@@ -702,7 +702,7 @@ def activation_request_mobile(api_user, nick, mobile):
 
     activation_ref = activation_create_mobile(ROOT, nick, mobile)
 
-  message = "Your activation code is %s" % activation_ref.code
+  message = u"Mã số kích hoạt của bạn là %s" % activation_ref.code
   sms_send(ROOT, api_user.nick, mobile, message)
   return activation_ref
 

@@ -24,6 +24,11 @@ DATABASE_PASSWORD = ''         # Not used with appengine
 DATABASE_HOST = ''             # Not used with appengine
 DATABASE_PORT = ''             # Not used with appengine
 
+## Default ourpicks_channels
+# (show at "Ourpicks Channels" - "Channel" when not login)
+DEFAULT_OURPICKS_CHANNELS = ["#support@inforlearn.appspot.com",
+                             "#inforlearn@inforlearn.appspot.com"]
+
 # The appengine_django code doesn't care about the address of memcached
 # because it is a built in API for App Engine
 CACHE_BACKEND = 'memcached://'

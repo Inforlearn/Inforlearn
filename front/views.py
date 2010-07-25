@@ -1,5 +1,6 @@
 from django.template import RequestContext, loader
 from django.http import HttpResponse, HttpResponseRedirect
+from settings import NS_DOMAIN
 
 ENTRIES_PER_PAGE = 5
 SIDEBAR_LIMIT = 9

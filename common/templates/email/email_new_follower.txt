@@ -1,15 +1,6 @@
-{% filter wordwrap:60 %}
-{{owner_ref.display_nick}} is now following you on {{SITE_NAME}}.
+{{full_name}} vừa theo đuôi bạn trên {{SITE_NAME}}.
 
-To follow {{owner_ref.display_nick}} back, click on one of the links below (or copy and paste it into your browser).
+Xem trang của {{full_name}}: {{email_url}}
 
-................
-
-{{email_url}}
-
-{{email_mobile_url}} (mobile)
-
-................
 
 {% include "common/templates/email/signature.txt" %}
-{% endfilter %}

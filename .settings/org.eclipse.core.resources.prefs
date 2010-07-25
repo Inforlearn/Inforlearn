@@ -1,4 +1,4 @@
-#Wed Jul 21 13:30:46 ICT 2010
+#Sun Jul 25 19:57:33 ICT 2010
 eclipse.preferences.version=1
 encoding//actor/tests.py=utf-8
 encoding//actor/views.py=utf-8
@@ -18,6 +18,7 @@ encoding//common/test/monitor.py=utf-8
 encoding//common/test/validate.py=utf-8
 encoding//common/validate.py=utf-8
 encoding//common/views.py=utf-8
+encoding//confirm/views.py=utf-8
 encoding//django/core/handlers/base.py=utf-8
 encoding//django/utils/dates.py=utf-8
 encoding//django/utils/timesince.py=utf-8

@@ -12,6 +12,7 @@ from common import exception
 from common import util
 from common import views as common_views
 from operator import itemgetter
+from settings import DEFAULT_OURPICKS_CHANNELS
 
 
 CHANNEL_HISTORY_PER_PAGE = 20
@@ -133,7 +134,7 @@ def channel_recommendation_list(request, format="html"):
   recommended_channels.sort(key=itemgetter("rank"), reverse=True)
   actors = [x["details"] for x in recommended_channels[:20]]
   
-  channels = api.channel_browse(request.user, 10) # top channels
+  channels = api.channel_browse(request.user, 5) # top channels
   
   area = 'channel'
   c = template.RequestContext(request, locals())
@@ -146,9 +147,12 @@ def channel_recommendation_list(request, format="html"):
 
 def channel_index_signedout(request, format='html'):
   # for the Our Picks section of the sidebar
-  ourpicks_channels = api.actor_get_channels_member(request.user, api.ROOT.nick)
-  ourpicks_channels = api.channel_get_channels(request.user, ourpicks_channels)
-  ourpicks_channels = [x for x in ourpicks_channels.values() if x]
+  ourpicks_channels = [] 
+  for channel in DEFAULT_OURPICKS_CHANNELS:
+    try:
+      ourpicks_channels.append(api.get_actor_details(channel))
+    except AttributeError:
+      pass
 
   area = 'channel'
   c = template.RequestContext(request, locals())

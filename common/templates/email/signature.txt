@@ -1,1 +1,3 @@
-- http://www.inforlearn.com - Informal Learning Network -
+---
+http://inforlearn.com
+Informal Learning Network

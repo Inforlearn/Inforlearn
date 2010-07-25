@@ -1413,19 +1413,15 @@ float:left;
 
 div.groups ul li h3 {
 font-size:1.25em;
-letter-spacing:-1px;
-width:175px;
-margin:0 0 0 65px;
+width:245px;
+margin-bottom: 5px;
 }
 
 div.groups ul li p {
-font-size:0.86em;
 color:#666;
-margin:0 0 0 65px;
 }
 
-div.groups ul p a:hover {
-text-decoration:underline;
+div.groups ul a {
 background:transparent;
 color:#333;
 }

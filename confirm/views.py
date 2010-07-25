@@ -1,3 +1,4 @@
+#! coding: utf-8
 from common import api
 from common import decorator
 from common import util
@@ -8,4 +9,4 @@ def confirm_email(request, code):
                                           request.user.nick,
                                           code)
   return util.RedirectFlash(request.user.url() + "/overview",
-                            "Email address '%s' confirmed." % rel_ref.target)
+                            u"Địa chỉ '%s' đã được xác nhận. Bạn có thể kích hoạt tính năng nhận thông báo qua email <a href='%s/user/Admin/settings/notifications'>ở đây</a>" % (rel_ref.target, request.user.url()))

@@ -1,32 +1,18 @@
-{% filter wordwrap:60 %}
-Moi!
-
 {% if my_entry %}
-{{from_name}} has posted a comment to your update "{{entry_title}}":
+  {{from_name}} đã gửi một ý kiến trong "{{entry_title}}":
 {% else %}
-{{from_name}} has posted a comment to {{entry_actor_name}}'s update "{{entry_title}}":
+  {{from_name}} đã gửi một ý kiến trong "{{entry_title}}" ({{entry_actor_name}}):
 {% endif %}
 
 {{comment_pretty}}
 
 
-To reply to{{my_entry|yesno:" or delete,"}} this comment, 
-click on one of the following links (or copy and paste it to your browser):
+Bạn có thể trả lời ý kiến này bằng cách nhấn vào liên kết sau: {{entry_url}}
 
-................
+Nếu có vấn đề gì, hãy gửi thư về support@inforlearn.com, chúng tôi sẽ cố gắng làm những điều tốt nhất để giúp bạn.
 
-{{entry_url}}
-
-{{entry_mobile_url}} (mobile)
-
-................
-
-If you want to report comment spam or other abuse, please send
-us an email at support@{{NS_DOMAIN}}, and we'll do our best to help you.
 
 {% include 'common/templates/email/signature.txt' %}
+(Nội dung của email này được sinh tự động, vui lòng không trả lời lại)
 
-(This email was generated automatically. Please do not reply
-to it, your words would be lost in the ether.)
 
-{% endfilter %}

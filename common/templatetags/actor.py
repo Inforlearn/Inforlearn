@@ -65,7 +65,7 @@ def actor_add_contact(parser, token):
   Parameters: user, view, actor.
   """
   return _actor_action(parser, token, is_not_contact, 'actor_add_contact',
-                       'add', u'Thêm vào danh sách bạn bè')
+                       'add', u'Kết bạn')
 
 @register.tag
 def actor_add_contact_long(parser, token):

@@ -389,7 +389,7 @@ color: #4183C4;
 }
 
 a:hover,a:link:hover,a:visited:hover {
-background:#009bc7;
+text-decoration: underline;
 color:#009bc7;
 }
 
@@ -562,7 +562,7 @@ background:#96c63f;
 color:#fff;
 }
 
-div.groups ul p.members,#mobile div.download a {
+#mobile div.download a {
 color:#96c63f;
 }
 

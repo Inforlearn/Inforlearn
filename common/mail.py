@@ -8,6 +8,7 @@ from django.core import mail
 from django.utils.http import urlquote
 from common import exception
 from common import util
+from settings import NS_DOMAIN
 
 
 def is_allowed_to_send_email_to(email):
@@ -94,14 +95,15 @@ def email_comment_notification(actor_to_ref, actor_from_ref,
   entry_actor_name = util.display_nick(entry_ref.actor)
   entry_title = entry_ref.title()
 
-
+  SITE_NAME = settings.SITE_NAME
+  
   # TODO(termie) pretty 'r up
   comment_pretty = comment_ref.extra.get('content', '')
 
   t = loader.get_template('common/templates/email/email_comment.txt')
   c = template.Context(locals(), autoescape=False)
   message = t.render(c)
-  subject = 'New comment on %s' % (entry_ref.title())
+  subject = u'Inforlearn - Bình luận mới'
   return (subject, message)
 
 def email_confirmation_message(actor, activation_code):
@@ -115,6 +117,8 @@ def email_confirmation_message(actor, activation_code):
   email_link = activation_url
   email_mobile_link = activation_mobile_url
 
+  SITE_NAME = settings.SITE_NAME
+  full_name = _full_name(actor)
   t = loader.get_template('common/templates/email/email_confirm.txt')
   c = template.Context(locals(), autoescape=False)
   message = t.render(c)
@@ -122,7 +126,7 @@ def email_confirmation_message(actor, activation_code):
   html_template = loader.get_template(
       'common/templates/email/email_confirm.html')
   html_message = html_template.render(c)
-  subject = "Welcome! Confirm your email"
+  subject = u"Inforlearn - Xác thực email"
   return (subject, message, html_message)
 
 def email_invite(from_actor_ref, invite_code):
@@ -146,10 +150,11 @@ def email_invite(from_actor_ref, invite_code):
     subject = u'%s mời bạn tham gia %s' % (full_name, settings.SITE_NAME)
   return (subject, message, html_message)
 
-def email_new_follower(owner_ref, target_ref):
+def email_new_follower(owner_ref, target_ref):  
   email_url = owner_ref.url()
   email_mobile_url = owner_ref.url(mobile=True)
-
+  full_name = _full_name(owner_ref)
+  SITE_NAME = settings.SITE_NAME
   t = loader.get_template('common/templates/email/email_new_follower.txt')
   c = template.Context(locals(), autoescape=False)
   message = t.render(c)
@@ -157,14 +162,15 @@ def email_new_follower(owner_ref, target_ref):
   html_template = loader.get_template(
       'common/templates/email/email_new_follower.html')
   html_message = html_template.render(c)
-  subject = '%s now follows you' % owner_ref.display_nick()
+  subject = u'%s vừa theo đuôi bạn trên Inforlearn' % owner_ref.display_nick()
   return (subject, message, html_message)
 
 def email_new_follower_mutual(owner_ref, target_ref):
   profile_url = owner_ref.url()
   profile_mobile_url = owner_ref.url(mobile=True)
-  full_name = _full_name(owner_ref)
-
+  SITE_NAME = settings.SITE_NAME
+  nick = owner_ref.nick.split("@")[0]
+  
   t = loader.get_template(
       'common/templates/email/email_new_follower_mutual.txt')
   c = template.Context(locals(), autoescape=False)
@@ -173,7 +179,7 @@ def email_new_follower_mutual(owner_ref, target_ref):
   html_template = loader.get_template(
       'common/templates/email/email_new_follower_mutual.html')
   html_message = html_template.render(c)
-  subject = '%s is now following you, too' % full_name
+  subject = u'%s vừa đăng ký nhận các tin bạn gửi trên Inforlearn' % nick
   return (subject, message, html_message)
 
 def email_lost_password(actor, email, code):
@@ -181,7 +187,8 @@ def email_lost_password(actor, email, code):
                 (settings.DOMAIN, urlquote(email), code))
   email_mobile_link = ("http://m.%s/login/reset?email=%s&hash=%s" %
                        (settings.DOMAIN, urlquote(email), code))
-
+  SITE_NAME = settings.SITE_NAME
+  full_name = _full_name(actor)
   t = loader.get_template('common/templates/email/email_password.txt')
   c = template.Context(locals(), autoescape=False)
   message = t.render(c)
@@ -190,5 +197,5 @@ def email_lost_password(actor, email, code):
       'common/templates/email/email_password.html')
   html_message = html_template.render(c)
 
-  subject = ('Password reset')
+  subject = (u'Khôi phục mật khẩu')
   return (subject, message, html_message)

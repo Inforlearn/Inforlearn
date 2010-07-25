@@ -1,14 +1,6 @@
-{% if full_name %} {{full_name}} ({{nick_name}}) {% else %} {{ nick_name }} {% endif %}có lời mời bạn tham gia vào phiên bản thử nghiệm của {{SITE_NAME}}.
+{{full_name}}có lời mời bạn tham gia vào phiên bản thử nghiệm của {{SITE_NAME}}.
 
-{{SITE_NAME}} được phát triển với mục đích giúp cho việc kết nối, chia sẻ và nhận lại những thông tin, kiến thức,... từ những lĩnh vực bạn quan tâm đơn giản và dễ dàng hơn.
-
-Bạn có thể sử dụng {{SITE_NAME}} vào các mục đích:
-- Chia sẻ các nguồn tài nguyên: liên kết/bài viết hay, tin tức mới
-- Đặt câu hỏi/trả lời/thảo luận theo các chủ đề
-- Tìm nguồn kiến thức mới/bạn mới
-- Kênh trao đổi sau giờ học của giáo viên và học sinh theo từng chủ đề/môn học
-- ...
-
+{{SITE_NAME}} tạo ra một nền tảng cho phép bạn kết nối và chia sẻ kiến thức ở bất cứ lĩnh vực nào bạn quan tâm.
 
 Nhấn vào liên kết dưới đây để xác nhận: 
     {{accept_url}}

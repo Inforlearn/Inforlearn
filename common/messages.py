@@ -3,7 +3,7 @@
 """User-visible strings for confirmation and flash messages.
 """
 
-__author__ = 'mikie@google.com (Mika Raento)'
+__author__ = 'AloneRoad@Gmail.com'
 
 # api call -> (confirmation message, flash message)
 # If the confirmation message is None, no confirmation is required.
@@ -16,22 +16,22 @@ _message_table__ = {
        'Một thư xác nhận đã được gửi đến hòm thư của bạn.'),
   'activation_request_mobile':
       (None,
-       'Mobile activation code has been sent.'),
+       'Mã số kích hoạt đã được gửi tới điện thoại của bạn.'),
   'actor_add_contact':
       (None,
        'Người này đã được thêm vào danh sách liên hệ của bạn.'),
   'actor_remove' :
       (None,
-       'Người vừa rồi đã được xóa khỏi danh sách.'),
+       'Tài khoản vừa rồi đã được xóa khỏi danh sách liên hệ của bạn.'),
   'actor_remove_contact':
       (None,
-       'Đã xóa khỏi danh sách liên lạc.'),
+       'Tài khoản vừa rồi đã được xóa khỏi danh sách liên hệ của bạn.'),
   'channel_create':
       (None,
        'Tạo nhóm thành công'),
   'channel_join':
       (None,
-       'Bạn đã gia nhập nhóm thành công :)'),
+       'Bạn đã gia nhập thành công :)'),
   'channel_update':
       (None,
        'Các thiết lập dành cho nhóm này đã được cập nhật.'),
@@ -55,13 +55,13 @@ _message_table__ = {
        'Đã xóa ý kiến vừa rồi.'),
   'invite_accept':
       (None,
-       'Thư mời đã được đồng ý'),
+       'Thư mời của bạn đã được đồng ý'),
   'invite_reject':
       (None,
-       'Thư mời bị từ chối :('),
+       'Thư mời của bạn bị từ chối :('),
   'invite_request_email':
       (None,
-       'Thư mời đã được gửi.'),
+       'Một thư mời đã được gửi đến email vừa rồi.'),
   'login_forgot':
       (None,
        'Mật khẩu mới đã được gửi đến hòm thư của bạn'),
@@ -91,16 +91,16 @@ _message_table__ = {
        'Các thiết lập đã được cập nhật lại.'),
   'settings_hide_comments':
       (None,
-       'Comments preferenced stored.'),
+       'Thiết lập của bạn đã được lưu.'),
   'settings_update_account':
       (None,
        'Hồ sơ của bạn đã được cập nhật lại.'),
   'subscription_remove':
       (None,
-       'Unsubscribed.'),
+       'Nguồn tin vừa rồi đã được xóa khỏi danh sách theo dõi của bạn.'),
   'subscription_request':
       (None,
-       'Subscription requested.'),
+       'Nguồn tin vừa rồi đã được thêm vào danh sách theo dõi của bạn.'),
 }
 
 def confirmation(api_call):
