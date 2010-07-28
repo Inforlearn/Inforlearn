@@ -111,7 +111,7 @@ top:-50px;
 
 /* --- Main Navigation ----------------------------------------- */
 ul#main-nav {
-font-family:"Trebuchet MS", Arial, Helvetica, sans-serif;
+font-family: Arial, Helvetica, sans-serif;
 list-style-type:none;
 overflow:hidden;
 font-size:1.2em;
@@ -169,7 +169,7 @@ margin-top:0.2em;
 
 ul#sub-nav li a {
 text-decoration:none;
-font:1.2em "Trebuchet MS", Arial, Helvetica, sans-serif;
+font:1.2em Arial, Helvetica, sans-serif;
 line-height:1.8em;
 padding:0.6em 0.8em 0.2em;
 }
@@ -552,7 +552,7 @@ padding:0.6em 0 1em 45px;
 }
 
 div#intro ul li h3 {
-font:normal 1.4em "Trebuchet MS", Arial, Helvetica, sans-serif;
+font:normal 1.4em Arial, Helvetica, sans-serif;
 margin:0;
 }
 
@@ -1377,7 +1377,7 @@ font-size: 1.1em;
 }
 
 div#group-intro p.description {
-font:bold 1.2em/1.2em "Trebuchet MS", Arial, Helvetica, sans-serif;
+font:bold 1.2em/1.2em Arial, Helvetica, sans-serif;
 }
 
 div.groups ul {
@@ -1807,7 +1807,7 @@ margin:0.3em 0;
 }
 
 ul.stream li.date h3 {
-font:bold 0.9em "Trebuchet MS", Arial, Helvetica, sans-serif;
+font:bold 0.9em Arial, Helvetica, sans-serif;
 text-transform:uppercase;
 color:#666;
 margin:0;
@@ -2225,7 +2225,7 @@ padding-top: 5px;
 }
 
 h1 {
-font:normal 2.2em "Trebuchet MS", Arial, Helvetica, sans-serif;
+font:normal 2.2em Arial, Helvetica, sans-serif;
 padding-top:0.2em;
 margin:0 0 0.5em;
 }
@@ -2237,7 +2237,7 @@ font-size:0.6em;
 }
 
 h2 {
-font:normal 1.5em "Trebuchet MS", Arial, Helvetica, sans-serif;
+font:normal 1.5em Arial, Helvetica, sans-serif;
 color:#333;
 margin:0.5em 0;
 }
@@ -2254,7 +2254,7 @@ margin:0 0 0.5em;
 }
 
 #frontpage div#sidebar h2 {
-font:normal 1.5em "Trebuchet MS", Arial, Helvetica, sans-serif;
+font:normal 1.5em Arial, Helvetica, sans-serif;
 background:transparent;
 color:#333;
 margin:0.5em 0;
@@ -2782,7 +2782,7 @@ margin-bottom:0;
 }
 
 div#intro h3 a:link,div#intro h3 a:visited,div.groups ul p a,div#content div#current-stream a,ul.stream li h3 a.url {
-color:#4183C4;
+color:#333;
 }
 
 div#start-mobile,div#current-stream div.bottom h2,div#current-stream div.bottom p {

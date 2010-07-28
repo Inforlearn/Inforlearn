@@ -26,6 +26,10 @@ div.wide div#content div.top.b {
 background-image:url(bg-content-w-top-g.png);
 }
 
+div.wide div#content div.top {
+background-image:url(bg-content-w-top-g.png);
+}
+
 div.wide div#content div.bottom {
 background-image:url(bg-content-w.png);
 }
