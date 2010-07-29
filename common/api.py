@@ -1732,6 +1732,23 @@ def channel_post(api_user, **kw):
   uuid = kw.get('uuid', util.generate_uuid())
   channel = kw.get('channel', None)
   nick = kw.get('nick', None)
+  
+  extra = {}
+  # Thumbnails are not yet shown on the site but are supported by the mobile
+  # client.
+  thumbnail_url = kw.get('thumbnail_url', None)
+  if thumbnail_url:
+    extra['thumbnail_url'] = clean.url(thumbnail_url)
+  channel_post_match = channel_post_re.search(message.replace("\n", "<br/>")) # temporary replace '\n' for match channel post regular expression  
+  if channel_post_match:
+    match_dict = channel_post_match.groupdict()
+    channel = match_dict['channel']
+    message = match_dict['message'].replace("<br/>", "\n") # re-replace
+    new_kw = kw.copy()
+    new_kw['channel'] = channel
+    new_kw['message'] = message
+    new_kw['extra'] = extra
+    return channel_post(api_user, **new_kw)
 
   validate.length(message, 0, MAX_POST_LENGTH)
   validate.location(location)
