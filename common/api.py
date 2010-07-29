@@ -2423,7 +2423,7 @@ def inbox_get_entries_since(api_user, inbox, limit=30, since_time=None,
 
   results = query.fetch(limit=limit)
   return [x.stream_entry_keyname() for x in results]
-
+  
 def inbox_get_explore(api_user, limit=30, offset=None):
   inbox = 'inbox/%s/explore' % ROOT.nick
   return inbox_get_entries(api_user, inbox, limit, offset)
@@ -4884,8 +4884,8 @@ def _subscribers_for_channel_entry(stream_ref, entry_ref):
   else:
     subscribers = [s.target for s in subscribers]
 
-  # the explore page if this isn't a comment
-  if stream_ref.type != 'comment' and not stream_ref.owner.startswith('#'):
+  # the explore page if this isn't a comment and message post in a group
+  if stream_ref.type != 'comment' and stream_ref.owner.startswith('#'):
     subscribers.append('inbox/%s/explore' % ROOT.nick)
 
   # the views of the entry owner
