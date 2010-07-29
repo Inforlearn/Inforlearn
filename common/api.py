@@ -1280,6 +1280,8 @@ def actor_remove_contact(api_user, owner, target):
         sub_ref.state = "pending"
         sub_ref.put()
 
+  _notify_contact_deleted(owner_ref, target_ref)
+    
   # XXX end transaction
   return rel
 
@@ -5144,7 +5146,19 @@ def _notify_new_contact(owner_ref, target_ref):
 
   email_send(ROOT, email, subject, message, html_message=html_message)
 
+def _notify_contact_deleted(owner_ref, target_ref):
+  if not target_ref.extra.get('email_notify'):
+    return
+  email = email_get_actor(ROOT, target_ref.nick)
+  if not email:
+    return
 
+  # using ROOT for internal functionality
+  subject, message, html_message = mail.email_deleted_contact(
+        owner_ref, target_ref)
+
+  email_send(ROOT, email, subject, message, html_message=html_message)
+  
 # Helpers for replying via @nick
 def _reply_cache_key(sender, target, service=''):
   memcache_key = 'reply/%s/%s/%s' % (service, sender, target)

@@ -8,7 +8,6 @@ from django.core import mail
 from django.utils.http import urlquote
 from common import exception
 from common import util
-from settings import NS_DOMAIN
 
 
 def is_allowed_to_send_email_to(email):
@@ -29,7 +28,7 @@ def _greeting_name(actor_ref):
 def _full_name(actor_ref):
   try:
     return actor_ref.extra['full_name']
-  except KeyError:
+  except:
     return actor_ref.display_nick()
 
 def log_blocked_send(on_behalf, email, subject, message=None):
@@ -162,7 +161,7 @@ def email_new_follower(owner_ref, target_ref):
   html_template = loader.get_template(
       'common/templates/email/email_new_follower.html')
   html_message = html_template.render(c)
-  subject = u'%s vừa theo đuôi bạn trên Inforlearn' % owner_ref.display_nick()
+  subject = u'%s vừa thêm bạn vào danh sách liên hệ của anh (cô) ấy' % owner_ref.display_nick()
   return (subject, message, html_message)
 
 def email_new_follower_mutual(owner_ref, target_ref):
@@ -180,6 +179,20 @@ def email_new_follower_mutual(owner_ref, target_ref):
       'common/templates/email/email_new_follower_mutual.html')
   html_message = html_template.render(c)
   subject = u'%s vừa đăng ký nhận các tin bạn gửi trên Inforlearn' % nick
+  return (subject, message, html_message)
+
+def email_deleted_contact(owner_ref, target_ref):
+  email_url = owner_ref.url()
+  full_name = _full_name(owner_ref)
+  SITE_NAME = settings.SITE_NAME
+  t = loader.get_template('common/templates/email/email_deleted_contact.txt')
+  c = template.Context(locals(), autoescape=False)
+  message = t.render(c)
+  c.autoescape = True
+  html_template = loader.get_template(
+      'common/templates/email/email_deleted_contact.html')
+  html_message = html_template.render(c)
+  subject = u'%s vừa xóa bạn khỏi danh sách liên hệ của anh (cô) ấy' % owner_ref.display_nick()
   return (subject, message, html_message)
 
 def email_lost_password(actor, email, code):

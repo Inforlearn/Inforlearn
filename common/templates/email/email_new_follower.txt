@@ -1,6 +1,8 @@
-{{full_name}} vừa theo đuôi bạn trên {{SITE_NAME}}.
+{{full_name}} vừa thêm bạn vào danh sách bạn bè của anh (cô) ấy.
 
-Xem trang của {{full_name}}: {{email_url}}
+Để thêm {{full_name}} vào danh sách bạn bè của bạn, mở liên kết sau và nhấn vào "Kết bạn".
+  
+     {{email_url}}
 
 
 {% include "common/templates/email/signature.txt" %}
