@@ -557,7 +557,7 @@ div#content div.bottom,body.single div#header {
 background:transparent url(bg-content.png) repeat-y;
 }
 
-div#current-stream a.confirm-delete:hover,div#intro ul li#more h3 a,div.contacts ul.float li h3 a,div#contacts ul.float li h3 a,div#followers ul.float li h3 a,div.contacts ul.float li p.foot a.remove:hover,div.contacts ul.float li p.foot a.add:hover,ul.stream li a.comments:hover,ul.stream li a.add-comment:hover,ul.stream li a.confirm-delete:hover,div#comments ul li a.confirm-delete:hover,ul.stream li a.confirm-subscribe:hover,div#comments ul li a.confirm-subscribe:hover {
+div#current-stream a.confirm-delete:hover,div#intro ul li#more h3 a,div.contacts ul.float li h3 a,div#contacts ul.float li h3 a:hover,div#followers ul.float li h3 a,div.contacts ul.float li p.foot a.remove:hover,div.contacts ul.float li p.foot a.add:hover,ul.stream li a.comments:hover,ul.stream li a.add-comment:hover,ul.stream li a.confirm-delete:hover,div#comments ul li a.confirm-delete:hover,ul.stream li a.confirm-subscribe:hover,div#comments ul li a.confirm-subscribe:hover {
 color:#009bc7;
 }
 

@@ -1163,7 +1163,7 @@ div.contacts ul.float li h3 {
 font-size:1.25em;
 letter-spacing:-1px;
 line-height:1em;
-margin:0 0 0 45px;
+margin:0 0 5px 45px;
 padding:0;
 }
 
@@ -1174,7 +1174,7 @@ padding:2px;
 }
 
 div.contacts ul.float li p {
-font-size:0.86em;
+font-size:1em;
 line-height:1.3em;
 margin:0 0 0 45px;
 }
@@ -1183,6 +1183,10 @@ div.contacts ul.float li p.foot a.remove,div.contacts ul.float li p.foot a.add {
 float:none;
 color:#333;
 margin:0;
+}
+
+div.contacts ul.float li p.foot a.remove{
+color:#666;
 }
 
 div.contacts ul.float li p.foot a.add {
