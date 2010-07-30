@@ -14,12 +14,13 @@
   <div id="followers" class='contacts'>
     {% ifequal request.user.nick view.nick %}
       <h2>
-        Người theo dõi bạn ({{actor_tiles_count}})
+        Đang chờ bạn đồng ý ({{actor_tiles_count}})
       </h2>
       <p class="foot-note">
-        Bạn sẽ nhận được các cập nhật của những người trong danh sách này.
-        Những người có nền màu xanh là những người cũng ở trong danh sách bạn
-        bè của bạn.
+        Những người trong danh sách này ngỏ lời muốn làm bạn với bạn. Click "Kết bạn" nếu bạn đồng ý.
+        <br></br>
+      Lưu ý: Khi bạn đồng ý kết bạn với một người thì người đó sẽ được phép theo dõi tất cả các trao đổi của bạn trên site, kể cả những trao đổi mang tính cá nhân.
+      
       </p>
     {% endifequal %}
 

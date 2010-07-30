@@ -540,9 +540,10 @@ def actor_followers(request, nick=None, format='html'):
   # add some extra info so we can let the user do contextual actions
   # on these homeboys
   if request.user and request.user.nick == view.nick:
-    for actor in actors:
+    for actor in list(actors):
       if api.actor_is_contact(request.user, view.nick, actor):
-        actors[actor].my_contact = True
+#        actors[actor].my_contact = True
+        actors.pop(actor)
     whose = u'bạn'
   else:
     whose = view.display_nick()
@@ -550,7 +551,7 @@ def actor_followers(request, nick=None, format='html'):
   # here comes lots of munging data into shape
   actor_tiles = [actors[x] for x in follower_nicks if x in actors]
 
-  actor_tiles_count = view.extra.get('follower_count', 0)
+  actor_tiles_count = len(actors)
   actor_tiles, actor_tiles_more = util.page_actors(request,
                                                    actor_tiles,
                                                    per_page)

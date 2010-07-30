@@ -470,28 +470,26 @@ $j(function() {
   }, 3E3)
 });
 
-$j(document).ready(function(){   
+
+$j(document).ready(function($){
+	$j("body").fadeIn(500); 
+	
     $j(document.body).click(function (event) {
-      if (
-          (
-            event.target.nodeName == "A" &&
+      if ((event.target.nodeName == "A" &&
             event.target.className != "send-message-disable" &&
             event.target.target != "_new" &&
             event.target.target != "_blank"
-           ) || 
-           (
+           ) || (
         	 event.target.nodeName == "IMG" && 
         	 event.target.className == "photo"
-           ) || 
-           (
+           ) || (
         	 event.target.type == "submit" && 
         	 event.target.name != "submit-location"
-           ) || 
-           (
+           ) || (
              event.target.nodeName == "SPAN" && 
              event.target.className != "nickname"
-           )
-           )  
-        { $j(document.body).fadeOut(200) }
+           )) { 
+    	  $j(document.body).fadeOut(500) 
+    	  }
       })
   })
