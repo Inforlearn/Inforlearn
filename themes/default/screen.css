@@ -574,9 +574,13 @@ div.path h1 a,div.path h1 a:hover {
 color:#86bd33;
 }
 
-div.highlight,div#contacts ul.float li.follower,div#followers ul.float li.contact,div.avatars li label:hover,div.backgrounds li label:hover,div#form-icons label.selected {
+div.highlight,div#contacts ul.float li.contact,div#followers ul.float li.contact,div.avatars li label:hover,div.backgrounds li label:hover,div#form-icons label.selected {
 background:#dbeaff;
 }
+
+div#contacts ul.float li.follower {
+	background: #fff;
+	}
 
 div.notice,div.reminder {
 border:solid 1px #f1cb2f;
