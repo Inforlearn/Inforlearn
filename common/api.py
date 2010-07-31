@@ -1479,7 +1479,7 @@ def channel_create(api_user, **kw):
   if existing_ref:
     channel_nick = channel_nick.split("@")[0][1:]
     raise exception.ApiException(
-        'Nhóm %s đã tồn tại. Bạn có thể tham gia bằng cách truy cập vào\
+        u'Nhóm %s đã tồn tại. Bạn có thể tham gia bằng cách truy cập vào\
         địa chỉ: http://inforlearn.com/channel/%s' % (channel_nick,
                                                       channel_nick))
 
