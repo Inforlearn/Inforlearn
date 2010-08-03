@@ -1,20 +1,20 @@
-DOMAIN = 'inforlearn.appspot.com'
+DOMAIN = 'www.inforlearn.com'
 
 SITE_NAME = 'Inforlearn'
 
-COOKIE_DOMAIN = 'inforlearn.appspot.com'
+COOKIE_DOMAIN = 'inforlearn.com'
 
 NS_DOMAIN = 'inforlearn.appspot.com'
 
 GAE_DOMAIN = 'inforlearn.appspot.com'
 
-ROOT_NICK = 'root@inforlearn.appspot.com'
+ROOT_NICK = 'root@inforlearn.com'
 
 TEMPLATE_DEBUG = False
 
-DEFAULT_FROM_EMAIL = 'AloneRoad@Gmail.com'
+DEFAULT_FROM_EMAIL = 'notifier@inforlearn.com'
 
-HOSTED_DOMAIN_ENABLED = False
+HOSTED_DOMAIN_ENABLED = True
 
 DEBUG = False
 

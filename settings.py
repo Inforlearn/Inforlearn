@@ -137,17 +137,17 @@ GAE_DOMAIN = 'inforlearn.appspot.com'
 
 # Enabling this means we expect to be spending most of our time on a 
 # Hosted domain
-HOSTED_DOMAIN_ENABLED = False
+HOSTED_DOMAIN_ENABLED = True
 
 # This is the domain you intend to serve your site from, when using hosted
 # domains. If SSL is enabled for login and join those requests will still 
 # go to the GAE_DOMAIN above.
-HOSTED_DOMAIN = 'example.com'
+HOSTED_DOMAIN = 'inforlearn.com'
 
 # App Engine requires you to serve with a subdomain
 DEFAULT_HOSTED_SUBDOMAIN = 'www'
 
-NS_DOMAIN = 'example.com'
+NS_DOMAIN = 'inforlearn.com'
 
 # DOMAIN will be used wherever a url to this site needs to be created
 # NS_DOMAIN will be used as the domain part of actor identifiers. 
@@ -279,7 +279,7 @@ IM_ENABLED = True
 
 # This is the id (JID) of the IM bot that you will use to communicate with
 # users of the IM interface
-IM_BOT = 'bot@inforlearn.appspot.com'
+IM_BOT = 'bot@inforlearn.com'
 
 # Turn on test mode for IM
 IM_TEST_ONLY = False
