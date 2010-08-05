@@ -3,9 +3,11 @@
   {% linked_avatar actor "u,contact" request %}
 </div>
 
-<script type='text/javascript'>
-  new Tip("tooltip_{{actor.nick}}", "Tên đầy đủ: {{actor.extra.full_name}}<br>" +
-                                    "Trang cá nhân: <a href='{{actor.extra.homepage}}' target='_new'>{{actor.extra.homepage}}</a><br>", {
+{% if actor.extra.fullname or actor.extra.homepage %}
+  <script type='text/javascript'>
+  new Tip("tooltip_{{actor.nick}}", "{% if actor.extra.full_name %}Tên đầy đủ: {{actor.extra.full_name}}<br>{% endif %}" +
+                                    "{% if actor.extra.homepage %}Trang cá nhân: <a href='{{actor.extra.homepage}}' target='_new'>{{actor.extra.homepage}}</a><br>{% endif %}" 
+                                  , {
     title: "{{ actor.display_nick }}",
     stem: 'bottomRight',
     hideOn: false,
@@ -14,7 +16,8 @@
     closeButton: true,
     hook: {target: 'topMiddle', tip: 'bottomRight'},
   });
-</script>
+  </script>
+{% endif %}
   
   
 

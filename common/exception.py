@@ -1,3 +1,4 @@
+#! coding: utf-8
 import logging
 import sys
 from google.appengine.api import datastore_errors
@@ -135,7 +136,7 @@ class UserDoesNotExistError(Error):
 
   @property
   def message(self):
-    return "User %s does not exist" % self.nick
+    return "Tài khoản %s không tồn tại" % self.nick
 
 class DisabledFeatureError(UserVisibleError):
   # TODO(teemu): we should probably add an extra field 

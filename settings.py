@@ -165,7 +165,7 @@ else:
 # probably won't be able to enable WILDCARD_SUBDOMAINS below, but you can 
 # still set up your app to use some of the static subdomains below.
 # Subdomains are ignored unless HOSTED_DOMAIN_ENABLED is True.
-SUBDOMAINS_ENABLED = False
+SUBDOMAINS_ENABLED = True
 
 # These are defined as { subdomain : url_conf, ...}
 INSTALLED_SUBDOMAINS = {

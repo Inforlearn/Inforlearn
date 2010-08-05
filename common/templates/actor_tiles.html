@@ -15,19 +15,23 @@
           {% actor_remove_contact request.user view actor %}
         </p>
       </li>
-      <script type='text/javascript'>
-		  new Tip("tooltip_{{actor.nick}}", "Tên đầy đủ: {{actor.extra.full_name}}<br>" +
-		                                    "Trang cá nhân: <a href='{{actor.extra.homepage}}' target='_new'>{{actor.extra.homepage}}</a><br>", {
-		    title: "{{ actor.display_nick }}",
-		    stem: 'bottomRight',
-		    hideOn: false,
-		    hideAfter: 0.25,
-		    delay: 0.5,
-		    closeButton: true,
-		    hook: {target: 'topLeft', tip: 'bottomRight'},
-		    offset: { x: 60, y: 0 }
-		  });
-		</script>
+      {% if actor.extra.fullname or actor.extra.homepage %}
+        <script type='text/javascript'>
+  		  new Tip("tooltip_{{actor.nick}}", "{% if actor.extra.full_name %}Tên đầy đủ: {{actor.extra.full_name}}<br>{% endif %}" +
+                                          "{% if actor.email %}Email: {{actor.email}}<br>{% endif %}" +
+  		                                    "{% if actor.extra.homepage %}Trang cá nhân: <a href='{{actor.extra.homepage}}' target='_new'>{{actor.extra.homepage}}</a><br>{% endif %}" 
+                                          , {
+  		    title: "{{ actor.display_nick }}",
+  		    stem: 'bottomRight',
+  		    hideOn: false,
+  		    hideAfter: 0.25,
+  		    delay: 0.5,
+  		    closeButton: true,
+  		    hook: {target: 'topLeft', tip: 'bottomRight'},
+  		    offset: { x: 60, y: 0 }
+  		  });
+  		  </script>
+      {% endif %}
     {% endfor %}
   </ul>
   {% if actor_tiles_more %}

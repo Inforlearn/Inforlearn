@@ -5307,4 +5307,10 @@ def _actor_get_channels(actor_nick):
   result = [x.owner for x in rv]
   return result
 
-    
+def get_email(actor_nick):
+  query = Relation.gql('WHERE owner = :1 AND relation = :2',
+                         actor_nick, 'email') 
+  result = query.fetch(1)
+  if result:
+    return result[0].target
+  return None 

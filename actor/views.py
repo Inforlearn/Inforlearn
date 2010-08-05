@@ -469,6 +469,7 @@ def actor_contacts(request, nick=None, format='html'):
     for actor in actors:
       if api.actor_is_follower(request.user, view.nick, actor):
         actors[actor].my_follower = True
+        actors[actor].email = api.get_email(actors[actor].nick)
       actors[actor].my_contact = True
       actors[actor].rel = 'contact'
     whose = u'bạn'

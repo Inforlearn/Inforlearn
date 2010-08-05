@@ -1,3 +1,4 @@
+#! coding: utf-8
 from django import http
 from django import template
 from django.conf import settings
@@ -50,7 +51,7 @@ def login_login(request):
             sso_url, {'redirect_to': redirect_to, 'sso_token': sso_token})
         return http.HttpResponseRedirect(sso_url)
       else:
-        raise exception.ValidationError("Invalid username or password")
+        raise exception.ValidationError(u"Tên đăng nhập / mật khẩu không hợp lệ")
     except:
       exception.handle_exception(request)
 

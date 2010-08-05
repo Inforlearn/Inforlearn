@@ -32,15 +32,15 @@ def join_join(request):
   password = request.REQUEST.get('password', '')
 #  confirm = request.REQUEST.get('confirm', '')
   homepage = request.REQUEST.get('homepage', '')
-  hide = request.REQUEST.get('hide', '')
+#  hide = request.REQUEST.get('hide', '')
 
   if request.POST:
     try:
       # TODO validate
       params = util.query_dict_to_keywords(request.POST)
 
-      if hide:
-        params['privacy'] = 2
+#      if hide:
+      params['privacy'] = 2
 
       validate.email(email)
       if not mail.is_allowed_to_send_email_to(email):

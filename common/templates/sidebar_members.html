@@ -1,10 +1,11 @@
 {% load vcard %}
 <div id="contacts" class='contacts'>
   <h2>Thành viên ({{members_count}})</h2>
-  {% if PRIVATE_CHANNELS_ENABLED and user_is_admin %}
+  <!--
+  {% if user_is_admin %}
     <a href="{{view.url}}/members/manage" class="edit">Quản lý</a>
   {% endif %}
-
+  -->
   {% if members|length %}
     <ul>
     {% for member in members %}

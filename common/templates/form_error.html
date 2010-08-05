@@ -1,11 +1,9 @@
 {% load error %}
 {% if request.errors %}
   <div id="error" class='error'>
-    <ul>
     {% for error in request.errors %}
-      <li>{{error|error_to_html}}</li>
+      {{error|error_to_html}}
     {% endfor %}
-    </ul>
   </div>
 {% endif %}
 

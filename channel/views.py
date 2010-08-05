@@ -451,7 +451,7 @@ def channel_members(request, nick=None, format='html'):
   actors = dict([(k, v) for k, v in actors.iteritems() if v])
   per_page = per_page - (len(follower_nicks) - len(actors))
 
-  whose = "%s's" % view.display_nick()
+  whose = view.display_nick()
 
   # here comes lots of munging data into shape
   actor_tiles = [actors[x] for x in follower_nicks if x in actors]
