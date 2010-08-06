@@ -87,13 +87,13 @@ def actor_history(request, nick=None, format='html'):
       inbox = []
     else:
       inbox = api.inbox_get_actor_public(request.user, view.nick,
-                                         limit=(per_page + 1), offset=offset)
+                                         limit=100, offset=offset)
   elif privacy == 'contacts':
     inbox = api.inbox_get_actor_contacts(request.user, view.nick,
-                                         limit=(per_page + 1), offset=offset)
+                                         limit=100, offset=offset)
   elif privacy == 'private':
     inbox = api.inbox_get_actor_private(request.user, view.nick,
-                                        limit=(per_page + 1), offset=offset)
+                                        limit=100, offset=offset)
 
   actor_streams = api.stream_get_actor_safe(request.user, view.nick)
 
@@ -842,5 +842,5 @@ def _get_sidebar_streams(actor_streams, streams, request_user=None):
 
 def _get_inbox_entries(request, inbox, hide_comments=False):
   entries = api.entry_get_entries(request.user, inbox, hide_comments)
-  per_page = ENTRIES_PER_PAGE - (len(inbox) - len(entries))
+  per_page = 20# ENTRIES_PER_PAGE #- (len(inbox) - len(entries))
   return util.page_entries(request, entries, per_page)
