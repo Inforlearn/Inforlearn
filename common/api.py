@@ -1792,9 +1792,14 @@ def channel_post(api_user, **kw):
   #presence = _set_presence(**values)
   entry = _add_entry(stream, new_values=values)
   subscribers = _subscribers_for_channel_entry(stream, entry)
+  
+  subscribers.append('inbox/%s/private' % entry.actor)  # gửi một bản sao của tin nhắn vào "Gửi lên bởi tôi"
+  
   _add_inboxes_for_entry(subscribers, stream, entry)
   _notify_subscribers_for_entry(subscribers, actor_ref, stream, entry)
   # XXX end transaction
+
+  
 
   return entry
 
@@ -4898,7 +4903,6 @@ def _subscribers_for_channel_entry(stream_ref, entry_ref):
   """
   # the users subscribed to the stream this entry is going to
   subscribers = subscription_get_topic(ROOT, stream_ref.key().name())
-
   if stream_is_private(ROOT, stream_ref.key().name()):
     # LEGACY COMPAT: the 'or' in there is for legacy compat
     subscribers = [s.target for s in subscribers
