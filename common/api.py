@@ -59,6 +59,7 @@ ACCESS_LEVELS = [NO_ACCESS,
 ROOT = Actor(nick=settings.ROOT_NICK, type='user')
 ROOT.access_level = ADMIN_ACCESS
 
+PER_PAGE = 20
 
 # Max length of a message. Conciseness is a virtue.
 # UIs should prevent posting longer messages. API will truncate
@@ -2074,6 +2075,8 @@ def entry_get_entries(api_user, entries, hide_comments=False):
     entry = entries_dict.get(entry_key, None)
     if entry:
       out.append(entry)
+    if len(out) > PER_PAGE:
+      break
   return out
 
 def entry_get_entries_dict(api_user, entries, hide_comments=False):

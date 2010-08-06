@@ -220,7 +220,7 @@ def actor_overview(request, nick, format='html'):
 
   inbox = api.inbox_get_actor_overview(request.user,
                                        view.nick,
-                                       limit=(per_page + 1),
+                                       limit=100,#(per_page + 1),
                                        offset=offset)
 
   actor_streams = api.stream_get_actor(request.user, view.nick)

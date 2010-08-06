@@ -1,13 +1,13 @@
-==========================================
-Inforlearn.com - Informal Learning Network
-==========================================
+=========================
+http://www.inforlearn.com
+=========================
 
 Mã nguồn
 ========
 
-  * Mã nguồn sản phẩm được cập nhật tại địa chỉ:
+  * Mã nguồn sản phẩm được cập nhật tại địa chỉ::
       
-      `http://github.com/AloneRoad/Inforlearn`
+      http://github.com/AloneRoad/Inforlearn
 
 
 Hướng dẫn nhanh
@@ -16,17 +16,17 @@ Hướng dẫn nhanh
 Chạy thử sản phẩm
 -----------------
 
-  1. Tạo một bản sao của toàn bộ mã nguồn đang phát triển tại máy:
+  1. Tạo một bản sao của toàn bộ mã nguồn đang phát triển tại máy::
   
-    `git clone git://github.com/AloneRoad/Inforlearn.git`
+      git clone git://github.com/AloneRoad/Inforlearn.git
     
-  2. Khởi chạy ứng dụng
+  2. Khởi chạy ứng dụng::
   
-    `./start.sh`  
+      ./start.sh  
     
-  3. Truy cập ứng dụng tại địa chỉ:
+  3. Truy cập ứng dụng tại địa chỉ::
   
-    `http://localhost:8080/`
+      http://localhost:8080/
     
     
 Triển khai ứng dụng với Google App Engine
@@ -38,6 +38,6 @@ Triển khai ứng dụng với Google App Engine
   
   3. Sửa ID của ứng dụng thành ID bạn vừa đăng ký trong file app.yaml (dòng đầu tiên)
 
-  4. Chuyển code lên Google App Engine
+  4. Chuyển code lên Google App Engine::
     
-    `./update.sh`
+    ./update.sh
