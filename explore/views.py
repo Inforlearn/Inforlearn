@@ -23,13 +23,13 @@ def explore_recent(request, format="html"):
 
   offset, prev = util.page_offset(request)
 
-  inbox = api.inbox_get_explore(request.user, limit=(per_page + 1),
+  inbox = api.inbox_get_explore(request.user, limit=100,
                                 offset=offset)
 
   # START inbox generation chaos
   # TODO(termie): refacccttttooorrrrr
   entries = api.entry_get_entries(request.user, inbox)
-  per_page = per_page - (len(inbox) - len(entries))
+#  per_page = per_page - (len(inbox) - len(entries))
   entries, more = util.page_entries(request, entries, per_page)
 
   stream_keys = [e.stream for e in entries]
