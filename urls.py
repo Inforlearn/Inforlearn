@@ -12,7 +12,7 @@ urlpatterns += patterns('export.views',
     (r'^export/user_contacts', 'user_contacts'),
     (r'^export/channel_admins$', 'channel_admins'),
     (r'^export/user_history$', 'user_history'),
-    (r'^export/entries$', 'entries'),
+    (r'^export/user_comments$', 'user_comments'),
 )
 
 
