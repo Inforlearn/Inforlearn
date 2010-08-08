@@ -279,7 +279,7 @@ IM_ENABLED = True
 
 # This is the id (JID) of the IM bot that you will use to communicate with
 # users of the IM interface
-IM_BOT = 'bot@inforlearn.com'
+IM_BOT = 'inforlearn@appspot.com'
 
 # Turn on test mode for IM
 IM_TEST_ONLY = False

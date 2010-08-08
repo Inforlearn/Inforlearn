@@ -1167,21 +1167,13 @@ def actor_lookup_email(api_user, email):
   return None
 
 def actor_lookup_im(api_user, im):
-  memcache_key = "im::%s::%s" % (api_user, im)
-  memcache_key = md5(memcache_key).hexdigest()
-  cached_data = memcache.client.get(memcache_key)
-  if cached_data:
-    return cached_data
-
   query = Relation.gql('WHERE relation = :1 AND target = :2',
-                       'im_account',
-                       im)
+                       'im_account', im)
   rel_ref = query.get()
   if not rel_ref:
     return None
   else:
     result = actor_get(api_user, rel_ref.owner)
-    memcache.client.add(memcache_key, result, 120)
     return result
 
 def actor_lookup_mobile(api_user, mobile):
