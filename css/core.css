@@ -370,10 +370,6 @@ div#sidebar div.bottom {
   padding: 0 18px 1.5em;
 }
 
-#frontpage div#sidebar div.bottom {
-  min-height: 500px;
-}
-
 body.single div#sidebar {
   position: absolute;
   width: 150px;
@@ -548,7 +544,7 @@ div#intro ul {
 
 div#intro ul li {
   margin: 0;
-  padding: 0.6em 0 1em 45px;
+  padding: 0 0 1em 5px;
 }
 
 div#intro ul li h3 {
@@ -641,17 +637,6 @@ ul#more {
   right: 25px !important;
 }
 
-div#sign-up, li#sign-up {
-  text-align: center;
-  color: #a70086;
-  margin: 0 0 1em;
-}
-
-div#sign-up a, li#sign-up a {
-  display: block;
-  height: 78px;
-}
-
 div#sign-up a:hover {
   background-position: 50% -78px;
 }
@@ -685,7 +670,6 @@ li#learn-more a {
 div#footer {
   padding-top: 2em;
   line-height: 1.4em;
-  font-size: 0.86em;
   clear: both;
 }
 
@@ -927,7 +911,6 @@ div.buttons button:hover big.active span, div.buttons big.active:hover a, div#we
 }
 
 p.foot-note {
-  font-size: 0.86em;
   color: #666;
 }
 
@@ -1245,53 +1228,15 @@ div#sidebar div.contacts ul li {
   float: left;
 }
 
-#frontpage div#sidebar div#contacts ul {
-  margin: 0 8px;
-}
-
-#frontpage div#sidebar div#contacts ul li {
-  width: 64px;
-  clear: left;
-  margin: 0;
-}
-
-#frontpage div#sidebar div#contacts ul li img.photo {
-  margin: 2px;
-  padding: 4px;
-}
-
 div#sidebar div#channels ul {
   list-style-type: none;
   overflow: hidden;
-}
-
-#frontpage div#sidebar div#channels ul li {
-  border-bottom: none;
-  clear: none;
-  float: left;
-  width: 64px;
-  margin: 0;
-}
-
-#frontpage div#sidebar div#channels ul li img.photo {
-  border: solid 1px #e5e5e5;
-  margin: 2px;
-  padding: 4px;
-}
-/ /changes to get the padding back div#sidebar div#channels ul li img.photo {
-  float: left;
-  padding: 4px;
 }
 
 div#sidebar div#channels ul li img.photo {
   border: solid 1px #fff;
 }
 
-div#sidebar div#channels ul li {
-  border-bottom: solid 1px #f1f1f1;
-  overflow: hidden;
-  padding: 0.2em 0;
-}
 / /end changes #welcome div.avatars {
   overflow: hidden;
   width: 440px;
@@ -1334,6 +1279,10 @@ div.avatars li label, div.backgrounds li label, #welcome div.tabs div.tab div.av
   margin: 0 0 0 -20px;
 }
 
+#settings div.body ul {
+  margin-left: 25px;
+}
+
 div#list-select ul {
   list-style-type: none;
   clear: left;
@@ -1347,6 +1296,48 @@ div#list-select ul h3, div#list-select ul p {
 
 div#list-select div.buttons {
   padding-left: 30px;
+}
+
+/* Frontpage Groups listing*/
+div.front-groups ul {
+  border-top: solid 1px #f1f1f1;
+  list-style-type: none;
+  padding-top: 1em;
+  overflow: hidden;
+  margin: 0;
+}
+
+div.front-groups ul li {
+  overflow: hidden;
+  width: 165px;
+  margin: 0;
+  padding: 0 15px 0.5em 0;
+}
+
+#sidebar div.front-groups ul li {
+  border-bottom: solid 1px #f1f1f1;
+  width: auto;
+  padding: 0.5em 0;
+}
+
+div.front-groups ul li img {
+  margin-right: 10px;
+  float: left;
+}
+
+div.front-groups ul li h3 {
+  font-size: 1.25em;
+  width: 245px;
+  margin-bottom: 5px;
+}
+
+div.front-groups ul li p {
+  color: #666;
+}
+
+div.front-groups ul a {
+  background: transparent;
+  color: #333;
 }
 
 /* --- Groups listing -------------------------------------- */
@@ -1639,6 +1630,7 @@ div#stream div.controls a:hover {
 
 div#stream div.controls a.comment {
   padding-left: 17px;
+  font-size: 1.2em;
 }
 
 ul.stream li {
@@ -1804,7 +1796,9 @@ ul.stream li a.more:hover {
 
 ul.stream li.date {
   border-top: none;
-  margin: 0.3em 0;
+  font-size: 1.1em;
+  margin-top: 1em;
+  margin-bottom: 0.4em;
 }
 
 ul.stream li.date h3 {
@@ -2257,13 +2251,6 @@ div#sidebar h2, div#side-nav h2, div#leave-comment h2 {
 
 div#content div#sidebar h2 {
   margin: 0 0 0.5em;
-}
-
-#frontpage div#sidebar h2 {
-  font: normal 1.5em Arial, Helvetica, sans-serif;
-  background: transparent;
-  color: #333;
-  margin: 0.5em 0;
 }
 
 div#sidebar div#mobile h2, div#sidebar div.first h2 {
@@ -2842,7 +2829,7 @@ div#self, #settings div.tabs div.avatars ul {
   display: inline;
 }
 
-div.contacts ul.float li.clear, div.contacts h2, div.groups ul li.odd, div#current-stream {
+div.contacts ul.float li.clear, div.contacts h2, div#current-stream {
   clear: left;
 }
 

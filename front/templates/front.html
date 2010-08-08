@@ -1,4 +1,4 @@
-{% extends 'channel/templates/channel_base.html' %}
+{% extends 'common/templates/base_sidebar.html' %}
 
 {% block bodytag %}{{block.super}} {% endblock %}
 
@@ -11,41 +11,24 @@
 {% endblock %}
 
 {% block content %}
+    <div class="main" style="padding: 7px 15px 1px;">
+      <h1 style="font: normal normal normal 280%/100% 'Lucida Grande'; width:300px;">{{SITE_NAME}} </h1>
+      <h3 style="color: white; width:300px;">share.discuss.learn.make it simple.</h3>
+        <h3 style="width: 80px; float: right; margin-top: -30px;"><a href="/tour">&#8250; Giới thiệu</a></h3>
+    </div>
     <div id="intro">
-      <h1 style="font: normal normal normal 280%/100% 'Lucida Grande';">{{SITE_NAME}} </h1>
-      <h3>share.ask.discuss.learn.</h3>
       <ul>
-<!--          <li id="ninedot">-->
-<!--              <h3>&nbsp;&nbsp;&nbsp;Sự đơn giản...</h3>-->
-<!--              <p>&nbsp;&nbsp;&nbsp;&nbsp;Hãy thử giải bài toán sau: Cho 9 điểm -->
-<!--              như hình vẽ bên trái, hãy nối tất cả chúng bằng một đường liền nét, -->
-<!--              sao cho tổng số đoạn thẳng phải sử dụng là ít nhất... </p>-->
-<!--              <p>&nbsp;&nbsp;&nbsp;&nbsp;...bạn có thể nối 9 điểm đó với 3 đoạn -->
-<!--              thẳng liên tiếp nhau không? Đôi khi, chúng ta suy nghĩ mọi chuyện -->
-<!--              theo những lối mòn và đóng khung suy nghĩ trong một cái hộp vô hình...</p>-->
-<!--          </li>-->
-          <li id="follow">
-              <h3>&nbsp;&nbsp;&nbsp;Kết nối và chia sẻ</h3>
-              <p>&nbsp;&nbsp;&nbsp;&nbsp;Nền tảng inforlearn giúp cho bạn có thể
-              kết nối đến những người có chung mối quan tâm với bạn về các nguồn 
-              kiến thức.</p>
-          </li>
-          <li id="create">
-              <h3>&nbsp;&nbsp;&nbsp;Trao đổi, thảo luận</h3>
-              <p>&nbsp;&nbsp;&nbsp;&nbsp;Việc thảo luận và chia sẻ sẽ chưa bao giờ
-              dễ dàng đến vậy :).</p>
-          </li>
-<!--          <li id="create">-->
-<!--              <h3>&nbsp;&nbsp;&nbsp;Cập nhật, tổng hợp k</h3>-->
-<!--              <p>&nbsp;&nbsp;&nbsp;&nbsp;Kiến thức mới, tin tức mới luôn được chuyển đến tài khoản của bạn theo thời gian thực.-->
-<!--              dễ dàng đến vậy :).</p>-->
-<!--          </li>-->
           <li id="more">
-              <h3><a href="/tour">&#8250; Giới thiệu</a></h3>
+            <h3 ><a href="/join">&#8250; Tạo tài khoản mới</a></h3>
+            
           </li>
       </ul>
     </div>
-
+    <div class="front-groups">
+    {% with channels as channel_tiles %}
+      {% include 'channel/templates/channel_tiles.html' %}
+    {% endwith %}
+    </div>
 <ul>
 {% for entry in recent_entries %}
   <li><a href="{{ entry.url }}">{{ entry.url }}</a></li>
@@ -55,6 +38,4 @@
 
 {% block sidebar %}
   {% include 'front/templates/sidebar_joinnow.html' %}
-  {% include 'front/templates/sidebar_featured_channels.html' %}
-  {% include 'front/templates/sidebar_featured_members.html' %}
 {% endblock %}

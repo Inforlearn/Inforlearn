@@ -2,6 +2,7 @@ from django.template import RequestContext, loader
 from django.http import HttpResponse, HttpResponseRedirect
 from common import decorator
 from settings import NS_DOMAIN
+from common import api
 
 ENTRIES_PER_PAGE = 5
 SIDEBAR_LIMIT = 9
@@ -9,6 +10,9 @@ SIDEBAR_FETCH_LIMIT = 50
 
 def front_front(request):
   # if the user is logged in take them to their overview
+  green_top = True
+  sidebar_green_top = True
+  
   if request.user:
     url = request.user.url(request=request)
     return HttpResponseRedirect(url + "/overview")
@@ -69,6 +73,7 @@ def front_front(request):
 
 #  root = api.ROOT
 
+  channels = api.channel_browse(request.user, 15)
   area = 'frontpage'
 
   t = loader.get_template('front/templates/front.html')
