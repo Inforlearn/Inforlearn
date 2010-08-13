@@ -1,3 +1,4 @@
+#! coding: utf-8
 import datetime
 import logging
 import StringIO
@@ -361,7 +362,7 @@ def api_vendor_sms_receive(request, vendor_secret=None):
 
 def api_vendor_xmpp_receive(request):
   """Receive any XMPP message, at the moment it expects the message to
-     already be parsed."""
+     already be parsed."""     
   if not settings.IM_ENABLED:
     raise http.Http404()
   xmpp_message = xmpp.XmppMessage.from_request(request)
@@ -370,6 +371,7 @@ def api_vendor_xmpp_receive(request):
 
     raise http.Http404()
 
+  
   im_service = im.ImService(xmpp.XmppConnection())
   im_service.init_handlers()
   rv = im_service.handle_message(xmpp_message.sender,

@@ -14,16 +14,16 @@
     {% endif %}
   {% endif %}
   {% if IM_ENABLED %}
-  {% if not im_address %}
-  <p>Để nhận thông báo qua IM, bạn cần
-  <a href="{{view.url}}/settings/im">xác thực địa chỉ IM của bạn</a>.
-  </p>
-  {% endif %}
+    {% if not im_address %}
+      <p>Để nhận thông báo qua IM, bạn cần
+        <a href="{{view.url}}/settings/im">xác thực địa chỉ IM đang dùng</a>.
+      </p>
+    {% endif %}
   {% endif %}
   {% if not email %}
-  <p>Để nhận thông báo qua email, bạn cần
-  <a href="{{view.url}}/settings/email">xác thực địa chỉ email của bạn</a>.
-  </p>
+    <p>Để nhận thông báo qua email, bạn cần
+      <a href="{{view.url}}/settings/email">xác thực địa chỉ email đang dùng</a>.
+    </p>
   {% endif %}
 </div>
 {% endif %}
@@ -53,22 +53,22 @@
     <input type="checkbox" name="im" id="im" value="1"
     {% if im_notify %}checked="checked"{% endif %}
     {% if not im_address %}disabled=disabled{% endif %}/>
-    <label for="im">Gửi thông báo qua IM{% if im_address %} đến {{im_address.base}}{% endif %}</label>
+    <label for="im">Gửi tin nhắn thông báo {% if im_address %} đến {{im_address.base}}{% endif %}</label>
     {% if not im_address %}
-    <a href="{{view.url}}/settings/im">(Kích hoạt địa chỉ IM của bạn)</a>
+      <a href="{{view.url}}/settings/im">(Kích hoạt địa chỉ IM)</a>
     {% else %}
-    <a href="{{view.url}}/settings/im">(Thay đổi)</a>
+      <a href="{{view.url}}/settings/im">(Thay đổi)</a>
     {% endif %}
   </div>
   {% endif %}
-  <h3>Người theo đuôi và bình luận</h3>
+  <h3>Người xin kết bạn và các bình luận</h3>
   <div class="wide radio">
     <input type="checkbox" name="email" id="email" value="1"
     {% if email_notify %}checked="checked"{% endif %}
     {% if not email %}disabled=disabled{% endif %}/>
-    <label for="email">Gửi email thông báo về những người đăng ký nhận tin cập nhật của bạn và các bình luận mới {% if email %} tới {{email}}{% endif %}</label>
+    <label for="email">Gửi email thông báo {% if email %} tới {{email}}{% endif %}</label>
     {% if not email %}
-    <a href="{{view.url}}/settings/email">(Kích hoạt địa chỉ email của bạn)</a>
+    <a href="{{view.url}}/settings/email">(Kích hoạt địa chỉ email)</a>
     {% endif %}
   </div>
 

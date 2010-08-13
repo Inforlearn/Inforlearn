@@ -43,6 +43,7 @@ from common import util
 from common import validate
 from common.protocol import sms
 from common.protocol import xmpp
+from cachepy import cachepy as cache
 
 NO_ACCESS = 'none'
 READ_ACCESS = 'read'
@@ -509,7 +510,7 @@ def abuse_report_entry(api_user, nick, entry):
 def activation_activate_email(api_user, nick, code):
   activation_ref = activation_get_code(api_user, nick, 'email', code)
   if not activation_ref:
-    raise exception.ApiNotFound('Invalid code: %s' % code)
+    raise exception.ApiNotFound('Mã xác thực %s không hợp lệ' % code)
 
   actor_ref = actor_get(api_user, nick)
   existing_ref = actor_lookup_email(ROOT, activation_ref.content)
@@ -519,8 +520,7 @@ def activation_activate_email(api_user, nick, code):
                     actor_ref.nick, email)
     relation_ref = Relation(owner=actor_ref.nick,
                             relation='email',
-                            target=email,
-                            )
+                            target=email,)
     return relation_ref
 
   if existing_ref:
@@ -539,7 +539,7 @@ def activation_activate_email(api_user, nick, code):
 def activation_activate_mobile(api_user, nick, code):
   activation_ref = activation_get_code(api_user, nick, 'mobile', code)
   if not activation_ref:
-    raise exception.ApiNotFound('Invalid code: %s' % code)
+    raise exception.ApiNotFound('Mã xác thực %s không hợp lệ' % code)
 
   actor_ref = actor_get(api_user, nick)
   existing_ref = actor_lookup_mobile(ROOT, activation_ref.content)
@@ -586,7 +586,7 @@ def activation_create_email(api_user, nick, email):
   existing_ref = actor_lookup_email(ROOT, email)
   if existing_ref:
     raise exception.ApiAlreadyInUse(
-        "Email address is already in use: %s" % email)
+        "Địa chỉ email %s đã có người sử dụng" % email)
 
   return activation_create(api_user, nick, 'email', email)
 
@@ -614,8 +614,7 @@ def activation_get(api_user, nick, type, content):
 def activation_get_actor_email(api_user, nick):
   """Get a list of outstanding email activations for actor"""
   query = Activation.gql('WHERE type = :1 AND actor = :2',
-                         'email',
-                         nick)
+                         'email', nick)
 
   activations = list(query.run())
   return activations
@@ -623,8 +622,7 @@ def activation_get_actor_email(api_user, nick):
 @owner_required
 def activation_get_actor_mobile(api_user, nick):
   query = Activation.gql('WHERE type = :1 AND actor = :2',
-                         'mobile',
-                         nick)
+                         'mobile', nick)
 
   activations = list(query.run())
   return activations
@@ -640,9 +638,9 @@ def activation_get_by_email(api_user, email):
 
 @owner_required
 def activation_get_code(api_user, nick, type, code):
-  memcache_key = "%s::%s::%s::%s" % (api_user, nick, type, code)
-  memcache_key = md5(memcache_key).hexdigest()
-  cached_data = memcache.client.get(memcache_key)
+  cache_key = "%s::%s::%s::%s" % (api_user, nick, type, code)
+  cache_key = md5(cache_key).hexdigest()
+  cached_data = cache.get(cache_key)
   if cached_data:
     return cached_data
 
@@ -652,7 +650,7 @@ def activation_get_code(api_user, nick, type, code):
                          code)
 
   activation_ref = query.get()
-  memcache.client.add(memcache_key, activation_ref, 120)
+  cache.set(cache_key, activation_ref, 120)
   return activation_ref
 
 @admin_required
@@ -752,10 +750,10 @@ def actor_add_contact(api_user, owner, target):
   target_ref = actor_get(api_user, target)
 
   if not owner_ref:
-    raise exception.ApiException('Actor does not exist: %s' % owner)
+    raise exception.ApiException('Đối tượng %s không tồn tại' % owner)
 
   if not target_ref:
-    raise exception.ApiException('Actor does not exist: %s' % target)
+    raise exception.ApiException('Đối tượng %s không tồn tại' % target)
 
   existing_rel_ref = actor_has_contact(ROOT, owner, target)
 
@@ -844,9 +842,9 @@ def actor_add_contacts(api_user, owner, targets):
 
 @admin_required
 def actor_count_contacts(api_user, nick):
-  memcache_key = "%s::%s" % (api_user, nick)
-  memcache_key = md5(memcache_key).hexdigest()
-  cached_data = memcache.client.get(memcache_key)
+  cache_key = "%s::%s" % (api_user, nick)
+  cache_key = md5(cache_key).hexdigest()
+  cached_data = cache.get(cache_key)
   if cached_data:
     return cached_data
 
@@ -855,14 +853,14 @@ def actor_count_contacts(api_user, nick):
                        nick,
                        'contact')
   result = query.count()
-  memcache.client.add(memcache_key, result, 60)
+  cache.set(cache_key, result, 60)
   return result
 
 @admin_required
 def actor_count_followers(api_user, nick):
-  memcache_key = "%s::%s" % (api_user, nick)
-  memcache_key = md5(memcache_key).hexdigest()
-  cached_data = memcache.client.get(memcache_key)
+  cache_key = "%s::%s" % (api_user, nick)
+  cache_key = md5(cache_key).hexdigest()
+  cached_data = cache.get(cache_key)
   if cached_data:
     return cached_data
 
@@ -871,7 +869,7 @@ def actor_count_followers(api_user, nick):
                        nick,
                        'contact')
   result = query.count()
-  memcache.client.add(memcache_key, result, 60)
+  cache.set(cache_key, result, 60)
   return result
 
 def actor_is_follower(api_user, nick, potential_follower):
@@ -938,24 +936,31 @@ def actor_get(api_user, nick):
   .. _more info on icon: /api/docs/response_icon
   .. _actor_ref: /api/docs/model_actor_ref
   """
-  nick = clean.nick(nick)
-  if not nick:
-    raise exception.ApiException("Invalid nick: %s" % nick)
-
-  not_found_message = 'Actor not found: %s' % nick
-
-  key_name = Actor.key_from(nick=nick)
-  actor_ref = Actor.get_by_key_name(key_name)
-
-  if not actor_ref:
-    raise exception.ApiNotFound(not_found_message)
-
-  if actor_ref.is_deleted():
-    raise exception.ApiDeleted(not_found_message)
-
-  if actor_ref.nick == ROOT.nick:
-    actor_ref.access_level = ADMIN_ACCESS
-
+  key_name = "actor_get::%s::%s" % (api_user, nick)
+  key_name = md5(key_name).hexdigest()
+  cached_data = cache.get(key_name)
+  if cached_data:
+    actor_ref = cached_data
+  else:
+    nick = clean.nick(nick)
+    if not nick:
+      raise exception.ApiException("Nick %s không hợp lệ" % nick)
+  
+    not_found_message = u'Đối tượng %s không tồn tại' % nick
+  
+    key_name = Actor.key_from(nick=nick)
+    actor_ref = Actor.get_by_key_name(key_name)
+  
+    if not actor_ref:
+      raise exception.ApiNotFound(not_found_message)
+  
+    if actor_ref.is_deleted():
+      raise exception.ApiDeleted(not_found_message)
+  
+    if actor_ref.nick == ROOT.nick:
+      actor_ref.access_level = ADMIN_ACCESS
+    
+  cache.set(key_name, actor_ref)
   if actor_can_view_actor(api_user, actor_ref):
     return ResultWrapper(actor_ref, actor=actor_ref)
 
@@ -987,9 +992,9 @@ def actor_get_actors(api_user, nicks):
 @public_owner_or_contact
 def actor_get_channels_admin(api_user, nick, limit=48, offset=None):
   """returns the channels the given actor is a member of"""
-  memcache_key = "channeladmin::%s::%s::%s::%s" % (api_user, nick, limit, offset)
-  memcache_key = md5(memcache_key).hexdigest()
-  cached_data = memcache.client.get(memcache_key)
+  cache_key = "channeladmin::%s::%s::%s::%s" % (api_user, nick, limit, offset)
+  cache_key = md5(cache_key).hexdigest()
+  cached_data = cache.get(cache_key)
   if cached_data:
     return cached_data
 
@@ -1000,15 +1005,15 @@ def actor_get_channels_admin(api_user, nick, limit=48, offset=None):
                        offset)
   rv = query.fetch(limit)
   result = [x.owner for x in rv]
-  memcache.client.add(memcache_key, result)
+  cache.set(cache_key, result)
   return result
 
 @public_owner_or_contact
 def actor_get_channels_member(api_user, nick, limit=48, offset=None):
   """returns the channels the given actor is a member of"""
-  memcache_key = "channelmember::%s::%s::%s::%s" % (api_user, nick, limit, offset)
-  memcache_key = md5(memcache_key).hexdigest()
-  cached_data = memcache.client.get(memcache_key)
+  cache_key = "channelmember::%s::%s::%s::%s" % (api_user, nick, limit, offset)
+  cache_key = md5(cache_key).hexdigest()
+  cached_data = cache.get(cache_key)
   if cached_data:
     return cached_data
 
@@ -1018,7 +1023,7 @@ def actor_get_channels_member(api_user, nick, limit=48, offset=None):
                        offset)
   rv = query.fetch(limit)
   result = [x.owner for x in rv]
-  memcache.client.add(memcache_key, result, 60)
+  cache.set(cache_key, result, 60)
   return result
 
 def actor_get_channels_member_safe(api_user, nick, limit=48, offset=None):
@@ -1030,9 +1035,9 @@ def actor_get_channels_member_safe(api_user, nick, limit=48, offset=None):
 @public_owner_or_contact
 def actor_get_contacts(api_user, nick, limit=48, offset=None):
   """returns the contacts for the given actor if current_actor can view them"""
-  memcache_key = "contact::%s::%s::%s::%s" % (api_user, nick, limit, offset)
-  memcache_key = md5(memcache_key).hexdigest()
-  cached_data = memcache.client.get(memcache_key)
+  cache_key = "contact::%s::%s::%s::%s" % (api_user, nick, limit, offset)
+  cache_key = md5(cache_key).hexdigest()
+  cached_data = cache.get(cache_key)
   if cached_data:
     return cached_data
 
@@ -1042,7 +1047,7 @@ def actor_get_contacts(api_user, nick, limit=48, offset=None):
                        offset)
   results = query.fetch(limit)
   result = [x.target for x in results]
-  memcache.client.add(memcache_key, result, 120)
+  cache.set(cache_key, result, 120)
   return result
 
 def actor_get_contacts_safe(api_user, nick, limit=48, offset=None):
@@ -1054,9 +1059,9 @@ def actor_get_contacts_safe(api_user, nick, limit=48, offset=None):
 @owner_required
 def actor_get_contacts_since(api_user, nick, limit=30, since_time=None):
   """returns the contacts for the given actor if current_actor can view them"""
-  memcache_key = "contact_since::%s::%s::%s::%s" % (api_user, nick, limit, since_time)
-  memcache_key = md5(memcache_key).hexdigest()
-  cached_data = memcache.client.get(memcache_key)
+  cache_key = "contact_since::%s::%s::%s::%s" % (api_user, nick, limit, since_time)
+  cache_key = md5(cache_key).hexdigest()
+  cached_data = cache.get(cache_key)
   if cached_data:
     return cached_data
 
@@ -1066,7 +1071,7 @@ def actor_get_contacts_since(api_user, nick, limit=30, since_time=None):
                        since_time)
   results = query.fetch(limit)
   result = [x.target for x in results]
-  memcache.client.add(memcache_key, result, 120)
+  cache.set(cache_key, result, 120)
   return result
 
 @owner_required
@@ -1118,9 +1123,9 @@ def actor_get_contacts_avatars_since(api_user, nick, limit=30, since_time=None):
 @public_owner_or_contact
 def actor_get_followers(api_user, nick, limit=48, offset=None):
   """returns the followers for the given actor if current_actor can view them"""
-  memcache_key = "followers::%s::%s::%s::%s" % (api_user, nick, limit, offset)
-  memcache_key = md5(memcache_key).hexdigest()
-  cached_data = memcache.client.get(memcache_key)
+  cache_key = "followers::%s::%s::%s::%s" % (api_user, nick, limit, offset)
+  cache_key = md5(cache_key).hexdigest()
+  cached_data = cache.get(cache_key)
   if cached_data:
     return cached_data
 
@@ -1130,7 +1135,7 @@ def actor_get_followers(api_user, nick, limit=48, offset=None):
                        offset)
   results = query.fetch(limit)
   result = [x.owner for x in results]
-  memcache.client.add(memcache_key, result, 120)
+  cache.set(cache_key, result, 120)
   return result
 
 def actor_get_safe(api_user, nick):
@@ -1151,9 +1156,9 @@ def actor_lookup_email(api_user, email):
     email - email alias
   RETURNS: actor_ref
   """
-  memcache_key = "email::%s::%s" % (api_user, email)
-  memcache_key = md5(memcache_key).hexdigest()
-  cached_data = memcache.client.get(memcache_key)
+  cache_key = "email::%s::%s" % (api_user, email)
+  cache_key = md5(cache_key).hexdigest()
+  cached_data = cache.get(cache_key)
   if cached_data:
     return cached_data
 
@@ -1162,7 +1167,7 @@ def actor_lookup_email(api_user, email):
   for rel_ref in query:
     actor_ref = actor_get_safe(api_user, rel_ref.owner)
     if actor_ref:
-      memcache.client.add(memcache_key, actor_ref, 120)
+      cache.set(cache_key, actor_ref, 120)
       return actor_ref
   return None
 
@@ -1177,9 +1182,9 @@ def actor_lookup_im(api_user, im):
     return result
 
 def actor_lookup_mobile(api_user, mobile):
-  memcache_key = "mobile::%s::%s" % (api_user, mobile)
-  memcache_key = md5(memcache_key).hexdigest()
-  cached_data = memcache.client.get(memcache_key)
+  cache_key = "mobile::%s::%s" % (api_user, mobile)
+  cache_key = md5(cache_key).hexdigest()
+  cached_data = cache.get(cache_key)
   if cached_data:
     return cached_data
 
@@ -1189,15 +1194,15 @@ def actor_lookup_mobile(api_user, mobile):
   for rel_ref in query:
     actor_ref = actor_get_safe(api_user, rel_ref.owner)
     if actor_ref:
-      memcache.client.add(memcache_key, actor_ref, 120)
+      cache.set(cache_key, actor_ref, 120)
       return actor_ref
   return None
 
 def actor_lookup_nick(api_user, nick):
   """ lookup actor based on normalized version of the nick """
-  memcache_key = "nick::%s::%s" % (api_user, nick)
-  memcache_key = md5(memcache_key).hexdigest()
-  cached_data = memcache.client.get(memcache_key)
+  cache_key = "nick::%s::%s" % (api_user, nick)
+  cache_key = md5(cache_key).hexdigest()
+  cached_data = cache.get(cache_key)
   if cached_data:
     return cached_data
 
@@ -1212,7 +1217,7 @@ def actor_lookup_nick(api_user, nick):
   if not actor_ref:
     return None
   result = actor_get_safe(api_user, actor_ref.nick)
-  memcache.client.add(memcache_key, result, 120)
+  cache.set(cache_key, result)
   return result
 
 @delete_required
@@ -1427,9 +1432,10 @@ def channel_browse(api_user, limit, offset_channel_nick=''):
     offset_channel_nick - Retrieve channels with nick > this value.
   """
   # Sort by nick, so that filtering works.
-  memcache_key = "channel_browse::%s::%s::%s" % (api_user, limit, offset_channel_nick)
-  memcache_key = md5(memcache_key).hexdigest()
-  cached_data = memcache.client.get(memcache_key)
+  cache_key = "channel_browse::%s::%s::%s" % (api_user, limit, offset_channel_nick)
+  cache_key = md5(cache_key).hexdigest()
+#  cached_data = cache.get(cache_key)
+  cached_data = cache.get(cache_key)
   if cached_data:
     return cached_data
 
@@ -1442,7 +1448,8 @@ def channel_browse(api_user, limit, offset_channel_nick=''):
   if offset_channel_nick:
     logging.info('offset: ' + offset_channel_nick)
   results = query.fetch(limit)
-  memcache.client.add(memcache_key, results, 120)
+#  memcache.client.add(cache_key, results, 120)
+  cache.set(cache_key, results, 500)
   return results
 
 def channel_browse_recent(api_user, limit=48, offset=None):
@@ -1529,9 +1536,9 @@ def channel_get(api_user, channel):
   RETURNS:  Channel object
   THROWS: ApiExceptioon
   """
-  memcache_key = "channel_get::%s::%s" % (api_user, channel)
-  memcache_key = md5(memcache_key).hexdigest()
-  cached_data = memcache.client.get(memcache_key)
+  cache_key = "channel_get::%s::%s" % (api_user, channel)
+  cache_key = md5(cache_key).hexdigest()
+  cached_data = cache.get(cache_key)
   if cached_data:
     return cached_data
 
@@ -1555,14 +1562,14 @@ def channel_get(api_user, channel):
 
   if channel_ref.is_deleted():
     raise exception.ApiDeleted(not_found_message)
-  memcache.client.add(memcache_key, channel_ref, 120)
+  cache.set(cache_key, channel_ref, 120)
   return channel_ref
 
 @public_owner_or_member
 def channel_get_admins(api_user, channel, limit=24):
-  memcache_key = "channeladmin::%s::%s::%s" % (api_user, channel, limit)
-  memcache_key = md5(memcache_key).hexdigest()
-  cached_data = memcache.client.get(memcache_key)
+  cache_key = "channeladmin::%s::%s::%s" % (api_user, channel, limit)
+  cache_key = md5(cache_key).hexdigest()
+  cached_data = cache.get(cache_key)
   if cached_data:
     return cached_data
 
@@ -1570,7 +1577,7 @@ def channel_get_admins(api_user, channel, limit=24):
                        channel,
                        'channeladmin')
   results = [a.target for a in query.fetch(limit)]
-  memcache.client.add(memcache_key, results, 120)
+  cache.set(cache_key, results, 86400)
   return results
 
 # depends on channel_get's privacy
@@ -1600,9 +1607,9 @@ def channel_get_channels(api_user, channels):
 
 @public_owner_or_member
 def channel_get_members(api_user, channel, limit=24, offset=None):
-  memcache_key = "channelmember::%s::%s::%s" % (api_user, limit, offset)
-  memcache_key = md5(memcache_key).hexdigest()
-  cached_data = memcache.client.get(memcache_key)
+  cache_key = "channelmember::%s::%s::%s" % (api_user, limit, offset)
+  cache_key = md5(cache_key).hexdigest()
+  cached_data = cache.get(cache_key)
   if cached_data:
     return cached_data
 
@@ -1611,7 +1618,7 @@ def channel_get_members(api_user, channel, limit=24, offset=None):
                        'channelmember',
                        offset)
   results = [a.target for a in query.fetch(limit)]
-  memcache.client.add(memcache_key, results, 120)
+  cache.set(cache_key, results, 120)
   return results
 
 def channel_get_safe(api_user, channel):
@@ -1632,9 +1639,15 @@ def channel_has_admin(api_user, channel, nick):
   key_name = Relation.key_from(relation='channeladmin',
                                owner=channel,
                                target=nick)
+  cached_data = cache.get(key_name)
+  if cached_data:
+    return cached_data
+  
   admin_ref = Relation.get_by_key_name(key_name)
   if admin_ref:
+    cache.set(key_name, "True", 86400)
     return True
+  cache.set(key_name, "False", 86400)
   return False
 
 @public_owner_or_member
@@ -1642,9 +1655,15 @@ def channel_has_member(api_user, channel, nick):
   key_name = Relation.key_from(relation='channelmember',
                                owner=channel,
                                target=nick)
+  cached_data = cache.get(key_name)
+  if cached_data:
+    return cached_data
+  
   member_ref = Relation.get_by_key_name(key_name)
   if member_ref:
+    cache.set(key_name, "True", 86400)
     return True
+  cache.set(key_name, "False", 86400)
   return False
 
 @throttled(minute=10, hour=50, day=100, month=200)
@@ -1847,9 +1866,9 @@ def email_associate(api_user, nick, email):
 
 @owner_required
 def email_get_actor(api_user, nick):
-  memcache_key = "email_actor::%s::%s" % (api_user, nick)
-  memcache_key = md5(memcache_key).hexdigest()
-  cached_data = memcache.client.get(memcache_key)
+  cache_key = "email_actor::%s::%s" % (api_user, nick)
+  cache_key = md5(cache_key).hexdigest()
+  cached_data = cache.get(cache_key)
   if cached_data:
     return cached_data
 
@@ -1859,7 +1878,7 @@ def email_get_actor(api_user, nick):
                        'email')
   rel_ref = query.get()
   if rel_ref:
-    memcache.client.add(memcache_key, rel_ref.target)
+    cache.set(cache_key, rel_ref.target)
     return rel_ref.target
   return None
 
@@ -1996,9 +2015,15 @@ def entry_add_comment_with_entry_uuid(api_user, **kw):
 
 @public_owner_or_contact_by_entry
 def entry_get(api_user, entry):
+  key_name = entry
+  cached_data = cache.get(key_name)
+#  print cached_data
+  if cached_data:
+    return cached_data
+  
   entry_ref = StreamEntry.get_by_key_name(entry)
 
-  not_found_message = 'Entry not found: %s' % entry
+  not_found_message = u'Chủ đề %s không tồn tại' % entry
   if not entry_ref:
     raise exception.ApiNotFound(not_found_message)
 
@@ -2024,13 +2049,14 @@ def entry_get(api_user, entry):
   except exception.ApiNotFound:
     raise exception.ApiNotFound(not_found_message)
 
+  cache.set(key_name, entry_ref)
   return entry_ref
 
 @public_owner_or_contact_by_entry
 def entry_get_comments(api_user, entry):
-  memcache_key = "comments::%s::%s" % (api_user, entry)
-  memcache_key = md5(memcache_key).hexdigest()
-  cached_data = memcache.client.get(memcache_key)
+  cache_key = "comments::%s::%s" % (api_user, entry)
+  cache_key = md5(cache_key).hexdigest()
+  cached_data = cache.get(cache_key)
   if cached_data:
     return cached_data
 
@@ -2042,7 +2068,7 @@ def entry_get_comments(api_user, entry):
                          entry_ref.key().name() + '/comments')
   comment_keys = [c.stream_entry_keyname() for c in query]
   results = entry_get_entries(api_user, comment_keys)
-  memcache.client.add(memcache_key, results, 3)
+  cache.set(cache_key, results, 3)
   return results
 
 # Relies on ACLs on the called functions
@@ -2167,9 +2193,9 @@ def entry_get_last(api_user, stream):
   """ Queries the StreamEntry entities to find the last StreamEntry
   for the given stream.
   """
-  memcache_key = "last::%s::%s" % (api_user, stream)
-  memcache_key = md5(memcache_key).hexdigest()
-  cached_data = memcache.client.get(memcache_key)
+  cache_key = "last::%s::%s" % (api_user, stream)
+  cache_key = md5(cache_key).hexdigest()
+  cached_data = cache.get(cache_key)
   if cached_data:
     return cached_data
 
@@ -2179,16 +2205,16 @@ def entry_get_last(api_user, stream):
   if not entry_ref:
     return None
   results = entry_get(api_user, entry_ref.key().name())
-  memcache.client.add(memcache_key, results, 10)
+  cache.set(cache_key, results, 10)
   return results
 
 def entry_get_uuid(api_user, uuid):
   """ Queries the StreamEntry entities to find the StreamEntry corresponding to
   given uuid.
   """
-  memcache_key = "uuid::%s::%s" % (api_user, uuid)
-  memcache_key = md5(memcache_key).hexdigest()
-  cached_data = memcache.client.get(memcache_key)
+  cache_key = "uuid::%s::%s" % (api_user, uuid)
+  cache_key = md5(cache_key).hexdigest()
+  cached_data = cache.get(cache_key)
   if cached_data:
     return cached_data
 
@@ -2200,7 +2226,7 @@ def entry_get_uuid(api_user, uuid):
         'Operation not allowed: %s cannot see entry with uuid %s'
         % (api_user.nick, uuid))
   results = entry_get(api_user, entry_ref.key().name())
-  memcache.client.add(memcache_key, results, 10)
+  cache.set(cache_key, results, 10)
   return results
 
 def entry_get_safe(api_user, entry):
@@ -2228,6 +2254,7 @@ def entry_remove(api_user, entry):
   if entry_ref.entry:
     raise exception.ApiException("Cannot call entry_remove on a comment")
   entry_ref.mark_as_deleted()
+  cache.delete(entry)
 
 @delete_required
 @owner_required_by_entry
@@ -2246,6 +2273,7 @@ def entry_remove_comment(api_user, comment):
 
   entry_ref.put()
   comment_ref.mark_as_deleted()
+  cache.delete(comment)
   # XXX end transaction
 
 #######
@@ -2323,11 +2351,18 @@ def im_get_actor(api_user, nick):
 
   RETURNS: xmpp.JID()
   """
-  nick = clean.nick(nick)
-  query = Relation.gql('WHERE owner = :1 AND relation = :2',
-                       nick,
-                       'im_account')
-  rel_ref = query.get()
+  key_name = "im_get_actor::%s::%s" % (api_user, nick)
+  key_name = md5(key_name).hexdigest()
+  cached_data = cache.get(key_name)
+  if cached_data:
+    rel_ref = cached_data
+  else:
+    nick = clean.nick(nick)
+    query = Relation.gql('WHERE owner = :1 AND relation = :2',
+                         nick,
+                         'im_account')
+    rel_ref = query.get()
+    cache.set(key_name, rel_ref, 360)
   if rel_ref:
     return xmpp.JID.from_uri(rel_ref.target)
   return None
@@ -2449,9 +2484,9 @@ def inbox_get_explore(api_user, limit=30, offset=None):
 
 @admin_required
 def inbox_get_all_for_entry(api_user, stream, uuid, entry=None):
-  memcache_key = "inbox_entries::%s::%s" % (api_user, uuid)
-  memcache_key = md5(memcache_key).hexdigest()
-  cached_data = memcache.client.get(memcache_key)
+  cache_key = "inbox_entries::%s::%s" % (api_user, uuid)
+  cache_key = md5(cache_key).hexdigest()
+  cached_data = cache.get(cache_key)
   if cached_data:
     return cached_data
 
@@ -2462,7 +2497,7 @@ def inbox_get_all_for_entry(api_user, stream, uuid, entry=None):
   inboxes = []
   for inbox_entry in query:
     inboxes += inbox_entry.inbox
-  memcache.client.add(memcache_key, inboxes, 5)
+  cache.set(cache_key, inboxes, 5)
   return inboxes
 
 #######
@@ -2957,27 +2992,34 @@ def post(api_user, _task_ref=None, **kw):
 def presence_get(api_user, nick, at_time=None):
   """returns the presence for the given actor if the current can view"""
   nick = clean.nick(nick)
-  if not at_time:
-    # Get current presence
-    key_name = 'presence/%s/current' % nick
-    presence = Presence.get_by_key_name(key_name)
-    if not presence:
-      # We did not always create presence from posts
-      presence_stream = stream_get_presence(api_user, nick)
-      latest_post = StreamEntry.gql(
-          'WHERE stream = :1 ORDER BY created_at DESC',
-          presence_stream.key().name()).get()
-      if latest_post:
-        presence = Presence(actor=nick,
-                            uuid=latest_post.uuid,
-                            updated_at=latest_post.created_at,
-                            extra={'presenceline': {
-                                'description': latest_post.extra['title'],
-                                'since': latest_post.created_at}})
+  key_name = "presence_get::%s::%s::%s" % (api_user, nick, at_time)
+  key_name = md5(key_name).hexdigest()
+  cached_data = cache.get(key_name)
+  if cached_data:
+    presence = cached_data
   else:
-    presence = Presence.gql(
-        u"WHERE actor = :1 AND updated_at <= :2 ORDER BY updated_at DESC",
-        nick, at_time).get()
+    if not at_time:
+      # Get current presence
+      key_name = 'presence/%s/current' % nick
+      presence = Presence.get_by_key_name(key_name)
+      if not presence:
+        # We did not always create presence from posts
+        presence_stream = stream_get_presence(api_user, nick)
+        latest_post = StreamEntry.gql(
+            'WHERE stream = :1 ORDER BY created_at DESC',
+            presence_stream.key().name()).get()
+        if latest_post:
+          presence = Presence(actor=nick,
+                              uuid=latest_post.uuid,
+                              updated_at=latest_post.created_at,
+                              extra={'presenceline': {
+                                  'description': latest_post.extra['title'],
+                                  'since': latest_post.created_at}})
+    else:
+      presence = Presence.gql(
+          u"WHERE actor = :1 AND updated_at <= :2 ORDER BY updated_at DESC",
+          nick, at_time).get()
+    cache.set(key_name, presence)
   return ResultWrapper(presence, presence=presence)
 
 def presence_get_safe(api_user, nick, at_time=None):
@@ -3417,9 +3459,15 @@ def stream_create_presence(api_user, nick, read_privacy=PRIVACY_PUBLIC,
 
 @public_owner_or_contact_by_stream
 def stream_get(api_user, stream):
+  key_name = "stream_get::%s::%s" % (api_user, stream)
+  key_name = md5(key_name).hexdigest()
+  cached_data = cache.get(key_name)
+  if cached_data:
+    return cached_data
+  
   stream_ref = Stream.get_by_key_name(stream)
 
-  not_found_message = 'Stream not found: %s' % stream
+  not_found_message = u'Stream %s không tồn tại' % stream
 
   if not stream_ref:
     raise exception.ApiNotFound(not_found_message)
@@ -3434,23 +3482,41 @@ def stream_get(api_user, stream):
     raise exception.ApiDeleted(not_found_message)
   except exception.ApiNotFound:
     raise exception.ApiNotFound(not_found_message)
-
+  
+  cache.set(key_name, stream_ref)
   return stream_ref
 
 @public_owner_or_contact
 def stream_get_actor(api_user, nick):
+  key_name = "stream_get_actor::%s::%s" % (api_user, nick)
+  key_name = md5(key_name).hexdigest()
+  cached_data = cache.get(key_name)
+  if cached_data:
+    return cached_data
+  
   query = Stream.gql('WHERE owner = :1', nick)
   results = list(query.run())
+  
+  cache.set(key_name, results)
   return results
 
 @public_owner_or_contact
 def stream_get_comment(api_user, nick):
   """ stream/nick/comments """
   nick = clean.nick(nick)
+  
+  key_name = "stream_get_comment::%s::%s" % (api_user, nick)
+  key_name = md5(key_name).hexdigest()
+  cached_data = cache.get(key_name)
+  if cached_data:
+    return cached_data
+  
   key_name = Stream.key_from(owner=nick, slug='comments')
   comment_stream = Stream.get_by_key_name(key_name)
   if not comment_stream:
     raise exception.ApiNotFound('Stream not found')
+  
+  cache.set(key_name, comment_stream)
   return comment_stream
 
 def stream_get_actor_safe(api_user, nick):
@@ -3467,10 +3533,18 @@ def stream_get_presence(api_user, nick):
   The returned value should be the "stream/<nick>/presence" stream.
   """
   nick = clean.nick(nick)
+  
+  key_name = "stream_get_presence::%s::%s" % (api_user, nick)
+  key_name = md5(key_name).hexdigest()
+  cached_data = cache.get(key_name)
+  if cached_data:
+    return cached_data
+  
   key_name = Stream.key_from(owner=nick, slug='presence')
   presence_stream = Stream.get_by_key_name(key_name)
   if not presence_stream:
     raise exception.ApiNotFound('Stream not found')
+  cache.set(key_name, presence_stream)
   return presence_stream
 
 # depends on stream_get's privacy
@@ -5065,7 +5139,7 @@ def _notify_im_subscribers_for_comment(subscribers_ref, actor_ref,
   if settings.IM_PLAIN_TEXT_ONLY:
     html_message = None
   else:
-    t = template.loader.get_template('common/templates/im/im_comment.html')
+    t = template.loader.get_template('common/templates/im/im_comment.txt') # .html
     html_message = t.render(c)
 
     t = template.loader.get_template('common/templates/im/im_comment.atom')
@@ -5114,7 +5188,7 @@ def _notify_im_subscribers_for_entry(subscribers_ref, actor_ref, stream_ref, ent
   if settings.IM_PLAIN_TEXT_ONLY:
     html_message = None
   else:
-    t = template.loader.get_template('common/templates/im/im_entry.html')
+    t = template.loader.get_template('common/templates/im/im_entry.txt') # .html
     html_message = t.render(c)
     t = template.loader.get_template('common/templates/im/im_entry.atom')
     atom_message = t.render(c)
@@ -5160,8 +5234,8 @@ def _notify_contact_deleted(owner_ref, target_ref):
   
 # Helpers for replying via @nick
 def _reply_cache_key(sender, target, service=''):
-  memcache_key = 'reply/%s/%s/%s' % (service, sender, target)
-  return memcache_key
+  cache_key = 'reply/%s/%s/%s' % (service, sender, target)
+  return cache_key
 
 def _reply_add_cache(sender_ref, target_refs, entry, service=''):
   """Add an entry in the memcache, matching each outgoing IM message
@@ -5174,10 +5248,10 @@ def _reply_add_cache(sender_ref, target_refs, entry, service=''):
   """
   memcache_entry = {}
   for target_ref in target_refs:
-    memcache_key = _reply_cache_key(sender_ref.nick,
+    cache_key = _reply_cache_key(sender_ref.nick,
                                     target_ref.nick,
                                     service=service)
-    memcache_entry[memcache_key] = entry
+    memcache_entry[cache_key] = entry
 
   memcache.client.set_multi(memcache_entry)
 
@@ -5200,10 +5274,10 @@ def reply_get_cache(sender, target, service=''):
   entry_ref = None
   sender_ref = actor_lookup_nick(ROOT, sender)
   target_ref = actor_lookup_nick(ROOT, target)
-  memcache_key = _reply_cache_key(sender_ref.nick,
+  cache_key = _reply_cache_key(sender_ref.nick,
                                   target_ref.nick,
                                   service=service)
-  stream_key = memcache.client.get(memcache_key)
+  stream_key = memcache.client.get(cache_key)
   if stream_key:
     entry_ref = entry_get(ROOT, stream_key)
   if not entry_ref:
@@ -5284,17 +5358,31 @@ def get_recommended_items(actor_name, type):
   - user:channels
   - channel:channels
   """
+  key_name = "recommendation::%s::%s" % (actor_name, type)
+  key_name = md5(key_name).hexdigest()
+  cached_data = cache.get(key_name)
+  if cached_data:
+    return cached_data
+  
   key_name = type + "/" + actor_name
   data = Recommendation.get_by_key_name(key_name)
   if not data:
     return []
   data = data.items
+  cache.set(key_name, data, 86400)
   return eval(data)
   
 def get_actor_details(actor_nick):
+  key_name = "get_actor_details::%s" % (actor_nick)
+  key_name = md5(key_name).hexdigest()
+  cached_data = cache.get(key_name)
+  if cached_data:
+    return cached_data
+  
   key_name = "actor/%s" % actor_nick
   actor = Actor.get_by_key_name(key_name)
   if not actor.is_deleted():
+    cache.set(key_name, actor, 3600)
     return actor
 
 def _actor_get_channels(actor_nick):
@@ -5307,9 +5395,16 @@ def _actor_get_channels(actor_nick):
   return result
 
 def get_email(actor_nick):
+  key_name = "get_email::%s" % (actor_nick)
+  key_name = md5(key_name).hexdigest()
+  cached_data = cache.get(key_name)
+  if cached_data:
+    return cached_data
+  
   query = Relation.gql('WHERE owner = :1 AND relation = :2',
                          actor_nick, 'email') 
   result = query.fetch(1)
   if result:
+    cache.set(key_name, result[0].target, 3600)
     return result[0].target
   return None 

@@ -489,10 +489,6 @@ div#logo h3 {
   text-shadow: 0 1px 0 #ccc;
 }
 
-strong {
-  text-shadow: 0 1px 1px #fff;
-}
-
 div#helper-nav h2 {
   font-size: 1.8em;
 }
@@ -1245,7 +1241,7 @@ div#sidebar div#channels ul li img.photo {
 }
 
 #settings div.avatars {
-  width: 390px;
+  width: 450px;
   margin: 0 1em 0 0;
   padding: 0;
 }
@@ -1261,7 +1257,7 @@ div.avatars li, div.backgrounds li, div.tabs div.avatars ul li, div.backgrounds 
   background: transparent;
   width: auto;
   float: left;
-  margin: 4px;
+  margin: 3px;
   padding: 0;
 }
 
@@ -1275,7 +1271,7 @@ div.avatars li label, div.backgrounds li label, #welcome div.tabs div.tab div.av
 
 #settings div.body dd {
   padding-left: 20px;
-  min-height: 200px;
+  min-height: 150px;
   margin: 0 0 0 -20px;
 }
 
@@ -2073,14 +2069,12 @@ div.tabs div.tab {
 
 #welcome div.tabs div.tab {
   overflow: auto;
-  height: 180px;
-  width: 365px;
+  width: 410px;
 }
 
 #settings div.tabs div.tab {
   overflow: auto;
-  height: 220px;
-  width: 410px;
+  width: 450px;
 }
 
 div.tabs div.tab.current {
@@ -2100,6 +2094,7 @@ div.tabs div.tab p {
 
 #welcome div.tabs ul, #welcome div.tabs div.tab, #settings div.tabs ul, #settings div.tabs div.tab {
   margin-left: 90px;
+  list-style-type: none;
 }
 
 #welcome a.confirm-delete, #settings a.confirm-delete {
@@ -2742,7 +2737,7 @@ div#sidebar a.ad:hover, div.box form, div.tabs ul li.current, div.tabs ul li.cur
   background: #fff;
 }
 
-div#streams ul, div.tour div.body ul, #join #sidebar ul, div.contacts ul, div#actors ul, ul.stream, div.tabs ul, #settings div.tabs ul, #settings ul#badges {
+div#streams ul, div.tour div.body ul, #join #sidebar ul, div.contacts ul, div#actors ul, ul.stream, div.tabs ul, #settings ul#badges {
   list-style-type: none;
   margin: 0;
   padding: 0;

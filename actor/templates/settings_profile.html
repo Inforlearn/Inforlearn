@@ -10,7 +10,7 @@
     <input type="hidden" name="settings_update_account" />
     <input type="hidden" name="nick" value="{{request.user.nick}}" />
     <div>
-      Tên đăng nhập
+      <label for="nick_name">Tên đăng nhập</label>
       <span><strong>{{view.display_nick}}</strong></span>
     </div>
     <div>
@@ -43,7 +43,7 @@
     {% endif %}
   
     <div>
-      <label for="email">Địa chỉ email</label>
+      <label for="email">Email</label>
       {% if email %}
         <span>
           <strong>{{email}}</strong>
@@ -66,16 +66,16 @@
   
     {% if IM_ENABLED %}
       <div>
-        <label for="email">IM address</label>
+        <label for="email">IM</label>
         {% if im %}
           <span>
             <strong>{{im}}</strong>
-            <a href="{{view.url}}/settings/im/">(Change)</a>
+            <a href="{{view.url}}/settings/im/">(Thay đổi)</a>
           </span>
         {% else %}
           <span>
-            <strong>None</strong>
-            <a href="{{view.url}}/settings/im">(Add)</a>
+            <strong>Chưa có</strong>
+            <a href="{{view.url}}/settings/im">(Thêm)</a>
           </span>
         {% endif %}
       </div>
@@ -88,7 +88,7 @@
     </div>
      
     <div class="buttons">
-      <input type="submit" value="Lưu"/>
+      <input type="submit" value="Lưu thay đổi"/>
     </div>
   
   </form>

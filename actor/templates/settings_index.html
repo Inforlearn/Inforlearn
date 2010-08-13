@@ -8,7 +8,7 @@
     <dd id="profile">
     <p>Cập nhật các thông tin chi tiết về tài khoản, đổi mật khẩu, hoặc thay ảnh đại diện của bạn.</p>
     <ul>
-      <li><a href="{{view.url}}/settings/profile">Quản lý thông tin</a></li>
+      <li><a href="{{view.url}}/settings/profile">Thay đổi thông tin cá nhân</a></li>
       {% if email %}
       <li><a href="{{view.url}}/settings/email">Thay đổi địa chỉ email</a></li>
       {% else %}
@@ -30,14 +30,14 @@
       {% endif %}
       <li><a href="{{view.url}}/settings/password">Đổi mật khẩu</a></li>
       <li><a href="{{view.url}}/settings/photo">Thay ảnh đại diện</a></li>
-      <li><a href="{{view.url}}/settings/privacy">Thiết lập quyền riêng tư</a></li>
+      <li><a href="{{view.url}}/settings/privacy">Chế độ riêng tư</a></li>
     </ul>
     </dd>
 
     {% if not request.mobile %}
       <dt><h2>Hiển thị</h2></dt>
       <dd id="design">
-      <p>Chọn màu nền hoặc ảnh nền cho trang cá nhân của bạn.
+      <p>Chọn màu nền hoặc ảnh nền theo phong cách của riêng bạn.
       </p>
       <ul>
         <li><a href="{{view.url}}/settings/design">Thay ảnh nền</a></li>
@@ -54,7 +54,7 @@
   <dl>
     <dt><h2>Thông báo</h2></dt>
     <dd id="notifications">
-    <p>Thiết lập hệ thống sẽ thông báo cho bạn những gì và thông báo như thế nào
+    <p>Thiết lập hệ thống sẽ thông báo cho bạn những gì và thông báo theo cách như thế nào
     </p>
     <ul>
       <li><a href="{{view.url}}/settings/notifications">Thay đổi</a></li>

@@ -4,13 +4,11 @@
 
 {% block content %}
   <div class="path">
-    <h1>
+    <h1 style="font-size: 1.8em;">
       {% block path %}
         <a href="{% url_for view request %}">{{view.display_nick}}</a> /
         {% ifnotequal page "index" %}
-          <a href="{% url_for view request %}/settings">
-            Thiết lập
-          </a>
+          <a href="{% url_for view request %}/settings">Thiết lập</a>
         {% endifnotequal %}
         
         {% if full_page %}
@@ -28,7 +26,7 @@
         <a href="{{view.url}}/settings/profile">Thông tin cá nhân</a>
       </li>
       <li{% ifequal page "email" %} class="current"{% endifequal %}>
-        <a href="{{view.url}}/settings/email">Địa chỉ email</a>
+        <a href="{{view.url}}/settings/email">Email</a>
       </li>
       {% if SMS_ENABLED %}
         <li{% ifequal page "mobile" %} class="current"{% endifequal %}>
@@ -37,7 +35,7 @@
       {% endif %}
       {% if IM_ENABLED %}
         <li{% ifequal page "im" %} class="current"{% endifequal %}>
-          <a href="{{view.url}}/settings/im">Địa chỉ IM</a>
+          <a href="{{view.url}}/settings/im">IM</a>
         </li>
       {% endif %}
       <li{% ifequal page "password" %} class="current"{% endifequal %}>
@@ -47,7 +45,7 @@
         <a href="{{view.url}}/settings/photo">Ảnh đại diện</a>
       </li>
       <li{% ifequal page "privacy" %} class="current"{% endifequal %}>
-        <a href="{{view.url}}/settings/privacy">Quyền riêng tư</a>
+        <a href="{{view.url}}/settings/privacy">Chế độ riêng tư</a>
       </li>
       {% if FEEDS_ENABLED %}
         <li{% ifequal page "feeds" %} class="current"{% endifequal %}>

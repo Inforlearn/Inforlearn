@@ -34,7 +34,7 @@ ACTIVE = True
 None means forever.
 Value in seconds.
 """
-DEFAULT_CACHING_TIME = None
+DEFAULT_CACHING_TIME = 86400
 
 URL_KEY = 'URL_%s'
 

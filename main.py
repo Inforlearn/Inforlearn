@@ -56,6 +56,21 @@ import django.core.signals
 # Log all exceptions detected by Django.
 django.core.signals.got_request_exception.connect(log_exception)
 
+def redirect_from_appspot(wsgi_app):
+  from_server = 'inforlearn.appspot.com'
+  to_server = 'www.inforlearn.com'
+  def redirect_if_needed(env, start_response):
+    if env['HTTP_HOST'].startswith(from_server) and env['HTTPS'] == 'off':
+      import webob, urlparse
+      request = webob.Request(env)
+      scheme, netloc, path, query, fragment = urlparse.urlsplit(request.url)
+      url = urlparse.urlunsplit([scheme, to_server, path, query, fragment])
+      start_response('301 Moved Permanently', [('Location', url)])
+      return [] # it seems can be empty list
+    else:
+      return wsgi_app(env, start_response)
+  return redirect_if_needed
+
 def main():
   # we only want to do this once, but due to weird method
   # caching behavior it sometimes gets blown away
@@ -63,7 +78,7 @@ def main():
 
   # Create a Django application for WSGI.
   application = django.core.handlers.wsgi.WSGIHandler()
-
+  application = redirect_from_appspot(application)
   # Run the WSGI CGI handler with that application.
   util.run_wsgi_app(application)
 
@@ -81,6 +96,7 @@ def profile_main():
   # stats.print_callees()
   # stats.print_callers()
   print "</pre>"
+
 
 
 if __name__ == '__main__':

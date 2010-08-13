@@ -15,6 +15,8 @@ from common import util
 from common import validate
 from common import display
 from common import views as common_views
+from cachepy import cachepy as cache
+from hashlib import md5
 
 ENTRIES_PER_PAGE = 20
 CONTACTS_PER_PAGE = 48
@@ -34,6 +36,9 @@ def alternate_nick(f):
 
 @alternate_nick
 def actor_history(request, nick=None, format='html'):
+  s = request.COOKIES.get('user') + request.META.get("HTTP_REFERER")
+  key_name = "html:%s" % md5(s).hexdigest()
+  
   nick = clean.nick(nick)
   view = api.actor_lookup_nick(request.user, nick)
 
@@ -62,8 +67,14 @@ def actor_history(request, nick=None, format='html'):
       }
   )
   if handled:
+    cache.delete(key_name)
     return handled
 
+  cached_data = cache.get(key_name)
+  if cached_data:
+#    print "has cache"
+    return http.HttpResponse(cached_data)
+  
   privacy = 'public'
   if request.user:
     if view.nick == request.user.nick:
@@ -145,7 +156,9 @@ def actor_history(request, nick=None, format='html'):
 
   if format == 'html':
     t = loader.get_template('actor/templates/history.html')
-    return http.HttpResponse(t.render(c))
+    html = t.render(c)
+    cache.set(key_name, html)
+    return http.HttpResponse(html)
   elif format == 'json':
     t = loader.get_template('actor/templates/history.json')
     return util.HttpJsonResponse(t.render(c), request)
@@ -190,6 +203,9 @@ def actor_invite(request, nick, format='html'):
 
 @alternate_nick
 def actor_overview(request, nick, format='html'):
+  s = request.COOKIES.get('user') + request.META.get("HTTP_REFERER")
+  key_name = "html:%s" % md5(s).hexdigest()
+  
   nick = clean.nick(nick)
 
   view = api.actor_lookup_nick(request.user, nick)
@@ -213,7 +229,13 @@ def actor_overview(request, nick, format='html'):
       }
   )
   if handled:
+    cache.delete(key_name)
     return handled
+  
+  cached_data = cache.get(key_name)
+  if cached_data and format == "html":
+#    print "has cache"
+    return http.HttpResponse(cached_data)
   
   per_page = ENTRIES_PER_PAGE
   offset, prev = util.page_offset(request)
@@ -271,6 +293,8 @@ def actor_overview(request, nick, format='html'):
   if format == 'html':
     t = loader.get_template('actor/templates/overview.html')
     html = t.render(c)
+    cache.set(key_name, html)
+#    print "not cache"
     return http.HttpResponse(html)
   elif format == 'json':
     t = loader.get_template('actor/templates/overview.json')
@@ -434,6 +458,9 @@ def actor_item(request, nick=None, item=None, format='html'):
 
 @alternate_nick
 def actor_contacts(request, nick=None, format='html'):
+  s = request.COOKIES.get('user') + request.META.get("HTTP_REFERER")
+  key_name = "html:%s" % md5(s).hexdigest()
+  
   nick = clean.nick(nick)
 
   view = api.actor_lookup_nick(request.user, nick)
@@ -446,7 +473,13 @@ def actor_contacts(request, nick=None, format='html'):
       { 'actor_add_contact': request.path,
         'actor_remove_contact': request.path, })
   if handled:
+    cache.delete(key_name)
     return handled
+
+  cached_data = cache.get(key_name)
+  if cached_data and format == "html":
+#    print "has cache"
+    return http.HttpResponse(cached_data)
 
   per_page = CONTACTS_PER_PAGE
   offset, prev = util.page_offset_nick(request)
@@ -500,7 +533,9 @@ def actor_contacts(request, nick=None, format='html'):
 
   if format == 'html':
     t = loader.get_template('actor/templates/contacts.html')
-    return http.HttpResponse(t.render(c))
+    html = t.render(c)
+    cache.set(key_name, html)
+    return http.HttpResponse(html)
   elif format == 'json':
     t = loader.get_template('actor/templates/contacts.json')
     return util.HttpJsonResponse(t.render(c), request)
@@ -691,6 +726,7 @@ def actor_settings(request, nick, page='index'):
     sms_notify = view.extra.get('sms_notify', False)
 
   elif page == 'im':
+    full_page = "Instant Messaging"
     im_address = api.im_get_actor(request.user, view.nick)
     im_notify = view.extra.get('im_notify', False)
   elif page == 'index':
@@ -719,9 +755,10 @@ def actor_settings(request, nick, page='index'):
     handled = common_views.common_design_update(request, redirect_to, view.nick)
     if handled:
       return handled
-    full_page = u'Hiển thị'
+    full_page = 'Hiển thị'
 
   elif page == 'notifications':
+    full_page = "Thông báo"
     email = api.email_get_actor(request.user, view.nick)
     email_notify = view.extra.get('email_notify', False)
     im_address = api.im_get_actor(request.user, view.nick)
@@ -733,6 +770,7 @@ def actor_settings(request, nick, page='index'):
     # TODO(termie): remove this once we can actually receive sms
     sms_confirm = False
   elif page == 'profile':
+    full_page = "Thông tin cá nhân"
     # check if we already have an email
     email = api.email_get_actor(request.user, view.nick)
 
@@ -743,6 +781,7 @@ def actor_settings(request, nick, page='index'):
         unconfirmed_email = unconfirmeds[0].content
 
   elif page == 'photo':
+    full_page = "Ảnh đại diện"
     avatars = display.DEFAULT_AVATARS
     small_photos = api.image_get_all_keys(request.user, view.nick, size='f')
 
@@ -754,6 +793,7 @@ def actor_settings(request, nick, page='index'):
     ]
 
   elif page == 'privacy':
+    full_page = "Chế độ riêng tư"
     PRIVACY_PUBLIC = api.PRIVACY_PUBLIC
     PRIVACY_CONTACTS = api.PRIVACY_CONTACTS
   elif page == 'jsbadge':
@@ -779,9 +819,11 @@ def actor_settings(request, nick, page='index'):
                },
               ]
 
-  elif page in ['password', 'delete']:
+  elif page == 'password':
+    full_page = "Mật khẩu"
     # Catch for remaining pages before we generate a 404.
-    pass
+  elif page == 'delete':
+    full_page = "Xóa tài khoản"
 
   else:
     return common_views.common_404(request)

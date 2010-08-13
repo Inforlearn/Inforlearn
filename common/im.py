@@ -1,13 +1,5 @@
-#! coding: utf-8
 import logging
 import re
-
-
-import sys
-from common.sms import HELP_FOLLOW_NEW, HELP_LEAVE, HELP_SIGN_OUT, HELP_SIGN_IN
-reload(sys)
-sys.setdefaultencoding('utf-8')
-
 
 from django.conf import settings
 
@@ -20,37 +12,41 @@ from common import util
 from common.protocol import base
 
 
-HELP_HUH = "Lệnh \"%s\" không đúng. Gõ HELP để xem danh sách các lệnh được hỗ trợ"
-HELP_WELCOME = u"Chào bạn, %s!\n"
-HELP_WELCOME_NICK = u"Chào bạn, %s!\n"
-HELP_NOT_SIGNED_IN = u"Bạn đã đăng xuất khỏi tài khoản của mình\n"
-HELP_SIGNED_IN_AS = u"Bạn đã đăng nhập với tên '%s'\n"
-HELP_FOLLOW_ONLY = u"You are signed in as a follow-only user\n"
-HELP_PASSWORD = u"Mật khẩu của bạn là: %s\n" \
-                u"Sử dụng nó để đăng nhập trên website Inforlearn tại địa chỉ http://%s/\n" % ('%s', settings.DOMAIN)
-HELP_POST = u"- Để gửi tin, gõ nội dung muốn gửi và nhấn Enter"
-HELP_CHANNEL_POST = u"- Thêm #channelid vào đầu tin nhắn để gửi tin vào một nhóm"
-HELP_COMMENT = u"- Thêm @user để bình luận cho tin mới nhất từ người đó"
-HELP_FOLLOW = u"- Để gia nhập một nhóm hoặc xin kết bạn với một người, gõ FOLLOW <user/#channel>"
-HELP_FOLLOW_NEW = u"- Gõ FOLLOW <user/#channel> để nhận tin nhắn từ một người hoặc một nhóm mà không cần đăng ký"
-HELP_LEAVE = u"- Để ngừng nhận tin từ một người hoặc một nhóm, gõ LEAVE <user/#channel>"
-HELP_STOP = u"- Để dừng nhận mọi thông báo, gõ STOP"
-HELP_START = u"- Để tiếp tục nhận thông báo, gõ START"
-HELP_SIGN_OUT = u"- Để đăng xuất, gõ SIGN OUT"
-HELP_DELETE_ME = u"- Để xóa tài khỏan của bạn, gõ DELETE ME"
-HELP_SIGN_IN = u"- Gõ SIGN IN <username> <password> nếu bạn đã có tài khoản"
-HELP_SIGN_UP = u"- Gõ SIGN UP <username> để tạo một tài khoản mới"
-HELP_MORE = u"Để xem danh sách các lệnh hỗ trợ, gõ HELP"
-HELP_FOOTER = u"\n" \
-              u"Hãy xem qua hướng dẫn tại http://%s/help/im\n"  \
-              u"Nếu gặp khó khăn hãy liên hệ với chúng tôi qua địa chỉ email support@inforlearn.com hoặc gửi câu hỏi trực tiếp tại http://support.inforlearn.com/" % (settings.DOMAIN)
-HELP_FOOTER_INFORMAL = u"\n" \
-                       u"Hướng dẫn sử dụng: http://%s/help/im" % (settings.DOMAIN)
-HELP_OTR = u"Your IM client has tried to initiate an OTR (off-the-record) session. However, this bot does not support OTR."
+HELP_HUH = "Sorry, did not understand \"%s\". Send HELP for commands"
+HELP_WELCOME = "Welcome to %s IM!\n" % (settings.SITE_NAME)
+HELP_WELCOME_NICK = "Welcome to %s IM, %s!\n" % (settings.SITE_NAME, '%s')
+HELP_NOT_SIGNED_IN = "You are currently signed out\n"
+HELP_SIGNED_IN_AS = "You are signed in as '%s'\n"
+HELP_FOLLOW_ONLY = "You are signed in as a follow-only user\n"
+HELP_PASSWORD = "Your password is: %s\n" \
+                "Use it to sign in on the web at http://%s/\n" % ('%s', settings.DOMAIN)
+HELP_POST = "To post to your stream, just send a message"
+HELP_CHANNEL_POST = "To post to a channel, start your message with " \
+                    "#channel"
+HELP_COMMENT = "To comment the latest update from someone, start " \
+               "with @user"
+HELP_FOLLOW = "To follow a user or channel, send FOLLOW <user/#channel>"
+HELP_FOLLOW_NEW = "Send FOLLOW <user/#channel> to just follow a user or " \
+                  "channel without signing up"
+HELP_LEAVE = "To stop following a user or channel, send LEAVE <user/#channel>"
+HELP_STOP = "To stop all alerts, send STOP"
+HELP_START = "To resume alerts, send START"
+HELP_SIGN_OUT = "To sign out from %s IM, send SIGN OUT" % (settings.SITE_NAME)
+HELP_DELETE_ME = "To remove your %s account, send DELETE ME" % (settings.SITE_NAME)
+HELP_SIGN_IN = "Send SIGN IN <screen name> <password> if you already have a " \
+               "%s account" % (settings.SITE_NAME)
+HELP_SIGN_UP = "Send SIGN UP <desired screen name> to create a new account"
+HELP_MORE = "For more commands, type HELP"
+HELP_FOOTER = "\n" \
+              "Questions? Visit http://%s/help/im\n"  \
+              "Contact us at support@%s" % (settings.DOMAIN, settings.NS_DOMAIN)
+HELP_FOOTER_INFORMAL = "\n" \
+                       "How it all works: http://%s/help/im" % (settings.DOMAIN)
+HELP_OTR = "Your IM client has tried to initiate an OTR (off-the-record) session. However, this bot does not support OTR."
 
-HELP_START_NOTIFICATIONS = u"Chế độ thông báo qua IM đã được kích hoạt. Gõ STOP để vô hiệu hóa, HELP để được giúp đỡ."
+HELP_START_NOTIFICATIONS = "IM notifications have been enabled. Send STOP to disable notifications, HELP for commands."
 
-HELP_STOP_NOTIFICATIONS = u"Chế độ thông báo qua IM đã được vô hiệu hóa. Gõ START để kích hoạt lại, HELP để được giúp đỡ."
+HELP_STOP_NOTIFICATIONS = "IM notifications have been disabled. Send START to enable notifications, HELP for commands."
 
 # TODO(tyler): Merge with validate/clean/nick/whatever
 NICK_RE = re.compile(r"""^[a-zA-Z][a-zA-Z0-9]{2,15}$""")
@@ -83,54 +79,61 @@ class ImService(base.Service):
     jid_ref = api.actor_lookup_im(api.ROOT, from_jid.base())
     if not jid_ref:
       raise exception.ValidationError(
-          u"Bạn phải đăng nhập để thực hiện thao tác này.\nĐể đăng nhập, gõ SIGN IN <username> <password>")
+          "You must be signed in to join a channel, please SIGN IN")
     channel = clean.channel(nick)
 
     try:
       api.channel_join(jid_ref, jid_ref.nick, channel)
       self.send_message((from_jid,),
-                        u"Success ^^\n Giờ bạn đã là thành viên của nhóm %s" % (channel.split('@')[0]))
+                        "%s joined %s" % (jid_ref.nick, channel))
 
     except:
-      self.send_message((from_jid,), "Error :(")
+      self.send_message((from_jid,),
+                        "Join FAILED:  %s" % channel)
 
   def channel_part(self, from_jid, nick):
     jid_ref = api.actor_lookup_im(api.ROOT, from_jid.base())
     if not jid_ref:
       raise exception.ValidationError(
-          u"Bạn phải đăng nhập trước khi thực hiện thao tác này")
+          "You must be signed in to leave a channel, please SIGN IN")
     channel = clean.channel(nick)
 
     try:
       api.channel_part(jid_ref, jid_ref.nick, channel)
-      self.send_message((from_jid,), "%s parted %s" % (jid_ref.nick, channel))
+      self.send_message((from_jid,),
+                        "%s parted %s" % (jid_ref.nick, channel))
 
     except:
-      self.send_message((from_jid,), "Error :(")
+      self.send_message((from_jid,),
+                        "Leave FAILED:  %s" % channel)
 
   def actor_add_contact(self, from_jid, nick):
     jid_ref = api.actor_lookup_im(api.ROOT, from_jid.base())
     if not jid_ref:
       raise exception.ValidationError(
-          u"Bạn phải đăng nhập trước khi thực hiện hành động này")
+          "You must be signed in to post, please SIGN IN")
     nick = clean.nick(nick)
 
     try:
       api.actor_add_contact(jid_ref, jid_ref.nick, nick)
-      self.send_message((from_jid,), u"Success ^^")
+      self.send_message((from_jid,),
+                        "%s followed %s" % (jid_ref.nick, nick))
 
     except:
-      self.send_message((from_jid,), "Error :(")
+      self.send_message((from_jid,),
+                        "Follow FAILED:  %s" % nick)
 
   def actor_remove_contact(self, from_jid, nick):
     jid_ref = api.actor_lookup_im(api.ROOT, from_jid.base())
     if not jid_ref:
-      raise exception.ValidationError(u"Bạn phải đăng nhập trước")
+      raise exception.ValidationError(
+          "You must be signed in to post, please SIGN IN")
     nick = clean.nick(nick)
 
     try:
       api.actor_remove_contact(jid_ref, jid_ref.nick, nick)
-      self.send_message((from_jid,), u"Success ^^")
+      self.send_message((from_jid,),
+                        "%s stopped following %s" % (jid_ref.nick, nick))
 
     except:
       self.send_message((from_jid,),
@@ -146,15 +149,20 @@ class ImService(base.Service):
     jid_ref = api.actor_lookup_im(api.ROOT, from_jid.base())
     if jid_ref:
       raise exception.ValidationError(
-          u"Bạn đang đăng nhập với tên %s, vui lòng gõ SIGN OUT trước" % jid_ref.nick.split("@")[0])
+          "You are already signed in, please SIGN OUT first")
 
     user_ref = user.authenticate_user_login(nick, password)
     if not user_ref:
-      raise exception.ValidationError(u"Tên đăng nhập / mật khẩu không hợp lệ")
+      raise exception.ValidationError("Username or password is incorrect")
 
-    api.im_associate(api.ROOT, user_ref.nick, from_jid.base())
+    im_ref = api.im_associate(api.ROOT, user_ref.nick, from_jid.base())
 
     welcome = '\n'.join([HELP_WELCOME_NICK % user_ref.display_nick(),
+                         HELP_POST,
+                         HELP_CHANNEL_POST,
+                         HELP_COMMENT,
+                         HELP_FOLLOW,
+                         HELP_STOP,
                          HELP_MORE,
                          HELP_FOOTER])
 
@@ -163,11 +171,11 @@ class ImService(base.Service):
   def sign_out(self, from_jid):
     jid_ref = api.actor_lookup_im(api.ROOT, from_jid.base())
     if not jid_ref:
-      raise exception.ValidationError(u"Bạn chưa đăng nhập. \nĐể đăng nhập, gõ SIGN IN <username> <password>")
+      raise exception.ValidationError("You are not signed in.")
 
-    api.im_disassociate(api.ROOT, jid_ref.nick, from_jid.base())
+    im_ref = api.im_disassociate(api.ROOT, jid_ref.nick, from_jid.base())
 
-    self.send_message([from_jid], u"Tạm biệt! Hẹn gặp lại^^")
+    self.send_message([from_jid], "signed out")
 
   def help(self, from_jid):
     welcome = '\n'.join([HELP_WELCOME,
@@ -175,11 +183,7 @@ class ImService(base.Service):
                          HELP_CHANNEL_POST,
                          HELP_COMMENT,
                          HELP_FOLLOW,
-                         HELP_FOLLOW_NEW,
-                         HELP_LEAVE,
                          HELP_STOP,
-                         HELP_SIGN_IN,
-                         HELP_SIGN_OUT,
                          HELP_MORE,
                          HELP_FOOTER])
 
@@ -188,33 +192,35 @@ class ImService(base.Service):
   def start_notifications(self, from_jid):
     jid_ref = api.actor_lookup_im(api.ROOT, from_jid.base())
     if not jid_ref:
-      raise exception.ValidationError(u"Bạn chưa đăng nhập. \nĐể đăng nhập, gõ SIGN IN <username> <password>")
+      raise exception.ValidationError("You are not signed in.")
 
-    api.settings_change_notify(api.ROOT, jid_ref.nick, im=True)
+    actor_ref = api.settings_change_notify(api.ROOT, jid_ref.nick, im=True)
 
     self.send_message([from_jid], HELP_START_NOTIFICATIONS)
 
   def stop_notifications(self, from_jid):
     jid_ref = api.actor_lookup_im(api.ROOT, from_jid.base())
     if not jid_ref:
-      raise exception.ValidationError(u"Bạn chưa đăng nhập. \nĐể đăng nhập, gõ SIGN IN <username> <password>")
+      raise exception.ValidationError("You are not signed in.")
 
-    api.settings_change_notify(api.ROOT, jid_ref.nick, im=False)
+    actor_ref = api.settings_change_notify(api.ROOT, jid_ref.nick, im=False)
 
     self.send_message([from_jid], HELP_STOP_NOTIFICATIONS)
 
   def post(self, from_jid, message):
     jid_ref = api.actor_lookup_im(api.ROOT, from_jid.base())
     if not jid_ref:
-      raise exception.ValidationError(u"Bạn chưa đăng nhập. \nĐể đăng nhập, gõ SIGN IN <username> <password>")
-    api.post(jid_ref, nick=jid_ref.nick, message=message)
+      raise exception.ValidationError(
+          "You must be signed in to post, please SIGN IN")
+    entry_ref = api.post(jid_ref, nick=jid_ref.nick, message=message)
 
   def channel_post(self, from_jid, channel_nick, message):
     jid_ref = api.actor_lookup_im(api.ROOT, from_jid.base())
     if not jid_ref:
-      raise exception.ValidationError(u"Bạn chưa đăng nhập. \nĐể đăng nhập, gõ SIGN IN <username> <password>")
+      raise exception.ValidationError(
+          "You must be signed in to post, please SIGN IN")
 
-    api.channel_post(
+    comment_ref = api.channel_post(
         jid_ref,
         message=message,
         nick=jid_ref.nick,
@@ -225,7 +231,7 @@ class ImService(base.Service):
     jid_ref = api.actor_lookup_im(api.ROOT, from_jid.base())
     if not jid_ref:
       raise exception.ValidationError(
-          u"Bạn phải đăng nhập để gửi tin, vui lòng gõ SIGN IN <username> <password>")
+          "You must be signed in to post, please SIGN IN")
 
     logging.debug("comment: %s %s %s", nick, jid_ref.nick, message)
 
@@ -246,25 +252,34 @@ class ImService(base.Service):
     jid_ref = api.actor_lookup_im(api.ROOT, from_jid.base())
     if jid_ref:
       # TODO(tyler): Should we tell the user who they are?
-      raise exception.ValidationError(u"Bạn đã có tài khoản và đang đăng nhập hệ thống.")
+      raise exception.ValidationError(
+          "You already have an account and are signed in.")
 
     if not NICK_RE.match(nick):
       raise exception.ValidationError(
-          u"Tên bạn chọn phải sử dụng các ký tự từ A-Z, a-z, 0-9 và dài từ 3 tới 16 ký tự")
+          "Invalid screen name, can only use letters or numbers, 3 to 16 "
+          "characters")
 
     # Create the user.  (user_create will check to see if the account has
     # already been created.)
     password = util.generate_uuid()[:8]
 
     # TODO(termie): Must have a first/last name. :(
-    api.user_create(api.ROOT, nick=nick, password=password,
+    actor = api.user_create(api.ROOT, nick=nick, password=password,
                             fullname_name=nick)
 
     # link this im account to the user's account (equivalent of SIGN IN)
     self.sign_in(from_jid, nick, password)
 
     # Inform the user of their new password
-    welcome = HELP_WELCOME_NICK % nick
+    welcome = '\n'.join([HELP_WELCOME_NICK % nick,
+                         HELP_PASSWORD % password,
+                         HELP_POST,
+                         HELP_CHANNEL_POST,
+                         HELP_COMMENT,
+                         HELP_FOLLOW,
+                         HELP_STOP,
+                         HELP_MORE,
+                         HELP_FOOTER])
 
     self.send_message([from_jid], welcome)
-

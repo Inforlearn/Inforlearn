@@ -2,48 +2,49 @@
 {% load nonce %}
 {% block settings %}
 
-<h2>Nhận và gửi tin cập nhật từ trình Instant Messaging</h2>
+<h2>Nhận và gửi tin từ chương trình IM yêu thích của bạn</h2>
 
 {% if im_address %} {# already active #}
   <p>
-  Your IM has been activated. Notifications are currently 
-    {{im_notify|yesno:"ON,OFF"}}
+  Tài khoản IM của bạn đã được kích hoạt. Chế độ nhận thông báo qua IM hiện đang 
+    {{im_notify|yesno:"bật,tắt"}}
     <a href="{{view.url}}/settings/notifications">
-      (Change notification options)
+      (Thay đổi)
     </a>
   </p>
   <div class="box">
     <p>
-    Your IM address is:
+    Địa chỉ IM của bạn là:
     </p>
     <p class="centered">
     <big><strong>{{im_address.base}}</strong></big>
     </p>
     <p class="centered">
-    You may clear it by sending SIGN OUT to <strong>{{IM_BOT}}</strong>
+    Để xóa, gửi lệnh <strong>SIGN OUT</strong> tới <strong>{{IM_BOT}}</strong>
     </p>
   </div>
 {% else %}
-  <p>
-  Kích hoạt tài khoản Google Talk, LiveJournal, hoặc Jabber để nhận cập nhật và
-  gửi tin từ chính các tài khoản đó.
-  </p>
   <div class="box">
-    <h3>Thêm {{SITE_NAME}} bot vào danh sách liên hệ</h3>
+    <h3>Để kích hoạt, hãy làm theo 2 bước sau:</h3>
     <ol>
-      <li>Thêm <strong>{{IM_BOT}}</strong> vào danh sách liên hệ sử dụng trình 
-      Instant Messaging hiện thời của bạn</li>
-      <li>Sau đó gửi: <strong>SIGN IN &lt;tên đăng nhập&gt; &lt;mật khẩu&gt;</strong> tới <strong>{{IM_BOT}}</strong></li>
-    </ol>
+      <li>Thêm <strong>{{IM_BOT}}</strong> vào danh sách liên hệ</li>
+      <li>Sau đó gõ: <strong>SIGN IN &lt;tên đăng nhập&gt; &lt;mật khẩu của bạn&gt;</strong> gửi tới <strong>{{IM_BOT}}</strong> <br>và refresh lại trang này ^^.</li>
+      <br>
+      <h4>Ví dụ:</h4>
     <p>
-    Bạn sử dụng Adium trên MacOSX? Nhấn vào liên kết sau để yêu cầu Adium thực hiện: 
-    <a href="xmpp:{{IM_BOT}}?message;body=SIGN%20IN%20">Thêm {{IM_BOT}} vào danh sách liên hệ</a>
+      Mở cửa sổ chat với inforlearn@appspot.com, gõ:<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <strong>SIGN IN demo secret</strong> &nbsp;&nbsp;&nbsp;&nbsp;(với <strong>demo</strong> là tên đăng nhập và <strong>secret</strong> là mật khẩu)<br> 
+        và nhấn Enter, tài khoản IM của demo sẽ được kích hoạt.
     </p>
+    </ol>
+
   </div>
 {% endif %}
 
 
 <ul>
+  <li><a href="#">Danh sách các trình IM hỗ trợ</a>
   <li><a href="http://{{DOMAIN}}/help/im">Trợ giúp</a></li>
   <li><a href="http://{{DOMAIN}}/settings/notifications">Thay đổi các tùy chọn thông báo</a></li>
   <li><a href="http://{{DOMAIN}}/help/commands">Danh sách cấu trúc lệnh có thể sử dụng</a></li>

@@ -4,6 +4,7 @@ from django.utils import html
 from common import component
 from common.protocol import base
 from common.clean import encoding
+from xml.sax.saxutils import escape
 
 
 class JID(object):
@@ -69,7 +70,7 @@ class XmppConnection(base.Connection):
         body_builder.append(atom_message)
       body = u'\n'.join([encoding.smart_unicode(x) for x in body_builder])
       body = body.encode('ascii', 'xmlcharrefreplace')
-
+    body = encoding.smart_unicode(body)
     xmpp_service = component.best['xmpp_service']
     xmpp_service.send_message([j.base() for j in to_jid_list],
                               body,

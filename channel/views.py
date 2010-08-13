@@ -13,6 +13,8 @@ from common import util
 from common import views as common_views
 from operator import itemgetter
 from settings import DEFAULT_OURPICKS_CHANNELS
+from cachepy import cachepy as cache
+from hashlib import md5
 
 
 CHANNEL_HISTORY_PER_PAGE = 20
@@ -56,8 +58,16 @@ def channel_index(request, format='html'):
   if not request.user:
     return channel_index_signedout(request, format='html')
 
+  s = request.COOKIES.get('user') + request.META.get("HTTP_REFERER")
+  key_name = "html:%s" % md5(s).hexdigest()
+  
+  cached_data = cache.get(key_name)
+  if cached_data and format == "html":
+#    print "has cache"
+    return http.HttpResponse(cached_data)
+  
   view = api.actor_lookup_nick(request.user, request.user.nick)
-
+  
   owned_nicks = api.actor_get_channels_admin(
       request.user,
       request.user.nick,
@@ -112,7 +122,9 @@ def channel_index(request, format='html'):
 
   if format == 'html':
     t = loader.get_template('channel/templates/index.html')
-    return http.HttpResponse(t.render(c))
+    html = t.render(c)
+    cache.set(key_name, html, 30)
+    return http.HttpResponse(html)
 
 
 def channel_recommendation_list(request, format="html"):
@@ -180,6 +192,9 @@ def channel_history(request, nick, format='html'):
   if not view:
     return http.HttpResponseRedirect('/channel/create?channel=%s' % nick)
 
+  s = request.COOKIES.get('user') + request.META.get("HTTP_REFERER")
+  key_name = "html:%s" % md5(s).hexdigest()
+
   admins = api.channel_get_admins(request.user, channel=view.nick)
   members = api.channel_get_members(request.user, channel=view.nick)
   
@@ -196,7 +211,13 @@ def channel_history(request, nick, format='html'):
        }
       )
   if handled:
+    cache.delete(key_name)
     return handled
+
+  cached_data = cache.get(key_name)
+  if cached_data and format == "html":
+#    print "has cache"
+    return http.HttpResponse(cached_data)
 
   privacy = 'public'
 
@@ -310,7 +331,9 @@ def channel_history(request, nick, format='html'):
 
   if format == 'html':
     t = loader.get_template('channel/templates/history.html')
-    return http.HttpResponse(t.render(c))
+    html = t.render(c)
+    cache.set(key_name, html)
+    return http.HttpResponse(html)
   elif format == 'json':
     t = loader.get_template('channel/templates/history.json')
     return util.HttpJsonResponse(t.render(c), request)
