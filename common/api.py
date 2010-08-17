@@ -793,6 +793,7 @@ def actor_add_contact(api_user, owner, target):
 
     target_ref.extra.setdefault('follower_count', 0)
     target_ref.extra['follower_count'] += 1
+    target_ref.rank += 1
     target_ref.put()
 
   # Subscribe owner to all of target's streams
@@ -1258,6 +1259,7 @@ def actor_remove_contact(api_user, owner, target):
 
   target_ref.extra.setdefault('follower_count', 1)
   target_ref.extra['follower_count'] -= 1
+  target_ref.rank -= 2
   target_ref.put()
 
   # Unsubscribe owner from all of target's streams
@@ -1424,6 +1426,23 @@ def background_upload(api_user, nick, content):
 #######
 ####### TODO: Slice channels
 #######
+def top_actors(limit):
+  # Sort by nick, so that filtering works.
+  cache_key = "top_actors::%s" % (limit)
+  cache_key = md5(cache_key).hexdigest()
+#  cached_data = cache.get(cache_key)
+  cached_data = cache.get(cache_key)
+  if cached_data:
+    return cached_data
+
+  query = Actor.gql('WHERE type = :1 AND deleted_at = :2 '
+                    'ORDER BY rank DESC',
+                    'user',
+                    None)
+  
+  results = query.fetch(limit)
+  cache.set(cache_key, results, 86400)
+  return results
 
 def channel_browse(api_user, limit, offset_channel_nick=''):
   """Return all channels.

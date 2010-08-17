@@ -101,6 +101,7 @@ handlers:
   
 - url: /cachepy_stats 
   script: cachepy/cachepy_stats.py 
+  login: admin
 
 - url: .*
   script: "main.py"

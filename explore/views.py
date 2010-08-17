@@ -45,6 +45,7 @@ def explore_recent(request, format="html"):
 
   # END inbox generation chaos
   channels = api.channel_browse(request.user, 22)
+  users = api.top_actors(25)
 
   area = 'explore'
   sidebar_green_top = True

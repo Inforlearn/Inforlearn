@@ -13,7 +13,8 @@ from common import util
 from common import views as common_views
 from operator import itemgetter
 from settings import DEFAULT_OURPICKS_CHANNELS
-from cachepy import cachepy as cache
+#from cachepy import cachepy as cache
+from common.memcache import client as cache
 from hashlib import md5
 
 
@@ -58,7 +59,9 @@ def channel_index(request, format='html'):
   if not request.user:
     return channel_index_signedout(request, format='html')
 
-  s = request.COOKIES.get('user') + request.META.get("HTTP_REFERER")
+  s = request.COOKIES.get('user')       \
+    + request.META.get("HTTP_REFERER")  \
+    + request.META.get("PATH_INFO")
   key_name = "html:%s" % md5(s).hexdigest()
   
   cached_data = cache.get(key_name)
@@ -192,7 +195,9 @@ def channel_history(request, nick, format='html'):
   if not view:
     return http.HttpResponseRedirect('/channel/create?channel=%s' % nick)
 
-  s = request.COOKIES.get('user') + request.META.get("HTTP_REFERER")
+  s = str(request.COOKIES.get('user'))       \
+    + str(request.META.get("HTTP_REFERER"))  \
+    + str(request.META.get("PATH_INFO"))
   key_name = "html:%s" % md5(s).hexdigest()
 
   admins = api.channel_get_admins(request.user, channel=view.nick)

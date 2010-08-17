@@ -5,10 +5,12 @@
 <form id="form-design" action="" method="post" enctype="multipart/form-data">
   {{request.user|noncefield:"update_design"}}
   <div id="picker" style="float: right;"></div>
+<!--
   <div>
     <label id="bg_color">Màu nền</label>
     <input type="text" name="bg_color" id="bg_color" class="colorwell" value="{{view.extra.bg_color|default:"#D5E9ED"}}" />
   </div>
+-->
   <div>
     <label id="bg_image">Ảnh nền</label>
     <input type="hidden" name="MAX_FILE_SIZE" value="200000" /> 

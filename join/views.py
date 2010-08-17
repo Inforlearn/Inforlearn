@@ -40,7 +40,7 @@ def join_join(request):
       params = util.query_dict_to_keywords(request.POST)
 
 #      if hide:
-      params['privacy'] = 2
+#      params['privacy'] = 2
 
       validate.email(email)
       if not mail.is_allowed_to_send_email_to(email):

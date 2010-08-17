@@ -15,6 +15,10 @@ urlpatterns += patterns('export.views',
     (r'^export/user_comments$', 'user_comments'),
 )
 
+#BOOKMARKLET
+urlpatterns += patterns('bookmarklet.views',
+    (r'^post', 'actor_post'),
+)
 
 # FRONT
 urlpatterns += patterns('front.views',
