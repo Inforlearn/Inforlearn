@@ -90,7 +90,8 @@
     <script type='text/javascript' src='http://{{DOMAIN}}/js/prototip/prototip.js'></script>
     
   </head>
-  <body style="display: none; {% if not view.extra.bg_image %} background: url(/images/backgrounds/{{ bg_image|auto_background }}); background-attachment: fixed; background-position: center; {% endif %}" {% block bodytag %}{% if area %} id="{{area}}"{% endif %}{% if not request.user %}class="global"{% endif %}{% endblock %}>
+  <body onload="document.message_form.message.focus();"
+        style="display: none; {% if not view.extra.bg_image %} background: url(/images/backgrounds/{{ bg_image|auto_background }}); background-attachment: fixed; background-position: center; {% endif %}" {% block bodytag %}{% if area %} id="{{area}}"{% endif %}{% if not request.user %}class="global"{% endif %}{% endblock %}>
       
     {% block body %}
     {% endblock %}
