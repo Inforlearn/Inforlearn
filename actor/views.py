@@ -71,6 +71,7 @@ def actor_history(request, nick=None, format='html'):
   )
   if handled:
     cache.delete(key_name)
+    cache.delete("html::explore_recent")
     s = str(request.COOKIES.get('user'))       \
       + str(request.META.get("HTTP_REFERER"))  \
       + str(request.META.get("PATH_INFO")) + "/overview"
@@ -240,6 +241,7 @@ def actor_overview(request, nick, format='html'):
   )
   if handled:
     cache.delete(key_name)
+    cache.delete("html::explore_recent")
     s = str(request.COOKIES.get('user'))       \
       + str(request.META.get("HTTP_REFERER"))  \
       + str(request.META.get("PATH_INFO")).replace("/overview", "")

@@ -4,11 +4,12 @@ from django.template import loader
 from common import api, util
 from common.display import prep_entry_list, prep_stream_dict
 from common.views import handle_view_action
-
+from common.memcache import client as cache
 
 ENTRIES_PER_PAGE = 20
 
 def explore_recent(request, format="html"):
+  key_name = "html::explore_recent"
   green_top = True
   handled = handle_view_action(request, {'entry_remove': request.path,
                                          'entry_remove_comment': request.path,
@@ -17,7 +18,12 @@ def explore_recent(request, format="html"):
                                          'settings_hide_comments': request.path,
                                          'post': request.path,})
   if handled:
+    cache.delete(key_name)
     return handled
+
+  cached_data = cache.get(key_name)
+  if cached_data:
+    return http.HttpResponse(cached_data)
 
   per_page = ENTRIES_PER_PAGE
 
@@ -54,7 +60,9 @@ def explore_recent(request, format="html"):
 
   if format == 'html':
     t = loader.get_template('explore/templates/recent.html')
-    return http.HttpResponse(t.render(c));
+    html = t.render(c)
+    cache.set(key_name, html)
+    return http.HttpResponse(html);
   elif format == 'json':
     t = loader.get_template('explore/templates/recent.json')
     return util.HttpJsonResponse(t.render(c), request)

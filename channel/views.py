@@ -217,6 +217,7 @@ def channel_history(request, nick, format='html'):
       )
   if handled:
     cache.delete(key_name)
+    cache.delete("html::explore_recent")
     return handled
 
   cached_data = cache.get(key_name)
