@@ -793,7 +793,10 @@ def actor_add_contact(api_user, owner, target):
 
     target_ref.extra.setdefault('follower_count', 0)
     target_ref.extra['follower_count'] += 1
-    target_ref.rank += 1
+    try:
+      target_ref.rank += 1
+    except TypeError:
+      target_ref.rank = 0
     target_ref.put()
 
   # Subscribe owner to all of target's streams
@@ -1259,7 +1262,10 @@ def actor_remove_contact(api_user, owner, target):
 
   target_ref.extra.setdefault('follower_count', 1)
   target_ref.extra['follower_count'] -= 1
-  target_ref.rank -= 2
+  try:
+    target_ref.rank -= 2
+  except TypeError:
+    target_ref.rank = 0
   target_ref.put()
 
   # Unsubscribe owner from all of target's streams

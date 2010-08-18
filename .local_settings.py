@@ -12,7 +12,7 @@ ROOT_NICK = 'root@inforlearn.appspot.com'
 
 TEMPLATE_DEBUG = False
 
-DEFAULT_FROM_EMAIL = 'aloneroad@gmail.com'
+DEFAULT_FROM_EMAIL = 'notifications@inforlearn.com'
 
 HOSTED_DOMAIN_ENABLED = True
 
