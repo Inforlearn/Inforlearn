@@ -2,21 +2,18 @@
 
 {% block help %}
 <p>
-    {{SITE_NAME}} IM, our Instant Messaging bot, allows you to communicate with all your {{SITE_NAME}} contacts using your (XMPP based) instant messaging client. The supported services are: Google Talk, LiveJournal, and Jabber.
+    {{SITE_NAME}} IM, chương trình Instant Messaging của chúng tôi, cho phép bạn tương tác với {{SITE_NAME}} sử dụng XMPP based instant messaging client. Danh sách hỗ trợ bạn có thể xem tại .
 </p>
-<h2>What you get</h2>
+<h2>Bạn được những gì?</h2>
 <p>
-    You get notified of posts, comments and Web feed updates from your contacts, and you can post your own messages and comments (even to channels!) right from your desktop.
+    Bạn sẽ nhận được tất cả các tin mới, bình luận từ danh sách liên hệ của bạn, và bạn có thể gửi tin nhắn và bình luận ngay từ trình IM yêu thích của bạn.
 </p>
+<h2>Kích hoạt</h2>
 <p>
-    Of course, sometimes you might want to not have all that going on in your Instant Messenger, so you can even stop the updates for a while (we don't mind, honestly - we know you actually need to work sometimes).
-</p>
-<h2>Activating</h2>
-<p>
-To get started, go to your IM client, and add {{IM_BOT}} to your buddy list. Then, send us an IM message containing the text (without the &lt; and &gt;): <strong>"SIGN IN &lt;your {{SITE_NAME}} screen name&gt; &lt;your {{SITE_NAME}} password&gt;"</strong>
+Để bắt đầu, mở trình IM của bạn, thêm {{IM_BOT}} vào danh sách liên lạc. Sau đó, gửi tới {{IM_BOT}} một tin nhắn như sau (không bao gồm &lt; và &gt;): <strong>"SIGN IN &lt;Tên đăng nhập&gt; &lt;Mật khẩu&gt;"</strong>
 </p>
 <p>
-    After your account has been verified, you'll start receiving notifications from your contacts.  It's that easy! 
+    Sau khi lệnh trên được thực hiện thành công, bạn có thể bắt đầu nhận thông báo khi có tin/bình luận mới từ những người trong danh sách liên hệ của bạn. Nó thực sự rất đơn giản! 
 </p>
 <h2>Communicating with the bot</h2>
 <p>
@@ -35,6 +32,7 @@ To get started, go to your IM client, and add {{IM_BOT}} to your buddy list. The
     Similarly, you can join and leave our channels - with JOIN or LEAVE (e.g. "JOIN #squid").  You can also post to channels by prefixing your message with #channelname ( e.g. "#squid Fresh squid fried with lime juice and garlic, served on a bed of crispy noodles = YUMMY!")
 </p>
 <ul>
+    <li><a href="/help/clients">Danh sách các trình IM Client hỗ trợ</a></li>
     <li><a href="/help/commands">List of SMS and IM commands</a></li>
     <li><a href="/settings/im">Set your IM address</a></li>
     <li><a href="/settings/notifications"> Notification options</a></li>

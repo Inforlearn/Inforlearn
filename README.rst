@@ -1,6 +1,6 @@
-=========================
-http://www.inforlearn.com
-=========================
+==============
+Inforlearn.com
+==============
 
 Mã nguồn
 ========
@@ -16,7 +16,7 @@ Hướng dẫn nhanh
 Chạy thử sản phẩm
 -----------------
 
-  1. Tạo một bản sao của toàn bộ mã nguồn đang phát triển tại máy::
+  1. Lấy một bản sao của toàn bộ mã nguồn đang phát triển về máy::
   
       git clone git://github.com/AloneRoad/Inforlearn.git
     
@@ -40,4 +40,10 @@ Triển khai ứng dụng với Google App Engine
 
   4. Chuyển code lên Google App Engine::
     
-    ./update.sh
+      ./update.sh
+      
+  5. Truy cập dòng lệnh điều khiển ứng dụng đang chạy::
+      
+      ./console.sh
+
+
