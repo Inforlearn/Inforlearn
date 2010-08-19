@@ -52,7 +52,7 @@ def api_keys(request):
   access_tokens = []
 
   # for templates
-  full_page = 'Keys'
+  full_page = 'API Keys'
   page = 'keys'
   area = 'api'
 
@@ -76,12 +76,12 @@ def api_key(request, consumer_key):
   consumer_token_ref = api.oauth_get_consumer(request.user, consumer_key)
 
   # for templates
-  full_page = 'Keys / %s' % consumer_key
+  full_page = 'API Keys / %s' % consumer_key
   page = 'key'
   area = 'api'
-  OAUTH_WEB = 'web'
-  OAUTH_DESKTOP = 'desktop'
-  OAUTH_MOBILE = 'mobile'
+  OAUTH_WEB = 'Web App'
+  OAUTH_DESKTOP = 'Desktop App'
+  OAUTH_MOBILE = 'Mobile App'
 
   c = template.RequestContext(request, locals())
   t = loader.get_template('api/templates/key.html')
@@ -100,7 +100,7 @@ def api_doc(request, doc):
   content = content_template.render(template.Context())
 
   # for templates
-  full_page = 'Documentation'
+  full_page = 'Tài liệu hướng dẫn'
   page = 'docs'
   area = 'api'
 
@@ -123,7 +123,7 @@ def api_docs(request):
   api_methods.sort()
 
   # for templates
-  full_page = 'Documentation'
+  full_page = 'Tài liệu hướng dẫn'
   page = 'docs'
   area = 'api'
 
@@ -149,7 +149,7 @@ def api_tokens(request):
                                                request.user.nick)
 
   # for templates
-  full_page = 'Tokens'
+  full_page = 'Danh sách các mã API đã kích hoạt'
   page = 'tokens'
   area = 'api'
 
@@ -452,7 +452,7 @@ def render_api_response(rv, format="json", servertime=None):
   else:
     o = {"status": "ok"}
     # TODO make this into something real
-    rv = {"rv": rv.to_api()}
+    rv = {"response": rv.to_api()}
     o.update(rv)
     if servertime:
       o['servertime'] = str(servertime)

@@ -4,8 +4,7 @@
 
 {% block content %} 
   {% if not request.mobile %}
-    <p style="font-size: 4px;"></p>
-    <div id="sidebar">
+    <div id="sidebar" style="margin-top: 40px;">
       <div class="tip">
         {{content|random_tips}}
       </div>
@@ -16,6 +15,10 @@
   {% else %}
     {% include 'channel/templates/sidebar_ourpicks.html' %}
   {% endif %}
+  
+  <div class="path">
+    <h1>Quản lý nhóm</h1>
+  </div>
   
   <div class="body">
     {% block channel_body %}{% endblock %}

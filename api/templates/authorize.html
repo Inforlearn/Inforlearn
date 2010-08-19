@@ -1,12 +1,13 @@
 {% extends 'common/templates/base_single.html' %}
 {% load nonce %}
 
-{% block title %}Xác nhận việc truy cập của {{oauth_consumer_ref.app_name}} vào tài khoản của bạn{% endblock %}
+{% block title %}Ứng dụng {{oauth_consumer_ref.app_name}} muốn truy cập vào tài khoản của bạn{% endblock %}
 
 {% block content %}
 <h2>Một ứng dụng muốn truy cập vào tài khoản của bạn</h2>
 
-<p><strong>{{oauth_consumer_ref.app_name}}</strong> muốn được phép thực hiện <strong>{{perms_pretty}}</strong> your posts. If you agree, {{oauth_consumer_ref.app_name}} will be able to access and update your posts until you tell us otherwise.</p> 
+<p><strong>{{oauth_consumer_ref.app_name}}</strong> muốn được phép <strong>{{perms_pretty}}</strong> . 
+Nếu đồng ý, {{oauth_consumer_ref.app_name}} sẽ được phép truy cập và gửi tin dưới danh nghĩa của bạn.</p> 
 
 <form id="authorizeform" action="/api/authorize" method="post">
   {% if oauth_callback %}

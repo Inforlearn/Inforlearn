@@ -2,11 +2,11 @@
 {% load nonce %}
 {% block api %}
 
-<p>Để sử dụng {{SITE_NAME}} API bạn cần có một khóa dành riêng cho từng ứng dụng. 
-Chúng tôi sẽ sử dụng nó để theo dõi việc sử dụng API của ứng dụng này.</p>
+<p>Bạn cần có API Key riêng biệt cho mỗi một ứng dụng. <br> 
+Nó sẽ được sử dụng để giám sát việc truy cập và các tác động của ứng dụng này lên tài khoản của bạn.</p>
 
 
-<h2>Khóa API của bạn</h2>
+<h2>API Keys</h2>
 
 {% for consumer_token_ref in consumer_tokens %}
 <div class="boxy" style="margin-bottom: 10px; background-color: {% cycle 'white' '#DDD' %}">
@@ -29,7 +29,7 @@ Chúng tôi sẽ sử dụng nó để theo dõi việc sử dụng API của �
 		<b>Trạng thái:</b> 
     <span style="color: #0c0; font-weight: bold;">{{consumer_token_ref.status}}</span><br />
 
-		<b>Chế độ xác thực:</b>
+		<b>Loại ứng dụng:</b>
     {{consumer_token_ref.type}}<br />
 	</div>
 
@@ -46,7 +46,7 @@ Chúng tôi sẽ sử dụng nó để theo dõi việc sử dụng API của �
   <input type='hidden' name='oauth_generate_consumer' value='' />
   <input type='hidden' name='nick' value='{{request.user.nick}}' />
   <div>
-    <input type="submit" id="generate" value="Tạo một khóa mới"/>
+    <input type="submit" id="generate" value="Tạo mới"/>
   </div>
 </form>
 

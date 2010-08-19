@@ -4,7 +4,7 @@
 
 {% block content %}
   <div class="path">
-    <h1 style="font-size: 1.8em;">
+    <h1>
       {% block path %}
         <a href="{% url_for view request %}">{{view.display_nick}}</a> /
         {% ifnotequal page "index" %}

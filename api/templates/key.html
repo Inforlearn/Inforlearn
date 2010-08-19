@@ -24,38 +24,38 @@
              value="{{consumer_token_ref.key_}}" />
 
       <br />
-      <b><label>Tên ứng dụng sẽ dùng API này:</label></b>
+      <b><label>Tên ứng dụng:</label></b>
       <input type="text" name="app_name"
         value="{{consumer_token_ref.app_name|default_if_none:""}}" />
       <br />
 
       <b>Issued:</b>{{consumer_token_ref.created_at|timesince}} ago<br />
-		  <b>Status:</b>
+		  <b>Trạng thái:</b>
       <span style="color: #0c0; font-weight: bold;">
         {{consumer_token_ref.status}}
       </span>
       <br />
 
-		  <b>Chế độ xác thực:</b>
+		  <b>Loại ứng dụng:</b>
       <span style="color: #000; font-weight: bold;">
         {{consumer_token_ref.type}}
       </span>
       {% comment %}
       <br />
-      <label for="web">Từ web</label>
+      <label for="web">Web Application</label>
       <input type="radio" id="web" name="consumer_type" value="{{OAUTH_WEB}}"
              {% ifequal consumer_token_ref.type "web" %}
                checked="checked"
              {% endifequal %} />
       <br />
-      <label for="desktop">Từ phần mềm cài trên máy tính</label>
+      <label for="desktop">Desktop App</label>
       <input type="radio" id="desktop" name="consumer_type"
              value="{{OAUTH_DESKTOP}}"
              {% ifequal consumer_token_ref.type "desktop" %}
                checked="checked"
              {% endifequal %} />
       <br />
-      <label for="mobile">Từ phần mềm cài trên di động</label>
+      <label for="mobile">Mobile App</label>
       <input type="radio" id="mobile" name="consumer_type"
              value="{{OAUTH_MOBILE}}"
              {% ifequal consumer_token_ref.type "mobile" %}
@@ -64,7 +64,7 @@
       {% endcomment %}
       <br />
       <a style="position:relative;top:0px;left:0px"
-         href="?oauth_consumer_delete=&amp;{{request.user|nonceparam:"oauth_consumer_delete"}}&amp;nick={{request.user.nick}}&amp;consumer_key={{consumer_token_ref.key_}}" class="confirm-delete" title="Delete this key">
+         href="?oauth_consumer_delete=&amp;{{request.user|nonceparam:"oauth_consumer_delete"}}&amp;nick={{request.user.nick}}&amp;consumer_key={{consumer_token_ref.key_}}" class="confirm-delete" title="Xóa">
         Xóa
       </a>
       <br />

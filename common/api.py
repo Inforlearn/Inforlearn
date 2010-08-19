@@ -5432,4 +5432,4 @@ def get_email(actor_nick):
   if result:
     cache.set(key_name, result[0].target, 3600)
     return result[0].target
-  return None 
+  return None

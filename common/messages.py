@@ -107,9 +107,7 @@ def confirmation(api_call):
   msg = title(api_call)
   if msg is None:
     return None
-  return (u'Bạn chắc chắn muốn ' +
-          msg +
-          u' chứ?')
+  return ('Bạn chắc chắn muốn thực hiện?')
 
 def title(api_call):
   if _message_table__.has_key(api_call):

@@ -2,10 +2,7 @@
 {% load nonce %}
 {% block api %}
 
-<p>Dưới đây là các ứng dụng đã được bạn cấp cho quyền truy cập vào tài khoản của mình.</p>
-
-
-<h2>Các khóa API đã kích hoạt</h2>
+<h2>Danh sách các mã API đã kích hoạt</h2>
 
 {% for consumer_token_ref in consumer_tokens %}
 <div class="boxy" 
@@ -22,15 +19,15 @@
 
 	<div style="clear: both; font-size: 12px; padding: 1em 0;">
     <b>Quyền:</b> <i>{{consumer_token_ref.perms}}</i><br />
-    <b>Hoạt động:</b>{{consumer_token_ref.created_at|timesince}} ago<br />
+    <b>Hoạt động:</b>{{consumer_token_ref.created_at|timesince}} trước<br />
 		<b>Consumer:</b> 
     <span style="color: #0c0; font-weight: bold;">
       {{consumer_token_ref.consumer}}
     </span>
     <br />
     <a style="position:relative;top:0px;left:0px"
-       href="?oauth_revoke_access_token=&amp;{{request.user|nonceparam:"oauth_revoke_access_token"}}&amp;key={{consumer_token_ref.key_}}" class="confirm-delete" title="Delete this key">
-      Xóa
+       href="?oauth_revoke_access_token=&amp;{{request.user|nonceparam:"oauth_revoke_access_token"}}&amp;key={{consumer_token_ref.key_}}" class="confirm-delete" title="Loại bỏ mã API này">
+      Loại bỏ
     </a>
     <br />
 	</div>

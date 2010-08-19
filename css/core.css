@@ -194,7 +194,7 @@ div#side-nav {
   background: #fff;
   width: 200px;
   float: right;
-  padding: 10px;
+  padding-left: 10px;
 }
 
 #settings div#side-nav {
@@ -298,6 +298,23 @@ div#content div.main {
   color: #fff;
   margin: 0 -15px;
   padding: 7px 15px 15px;
+}
+
+div#content div.path {
+  background: #96C63F url(http://localhost:8080/themes/default/bg-main.gif) repeat-x 0px 0px;
+  color: white;
+  margin: 0px -15px 15px;
+  padding: 7px 15px 10px;
+}
+
+div#content div.path h1 {
+  clear: none;
+  color: white;
+  float: none;
+  font-size: 1.4em;
+  line-height: 1.2em;
+  margin: 0px 0px 0.2em;
+  padding: 0px;
 }
 
 div#content div.main h1 {
@@ -945,7 +962,7 @@ ul {
   padding: 0;
 }
 
-dd, blockquote {
+li, dd, blockquote {
   margin-left: 2em;
 }
 
@@ -2828,6 +2845,10 @@ div#self, #settings div.tabs div.avatars ul {
 
 div.contacts ul.float li.clear, div.contacts h2, div#current-stream {
   clear: left;
+}
+
+div#content div.bottom div.body div.contacts {
+  margin-top: -20px;
 }
 
 div.contacts ul.float li p.foot a.remove, div#current-stream a.confirm-spam, div#comments ul li a.confirm-spam {

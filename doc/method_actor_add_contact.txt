@@ -1,0 +1,33 @@
+**actor_add_contact** (api_user, owner, target)
+
+
+Adds a one-way relationshp of type 'contact' from owner to target.
+
+  May be called multiple times for the same owner and target and should
+  always ensure the same ending conditions.
+
+  PARAMS:
+    * owner - the nick of the follower
+    * target - the nick of the followed
+
+  RETURNS: a relation_ref
+
+  A relation_ref has the following attributes:
+    * owner: nick of the relationship owner
+    * relation: the type of the relation; always 'contact' in this case
+    * target: nick of the actor related to the owner
+
+  EXAMPLE API RETURN:
+
+  ::
+
+    {'status': 'ok',
+     'rv': {'relation': {'owner': 'test@example.com',
+                         'relation': 'contact',
+                         'target': 'root@example.com'
+                         }
+            }
+     }
+
+
+  

@@ -59,10 +59,14 @@ def channel_index(request, format='html'):
   if not request.user:
     return channel_index_signedout(request, format='html')
 
-  s = request.COOKIES.get('user')       \
-    + request.META.get("HTTP_REFERER")  \
-    + request.META.get("PATH_INFO")
-  key_name = "html:%s" % md5(s).hexdigest()
+  if request.META.get("QUERY_STRING").startswith("offset"):
+    s = str(request.COOKIES.get('user')) + ":"      \
+      + request.META.get("PATH_INFO") + "?"  \
+      + request.META.get("QUERY_STRING")
+  else:
+    s = str(request.COOKIES.get('user')) + ":"      \
+      + request.META.get("PATH_INFO")
+  key_name = "html:%s" % s.strip()
   
   cached_data = cache.get(key_name)
   if cached_data and format == "html":
