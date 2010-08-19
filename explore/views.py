@@ -9,7 +9,7 @@ from common.memcache import client as cache
 ENTRIES_PER_PAGE = 20
 
 def explore_recent(request, format="html"):
-  key_name = "html::explore_recent"
+  key_name = "html:explore_recent"
   green_top = True
   handled = handle_view_action(request, {'entry_remove': request.path,
                                          'entry_remove_comment': request.path,
@@ -19,6 +19,19 @@ def explore_recent(request, format="html"):
                                          'post': request.path,})
   if handled:
     cache.delete(key_name)
+    user = request.COOKIES.get('user')
+    if user:
+      s = str(request.COOKIES.get('user')) + ":"      \
+        + "/user/%s" % user.split("@")[0]  \
+        + "/overview"
+      key_name = "html:%s" % s.strip()
+      cache.delete(key_name)
+      
+      s = request.COOKIES.get('user') + ":"      \
+        + "/user/%s" % user.split("@")[0]
+      key_name = "html:%s" % s.strip()
+      cache.delete(key_name)
+      
     return handled
 
   cached_data = cache.get(key_name)

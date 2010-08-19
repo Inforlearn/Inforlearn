@@ -37,10 +37,15 @@ def alternate_nick(f):
 
 @alternate_nick
 def actor_history(request, nick=None, format='html'):
-  s = str(request.COOKIES.get('user'))       \
-    + str(request.META.get("HTTP_REFERER"))  \
-    + str(request.META.get("PATH_INFO"))
-  key_name = "html:%s" % md5(s).hexdigest()
+  if request.META.get("QUERY_STRING").startswith("offset"):
+    s = str(request.COOKIES.get('user')) + ":"      \
+      + request.META.get("PATH_INFO") + "?"  \
+      + request.META.get("QUERY_STRING")
+  else:
+    s = str(request.COOKIES.get('user')) + ":"      \
+      + request.META.get("PATH_INFO")
+  key_name = "html:%s" % s.strip()
+#  return http.HttpResponse(key_name)
   
   nick = clean.nick(nick)
   view = api.actor_lookup_nick(request.user, nick)
@@ -71,17 +76,18 @@ def actor_history(request, nick=None, format='html'):
   )
   if handled:
     cache.delete(key_name)
-    cache.delete("html::explore_recent")
-    s = str(request.COOKIES.get('user'))       \
-      + str(request.META.get("HTTP_REFERER"))  \
-      + str(request.META.get("PATH_INFO")) + "/overview"
-    key_name = "html:%s" % md5(s).hexdigest()
+    cache.delete("html:explore_recent")
+    s = str(request.COOKIES.get('user')) + ":"      \
+      + str(request.META.get("PATH_INFO"))  \
+      + "/overview"
+    key_name = "html:%s" % s.strip()
     cache.delete(key_name)
     return handled
 
   cached_data = cache.get(key_name)
   if cached_data and format == "html":
 #    print "has cache"
+#    return http.HttpResponse(key_name)
     return http.HttpResponse(cached_data)
   
   privacy = 'public'
@@ -212,10 +218,14 @@ def actor_invite(request, nick, format='html'):
 
 @alternate_nick
 def actor_overview(request, nick, format='html'):
-  s = str(request.COOKIES.get('user'))       \
-    + str(request.META.get("HTTP_REFERER"))  \
-    + str(request.META.get("PATH_INFO"))
-  key_name = "html:%s" % md5(s).hexdigest()
+  if request.META.get("QUERY_STRING").startswith("offset"):
+    s = str(request.COOKIES.get('user')) + ":"      \
+      + request.META.get("PATH_INFO") + "?"  \
+      + request.META.get("QUERY_STRING")
+  else:
+    s = str(request.COOKIES.get('user')) + ":"      \
+      + request.META.get("PATH_INFO")
+  key_name = "html:%s" % s.strip()
     
   nick = clean.nick(nick)
 
@@ -241,16 +251,17 @@ def actor_overview(request, nick, format='html'):
   )
   if handled:
     cache.delete(key_name)
-    cache.delete("html::explore_recent")
-    s = str(request.COOKIES.get('user'))       \
-      + str(request.META.get("HTTP_REFERER"))  \
+    cache.delete("html:explore_recent")
+    s = str(request.COOKIES.get('user')) + ":"      \
       + str(request.META.get("PATH_INFO")).replace("/overview", "")
-    key_name = "html:%s" % md5(s).hexdigest()
+    key_name = "html:%s" % s.strip()
     cache.delete(key_name)
+    #TODO: xóa tin nhắn trong trang nhà khi xóa từ trang "Khám phá"
     return handled
   
   cached_data = cache.get(key_name)
   if cached_data and format == "html":
+#    print str(request)
 #    print "has cache"
     return http.HttpResponse(cached_data)
   
@@ -475,10 +486,14 @@ def actor_item(request, nick=None, item=None, format='html'):
 
 @alternate_nick
 def actor_contacts(request, nick=None, format='html'):
-  s = str(request.COOKIES.get('user'))       \
-    + str(request.META.get("HTTP_REFERER"))  \
-    + str(request.META.get("PATH_INFO"))
-  key_name = "html:%s" % md5(s).hexdigest()
+  if request.META.get("QUERY_STRING").startswith("offset"):
+    s = str(request.COOKIES.get('user')) + ":"      \
+      + request.META.get("PATH_INFO") + "?"  \
+      + request.META.get("QUERY_STRING")
+  else:
+    s = str(request.COOKIES.get('user')) + ":"      \
+      + request.META.get("PATH_INFO")
+  key_name = "html:%s" % s.strip()
   
   nick = clean.nick(nick)
 

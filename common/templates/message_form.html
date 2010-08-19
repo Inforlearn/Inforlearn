@@ -5,7 +5,7 @@
     {% include 'form_error.html' %}
     {% block message_title %}
     {% endblock %}
-    <form name="message_form" action="" method="POST">  
+    <form name="message_form" action="" method="GET">  
       {% if not request.mobile %}
         <a href="{{request.user.url}}/settings/photo">
           {{ request.user|avatar:"f" }}
@@ -15,7 +15,7 @@
         <label for="message" id="message-label">
           Gõ tin nhắn bạn muốn chia sẻ với mọi người vào đây
         </label>
-        <textarea id="message" name="message" rows="4" cols="25">{% if message %}{{ message|escape }}{% else %}{% if not request.mobile %}&nbsp;&nbsp;Hãy viết một điều gì đó mà bạn nghĩ rằng nó sẽ có ích cho mọi người...{% endif %}{% endif %}</textarea>
+        <textarea id="message" name="message" rows="4" cols="25">{% if message %}{{ message|escape }}{% else %}{% if not request.mobile %}&nbsp;{% endif %}{% endif %}</textarea>
       </p>
       <p class="buttons">
         <input type="hidden" id="location" name="location" value="{{ request.user.extra.location }}"/>

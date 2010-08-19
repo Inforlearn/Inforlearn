@@ -49,7 +49,7 @@ $j.fn.presence = function() {
   this.icons();
   a.get(0)._value = a.attr("value");
   a.one("focus", function() {
-    if (this.value == "  Hãy viết một điều gì đó mà bạn nghĩ rằng nó sẽ có ích cho mọi người...") {
+    if (this.value == " ") {
       this.value = "";
       $j(this).css({
         color: "#000"

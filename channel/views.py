@@ -195,10 +195,14 @@ def channel_history(request, nick, format='html'):
   if not view:
     return http.HttpResponseRedirect('/channel/create?channel=%s' % nick)
 
-  s = str(request.COOKIES.get('user'))       \
-    + str(request.META.get("HTTP_REFERER"))  \
-    + str(request.META.get("PATH_INFO"))
-  key_name = "html:%s" % md5(s).hexdigest()
+  if request.META.get("QUERY_STRING").startswith("offset"):
+    s = request.COOKIES.get('user') + ":"      \
+      + request.META.get("PATH_INFO") + "?"  \
+      + request.META.get("QUERY_STRING")
+  else:
+    s = request.COOKIES.get('user') + ":"      \
+      + request.META.get("PATH_INFO")
+  key_name = "html:%s" % s.strip()
 
   admins = api.channel_get_admins(request.user, channel=view.nick)
   members = api.channel_get_members(request.user, channel=view.nick)

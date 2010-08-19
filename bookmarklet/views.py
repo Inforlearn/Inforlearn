@@ -14,6 +14,7 @@ from common import views as common_views
 #from cachepy import cachepy as cache
 from common.memcache import client as cache
 from hashlib import md5
+import re
 
 
 ENTRIES_PER_PAGE = 20
@@ -32,9 +33,13 @@ def alternate_nick(f):
   _wrap.func_name = f.func_name
   return _wrap
 
+def get_text(begin_str, end_str, document):
+  """ Trả về các ký tự nằm giữa 2 chuỗi """
+  s = begin_str + '(.*?)' + end_str
+  return re.compile(s, re.DOTALL |  re.IGNORECASE).findall(document)
+
 @alternate_nick
 def actor_post(request, format='html'):
-#  print str(request)
   s = str(request.COOKIES.get('user'))       \
     + str(request.META.get("HTTP_REFERER"))  \
     + str(request.META.get("PATH_INFO"))
@@ -78,8 +83,11 @@ def actor_post(request, format='html'):
   
   message = request.GET.get("message")
   cached_data = cache.get(key_name)
-  if cached_data and format == "html" and not message:
-#    print "has cache"
+  if cached_data and format == "html":
+    if message:
+      replace_text = get_text('<textarea id="message" name="message" rows="4" cols="25">', '</textarea>', cached_data)[0]
+#      print replace_text
+      cached_data = cached_data.replace(replace_text, message)
     return http.HttpResponse(cached_data)
   
   
