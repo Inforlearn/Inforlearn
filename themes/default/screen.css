@@ -549,7 +549,8 @@ div#sidebar div#mobile div.download p {
 }
 
 div#content div.top, body.single div#header-container {
-  background: transparent url(bg-content-top.png) no-repeat;
+  //background: transparent url(bg-content-top.png) no-repeat;
+  background: transparent url(http://localhost:8080/themes/default/bg-content-top-g.png) no-repeat;
 }
 
 div#content div.bottom, body.single div#header {

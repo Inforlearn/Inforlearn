@@ -2,8 +2,14 @@
 {% load format %}
 
 {% block body %}
-  <div id="header-container">
-    <div id="header">
+  <div id="header-container">        
+    {% if green_title%}
+      <div class="green_title">
+        <h1>{{title}}</h1>
+      </div>
+    {% endif %}
+    <div id="header"{% if green_title%}style="padding: 0px;"{% endif %}>
+
       {% if not request.mobile %}
         <div id="helper-nav">
           <p id="login">

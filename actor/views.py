@@ -366,6 +366,20 @@ def actor_item(request, nick=None, item=None, format='html'):
   if not view:
     raise exception.UserDoesNotExistError(nick, request.user)
 
+  if request.META.get("QUERY_STRING").startswith("offset"):
+    s = str(request.COOKIES.get('user')) + ":"      \
+      + request.META.get("PATH_INFO") + "?"  \
+      + request.META.get("QUERY_STRING")
+  else:
+    s = str(request.COOKIES.get('user')) + ":"      \
+      + request.META.get("PATH_INFO")
+  key_name = "html:%s" % s.strip()
+
+  cached_data = cache.get(key_name)
+  if cached_data and format == "html":
+#    print "has cache"
+    return http.HttpResponse(cached_data)
+  
   # With very few exceptions, whenever we are referring to a an
   # instance that is an entity from the datastore we append `_ref`
   # to the variable name to distinguish it from the variable that
@@ -428,6 +442,7 @@ def actor_item(request, nick=None, item=None, format='html'):
        }
       )
   if handled:
+    cache.delete(key_name)
     return handled
 
   comments = api.entry_get_comments(request.user, entry_ref.key().name())
@@ -477,7 +492,9 @@ def actor_item(request, nick=None, item=None, format='html'):
     # We always use the full path to the template to prevent naming conflicts
     # and difficult searches.
     t = loader.get_template('actor/templates/item.html')
-    return http.HttpResponse(t.render(c))
+    html = t.render(c)
+    cache.set(key_name, html)
+    return http.HttpResponse(html)
 
   elif format == 'json':
     t = loader.get_template('actor/templates/item.json')

@@ -2,3 +2,7 @@ queue:
 - name: default
   rate: 20/s
   bucket_size: 20
+  
+- name: updatecache
+  rate: 20/s
+  bucket_size: 20

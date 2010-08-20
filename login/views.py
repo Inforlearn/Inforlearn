@@ -14,6 +14,8 @@ from common import views as common_views
 
 @decorator.cache_never
 def login_login(request):
+  green_title = True
+  title = "Đăng nhập"
   redirect_to = request.REQUEST.get('redirect_to', '/')
   redirect_to = clean.redirect_to(redirect_to)
 
@@ -81,6 +83,8 @@ def login_noreally(request):
 
 @decorator.cache_never
 def login_logout(request):
+  green_title = True
+  title = "Đăng xuất"
   request.user = None
   redirect_to = '/'
   c = template.RequestContext(request, locals())
@@ -91,6 +95,8 @@ def login_logout(request):
   return response
 
 def login_forgot(request):
+  green_title = True
+  title = "Quên mật khẩu"
   if request.user:
     # If the user is logged in, they don't get to the "forgot password" page.
     raise exception.AlreadyLoggedInException()
@@ -108,6 +114,8 @@ def login_forgot(request):
   return response
 
 def login_reset(request):
+  green_title = True
+  title = "Khôi phục mật khẩu"
   # TODO(termie): this is a weird return type for an api call
   new_password, nick = api.login_reset(
       None, request.GET.get('email'), request.GET.get('hash'))

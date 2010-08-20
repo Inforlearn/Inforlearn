@@ -1,9 +1,12 @@
 {% extends 'common/templates/base_sidebar.html' %}
 {% load avatar nonce %}
-{% block title %}Create Channel{% endblock %}
+{% block title %}Tạo nhóm mới{% endblock %}
 
 {% block content %}
+<div class="path">
+ 
   <h1>Tạo nhóm mới</h1>
+</div> 
   {% include 'form_error.html' %}
   <form action="" method="post">
     {{request.user|noncefield:"channel_create"}}

@@ -26,6 +26,7 @@ CONTACTS_PER_PAGE = 24
 
 @decorator.login_required
 def channel_create(request, format='html'):
+  green_top = True
   channel = request.REQUEST.get('channel', '')
 
   handled = common_views.handle_view_action(
@@ -200,11 +201,11 @@ def channel_history(request, nick, format='html'):
     return http.HttpResponseRedirect('/channel/create?channel=%s' % nick)
 
   if request.META.get("QUERY_STRING").startswith("offset"):
-    s = request.COOKIES.get('user') + ":"      \
+    s = str(request.COOKIES.get('user')) + ":"      \
       + request.META.get("PATH_INFO") + "?"  \
       + request.META.get("QUERY_STRING")
   else:
-    s = request.COOKIES.get('user') + ":"      \
+    s = str(request.COOKIES.get('user')) + ":"      \
       + request.META.get("PATH_INFO")
   key_name = "html:%s" % s.strip()
 
@@ -366,6 +367,20 @@ def channel_item(request, nick, item=None, format='html'):
   if not view:
     raise http.Http404()
 
+  if request.META.get("QUERY_STRING").startswith("offset"):
+    s = str(request.COOKIES.get('user')) + ":"      \
+      + request.META.get("PATH_INFO") + "?"  \
+      + request.META.get("QUERY_STRING")
+  else:
+    s = str(request.COOKIES.get('user')) + ":"      \
+      + request.META.get("PATH_INFO")
+  key_name = "html:%s" % s.strip()
+
+  cached_data = cache.get(key_name)
+  if cached_data and format == "html":
+#    print "has cache"
+    return http.HttpResponse(cached_data)
+  
   stream_ref = api.stream_get_presence(request.user, view.nick)
 
   entry = '%s/%s' % (stream_ref.key().name(), item)
@@ -383,6 +398,7 @@ def channel_item(request, nick, item=None, format='html'):
        }
       )
   if handled:
+    cache.delete(key_name)
     return handled
 
   admins = api.channel_get_admins(request.user, channel=view.nick)
@@ -417,7 +433,9 @@ def channel_item(request, nick, item=None, format='html'):
   c = template.RequestContext(request, locals())
   if format == 'html':
     t = loader.get_template('channel/templates/item.html')
-    return http.HttpResponse(t.render(c))
+    html = t.render(c)
+    cache.set(key_name, html)
+    return http.HttpResponse(html)
   elif format == 'json':
     t = loader.get_template('actor/templates/item.json')
     return util.HttpJsonResponse(t.render(c), request)

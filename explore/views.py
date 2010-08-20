@@ -27,7 +27,7 @@ def explore_recent(request, format="html"):
       key_name = "html:%s" % s.strip()
       cache.delete(key_name)
       
-      s = request.COOKIES.get('user') + ":"      \
+      s = str(request.COOKIES.get('user')) + ":"      \
         + "/user/%s" % user.split("@")[0]
       key_name = "html:%s" % s.strip()
       cache.delete(key_name)

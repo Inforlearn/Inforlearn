@@ -33,6 +33,9 @@ def join_join(request):
 #  confirm = request.REQUEST.get('confirm', '')
   homepage = request.REQUEST.get('homepage', '')
 #  hide = request.REQUEST.get('hide', '')
+  
+  green_title = True
+  title = "Đăng ký"
 
   if request.POST:
     try:
