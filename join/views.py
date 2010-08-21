@@ -93,7 +93,8 @@ def join_join(request):
 def join_welcome(request):
   redirect_to = request.REQUEST.get('redirect_to', '/')
   next = '/welcome/1'
-
+  
+  nick = request.user.display_nick()
   view = request.user
   page = 'start'
 
@@ -110,6 +111,8 @@ def join_welcome_photo(request):
 
   # Welcome pages have a 'Continue' button that should always lead
   # to the next page. 
+  nick = request.user.display_nick()
+  
   success = '/welcome/1'
   if 'continue' in request.POST:
     success = next
@@ -173,6 +176,7 @@ def join_welcome_design(request):
   if 'continue' in request.POST:
     success = next
 
+  nick = request.user.display_nick()
   rv = common_views.common_design_update(
     request,
     util.qsa(success, {'redirect_to': redirect_to})
@@ -213,6 +217,7 @@ def join_welcome_contacts(request):
   next = '/welcome/done'
 
 
+  nick = request.user.display_nick()
   # these are for the find more contacts bits
   start_index = int(request.REQUEST.get('index', 1))
   max = 100
@@ -346,6 +351,7 @@ def join_welcome_contacts(request):
 def join_welcome_done(request):
   redirect_to = request.REQUEST.get('redirect_to', '/')
 
+  nick = request.user.display_nick()
   # set the progress
   welcome_photo = True
   welcome_mobile = True

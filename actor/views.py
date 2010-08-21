@@ -405,11 +405,8 @@ def actor_item(request, nick=None, item=None, format='html'):
   else:
     s = request.META.get("PATH_INFO")
   key_name = "html:%s" % s.strip()
-
-  cached_data = cache.get(key_name)
-  if cached_data and format == "html":
-#    print "has cache"
-    return http.HttpResponse(cached_data)
+  
+#  print str(request)
   
   # With very few exceptions, whenever we are referring to a an
   # instance that is an entity from the datastore we append `_ref`
@@ -476,6 +473,10 @@ def actor_item(request, nick=None, item=None, format='html'):
     cache.delete(key_name)
     return handled
 
+  cached_data = cache.get(key_name)
+  if cached_data and format == "html":
+    return http.HttpResponse(cached_data)
+  
   comments = api.entry_get_comments(request.user, entry_ref.key().name())
 
   # To minimize the number of lookups to the datastore once we know

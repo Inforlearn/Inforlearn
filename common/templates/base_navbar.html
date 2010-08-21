@@ -5,40 +5,42 @@
   <div id="header-container">        
     {% if green_title%}
       <div class="green_title">
-        <h1>{{title}}</h1>
+        <h1>» {{title}}</h1>
       </div>
     {% endif %}
-    <div id="header"{% if green_title%}style="padding: 0px;"{% endif %}>
-
-      {% if not request.mobile %}
-        <div id="helper-nav">
-          <p id="login">
-            {% block login %}
-              {% if request.user %}
-                {% actor_link request.user request %} | 
-                <a href="{{request.user.url}}/settings">Thiết lập</a> | 
-                <a href="http://{{DOMAIN}}/logout">Đăng xuất</a>
-              {% else %}
-                Đã là thành viên? 
-                {% if SUBDOMAINS_ENABLED %}
-                  <a href="http://{{DOMAIN}}/login?redirect_to=http://{{request.META.HTTP_HOST}}{{request.META.PATH_INFO}}">Đăng nhập</a>
+    <div {% ifnotequal area 'welcome' %}id="header"{% endifnotequal %} {% if green_title%}style="padding: 0px;"{% endif %}>
+      {% ifnotequal area 'welcome' %}
+        {% if not request.mobile %}
+          <div id="helper-nav">
+            <p id="login">
+              {% block login %}
+                {% if request.user %}
+                  {% actor_link request.user request %} | 
+                  <a href="{{request.user.url}}/settings">Thiết lập</a> | 
+                  <a href="http://{{DOMAIN}}/logout">Đăng xuất</a>
                 {% else %}
-                  <a href="http://{{DOMAIN}}/login?redirect_to={{request.META.PATH_INFO}}">Đăng nhập</a>
+                  Đã là thành viên? 
+                  {% if SUBDOMAINS_ENABLED %}
+                    <a href="http://{{DOMAIN}}/login?redirect_to=http://{{request.META.HTTP_HOST}}{{request.META.PATH_INFO}}">Đăng nhập</a>
+                  {% else %}
+                    <a href="http://{{DOMAIN}}/login?redirect_to={{request.META.PATH_INFO}}">Đăng nhập</a>
+                  {% endif %}
                 {% endif %}
-              {% endif %}
-            {% endblock %}
-          </p>
-        </div>
-      {% endif %}
+              {% endblock %}
+            </p>
+          </div>
+        {% endif %}
+      {% endifnotequal %}
       
       {% if not request.mobile %}
         {% block mainnav %}
+        
         <ul id="main-nav" style="margin-bottom: 0;">
                 <div id="site-logo">
                 <li>
                   <span>
-                    <a href="/" style="color: #fff;background: #9C0;">
-                      <b>Inforlearn.com</b>
+                    <a href="/" style="color: #fafafa;background: #9C0;">
+                      Inforlearn.com
                     </a>
                   </span>
                 </li>
