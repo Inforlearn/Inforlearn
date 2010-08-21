@@ -3,11 +3,12 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
   <head>
+    <link href='http://fonts.googleapis.com/css?family=Droid+Sans' rel='stylesheet' type='text/css'>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <title>
       {{SITE_NAME}} {{DEBUG|yesno:"DEBUG ,"}}| {% block title %} {% endblock %}
     </title>
-    <meta name="description" content="Chia sẻ kiến thức, mở rộng tương lai" />
+    <meta name="description" content="The easiest way to share, discuss and learn." />
     <!-- Add Google meta tag -->
     <meta name="google-site-verification" content="zPyWrOQwgg4cW0kBR6IkPMnERXD4skq5eE4zneb3VUA" />
     {{component.best.analytics.header|safe}}
@@ -105,7 +106,7 @@
     
     </script>
   </head>
-  <body onload="document.message_form.message.focus();"
+  <body {% ifequal area 'home'%}onload="document.message_form.message.focus();" {% endifequal %}
         style="display: none; {% if not view.extra.bg_image %} background: url(/images/backgrounds/{{ bg_image|auto_background }}); background-attachment: fixed; background-position: center; {% endif %}" {% block bodytag %}{% if area %} id="{{area}}"{% endif %}{% if not request.user %}class="global"{% endif %}{% endblock %}>
       
     {% block body %}

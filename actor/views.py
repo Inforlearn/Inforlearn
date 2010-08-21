@@ -75,11 +75,30 @@ def actor_history(request, nick=None, format='html'):
       }
   )
   if handled:
+    cache.delete(key_name)    
+    
+    s = str(None) + ":"      \
+      + "/explore"
+    key_name = "html:%s" % s
     cache.delete(key_name)
-    cache.delete("html:explore_recent")
+    
+    s = str(request.COOKIES.get('user')) + ":"      \
+      + "/explore"
+    key_name = "html:%s" % s
+    cache.delete(key_name)
+    
     s = str(request.COOKIES.get('user')) + ":"      \
       + str(request.META.get("PATH_INFO"))  \
       + "/overview"
+    key_name = "html:%s" % s.strip()
+    cache.delete(key_name)
+    
+    s = str(request.COOKIES.get('user')) + ":" + "/channel"
+    key_name = "html:%s" % s
+    cache.delete(key_name)
+       
+    s = str(None) + ":"      \
+      + str(request.META.get("PATH_INFO")).replace("/overview", "")
     key_name = "html:%s" % s.strip()
     cache.delete(key_name)
     return handled
@@ -251,12 +270,26 @@ def actor_overview(request, nick, format='html'):
   )
   if handled:
     cache.delete(key_name)
-    cache.delete("html:explore_recent")
+    
     s = str(request.COOKIES.get('user')) + ":"      \
       + str(request.META.get("PATH_INFO")).replace("/overview", "")
     key_name = "html:%s" % s.strip()
     cache.delete(key_name)
-    #TODO: xóa tin nhắn trong trang nhà khi xóa từ trang "Khám phá"
+    
+    s = str(None) + ":"      \
+      + str(request.META.get("PATH_INFO")).replace("/overview", "")
+    key_name = "html:%s" % s.strip()
+    cache.delete(key_name)
+    
+    s = str(None) + ":"      \
+      + "/explore"
+    key_name = "html:%s" % s
+    cache.delete(key_name)
+    
+    s = str(request.COOKIES.get('user')) + ":"      \
+      + "/explore"
+    key_name = "html:%s" % s
+    cache.delete(key_name)
     return handled
   
   cached_data = cache.get(key_name)
@@ -367,12 +400,10 @@ def actor_item(request, nick=None, item=None, format='html'):
     raise exception.UserDoesNotExistError(nick, request.user)
 
   if request.META.get("QUERY_STRING").startswith("offset"):
-    s = str(request.COOKIES.get('user')) + ":"      \
-      + request.META.get("PATH_INFO") + "?"  \
+    s = request.META.get("PATH_INFO") + "?"  \
       + request.META.get("QUERY_STRING")
   else:
-    s = str(request.COOKIES.get('user')) + ":"      \
-      + request.META.get("PATH_INFO")
+    s = request.META.get("PATH_INFO")
   key_name = "html:%s" % s.strip()
 
   cached_data = cache.get(key_name)
@@ -525,6 +556,9 @@ def actor_contacts(request, nick=None, format='html'):
         'actor_remove_contact': request.path, })
   if handled:
     cache.delete(key_name)
+    s = str(request.COOKIES.get('user')) + ":" + "/channel"
+    key_name = "html:%s" % s
+    cache.delete(key_name)
     return handled
 
   cached_data = cache.get(key_name)
@@ -602,12 +636,30 @@ def actor_followers(request, nick=None, format='html'):
   if not view:
     raise exception.UserDoesNotExistError(nick, request.user)
 
+  if request.META.get("QUERY_STRING").startswith("offset"):
+    s = str(request.COOKIES.get('user')) + ":"      \
+      + request.META.get("PATH_INFO") + "?"  \
+      + request.META.get("QUERY_STRING")
+  else:
+    s = str(request.COOKIES.get('user')) + ":"      \
+      + request.META.get("PATH_INFO")
+  key_name = "html:%s" % s.strip()
+  
   handled = common_views.handle_view_action(
       request,
       { 'actor_add_contact': request.path,
         'actor_remove_contact': request.path, })
   if handled:
+    cache.delete(key_name)
+    s = str(request.COOKIES.get('user')) + ":" + "/channel"
+    key_name = "html:%s" % s
+    cache.delete(key_name)
     return handled
+
+  cached_data = cache.get(key_name)
+  if cached_data and format == "html":
+#    print "has cache"
+    return http.HttpResponse(cached_data)
 
   per_page = CONTACTS_PER_PAGE
   offset, prev = util.page_offset_nick(request)
@@ -650,7 +702,9 @@ def actor_followers(request, nick=None, format='html'):
   # TODO: Other output formats.
   if format == 'html':
     t = loader.get_template('actor/templates/followers.html')
-    return http.HttpResponse(t.render(c))
+    html = t.render(c)
+    cache.set(key_name, html)
+    return http.HttpResponse(html)
 
 @alternate_nick
 def recommended_users(request, nick=None, format="html"):

@@ -411,6 +411,24 @@ class ActorLinkNode(template.Node):
     except template.VariableDoesNotExist:
       return ''
 
+class GoBackLink(template.Node):
+  def __init__(self, actor, request):
+    self.actor = template.Variable(actor)
+    self.request = template.Variable(request)
+
+  def render(self, context):
+    try:
+      actual_actor = self.actor.resolve(context)
+      actual_request = self.request.resolve(context)
+
+      try:
+        url = actual_actor.url(request=actual_request)
+        return u'<a href="%s">&#171; Quay lại %s</a>' % (url, actual_actor.display_nick())
+      except AttributeError:
+        return ''
+    except template.VariableDoesNotExist:
+      return ''
+
 @register.tag
 def actor_link(parser, token):
   """
@@ -431,3 +449,24 @@ def actor_link(parser, token):
     raise template.TemplateSyntaxError, \
       "%r tag requires exactly two arguments" % token.contents.split()[0]
   return ActorLinkNode(actor, request)
+
+@register.tag
+def go_back(parser, token):
+  """
+  Custom tag for more easily being able to pass an HttpRequest object to
+  underlying url() functions.
+  
+  One use case is being able to return mobile links for mobile users and
+  regular links for others. This depends on request.mobile being set or
+  not.
+
+  Parameters: actor, request.
+  """
+  try:
+    params = token.split_contents()
+    actor = params[1]
+    request = params[2]
+  except ValueError:
+    raise template.TemplateSyntaxError, \
+      "%r tag requires exactly two arguments" % token.contents.split()[0]
+  return GoBackLink(actor, request)

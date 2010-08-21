@@ -9,7 +9,13 @@ from common.memcache import client as cache
 ENTRIES_PER_PAGE = 20
 
 def explore_recent(request, format="html"):
-  key_name = "html:explore_recent"
+  if request.META.get("QUERY_STRING").startswith("offset"):
+    key_name = "html:" + str(request.COOKIES.get('user')) + ":" \
+             + request.META.get("PATH_INFO") + "?"  \
+             + request.META.get("QUERY_STRING")
+  else:
+    key_name = "html:" + str(request.COOKIES.get('user')) + ":" \
+             + request.META.get("PATH_INFO")
   green_top = True
   handled = handle_view_action(request, {'entry_remove': request.path,
                                          'entry_remove_comment': request.path,

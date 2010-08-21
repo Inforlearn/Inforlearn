@@ -4,7 +4,7 @@ input[type = "text"], input[type = "password"] {
 }
 
 body {
-  font: 70% / 1.4em Arial, Helvetica, sans-serif;
+  font: 70% / 1.4em Droid Sans, Arial, Helvetica, sans-serif;
   text-align: center;
   color: #333;
   background-attachment: fixed;
@@ -111,7 +111,7 @@ body#welcome div#header h1 {
 
 /* --- Main Navigation ----------------------------------------- */
 ul#main-nav {
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: Droid Sans, Arial, Helvetica, sans-serif;
   list-style-type: none;
   overflow: hidden;
   font-size: 1.2em;
@@ -169,7 +169,7 @@ ul#sub-nav.b li {
 
 ul#sub-nav li a {
   text-decoration: none;
-  font: 1.2em Arial, Helvetica, sans-serif;
+  font: 1.2em Droid Sans, Arial, Helvetica, sans-serif;
   line-height: 1.8em;
   padding: 0.6em 0.8em 0.2em;
 }
@@ -577,7 +577,7 @@ div#intro ul li {
 }
 
 div#intro ul li h3 {
-  font: normal 1.4em Arial, Helvetica, sans-serif;
+  font: normal 1.4em Droid Sans, Arial, Helvetica, sans-serif;
   margin: 0;
   text-align: right;
   width: 540px;
@@ -628,7 +628,7 @@ div.tour div.body {
 }
 
 div.tour div.body h2 {
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: Droid Sans, Arial, Helvetica, sans-serif;
   font-weight: 700;
   color: #000;
 }
@@ -1111,7 +1111,7 @@ div#sidebar .vcard p {
 }
 
 .vcard h3 {
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: Droid Sans, Arial, Helvetica, sans-serif;
   font-weight: 400;
   font-size: 1.2em;
   color: #000;
@@ -1399,7 +1399,7 @@ div#sidebar div.tip {
 }
 
 div#group-intro p.description {
-  font: bold 1.2em / 1.2em Arial, Helvetica, sans-serif;
+  font: bold 1.2em / 1.2em Droid Sans, Arial, Helvetica, sans-serif;
 }
 
 div.groups ul {
@@ -1730,7 +1730,7 @@ ul.stream li img.photo {
 }
 
 ul.stream li h3 {
-  font: 0.96em / 1.4em Arial, Helvetica, sans-serif;
+  font: 0.96em / 1.4em Droid Sans, Arial, Helvetica, sans-serif;
   margin-bottom: 0;
   color: #888;
   padding: 0.5em 0 0 5px;
@@ -1833,7 +1833,7 @@ ul.stream li.date {
 }
 
 ul.stream li.date h3 {
-  font: bold 0.9em Arial, Helvetica, sans-serif;
+  font: bold 0.9em Droid Sans, Arial, Helvetica, sans-serif;
   text-transform: uppercase;
   color: #666;
   margin: 0;
@@ -2255,7 +2255,7 @@ div#current-stream ul {
 }
 
 h1 {
-  font: normal 2.2em Arial, Helvetica, sans-serif;
+  font: normal 2.2em Droid Sans, Arial, Helvetica, sans-serif;
   padding-top: 0.2em;
   margin: 0 0 0.5em;
 }
@@ -2267,7 +2267,7 @@ h1 span.beta {
 }
 
 h2 {
-  font: normal 1.5em Arial, Helvetica, sans-serif;
+  font: normal 1.5em Droid Sans, Arial, Helvetica, sans-serif;
   color: #333;
   margin: 0.5em 0;
 }
@@ -2293,7 +2293,7 @@ div#sidebar div#mobile h2, div#sidebar div.first h2 {
 }
 
 h3 {
-  font: normal 1.2em Arial, Helvetica, sans-serif;
+  font: normal 1.2em Droid Sans, Arial, Helvetica, sans-serif;
   color: #666;
 }
 
@@ -2353,7 +2353,7 @@ a img.photo, a:visited img.photo {
 }
 
 input, select, textarea {
-  font: 1.2em Arial, Geneva, sans-serif;
+  font: 1.2em Droid Sans, Arial, Geneva, sans-serif;
 }
 
 fieldset {

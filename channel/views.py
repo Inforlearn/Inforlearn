@@ -26,16 +26,21 @@ CONTACTS_PER_PAGE = 24
 
 @decorator.login_required
 def channel_create(request, format='html'):
+  key_name = "html:channel_create"
   green_top = True
   channel = request.REQUEST.get('channel', '')
 
   handled = common_views.handle_view_action(
       request,
-      {'channel_create': '/channel/%s' % channel,
-       }
+      {'channel_create': '/channel/%s' % channel,}
       )
   if handled:
+    cache.delete(key_name)
     return handled
+  
+  cached_data = cache.get(key_name)
+  if cached_data:
+    return http.HttpResponse(cached_data)
 
   # for template sidebar
   sidebar_green_top = True
@@ -45,7 +50,9 @@ def channel_create(request, format='html'):
 
   if format == 'html':
     t = loader.get_template('channel/templates/create.html')
-    return http.HttpResponse(t.render(c))
+    html = t.render(c)
+    cache.set(key_name, html)
+    return http.HttpResponse(html)
 
 
 def channel_index(request, format='html'):
@@ -131,7 +138,7 @@ def channel_index(request, format='html'):
   if format == 'html':
     t = loader.get_template('channel/templates/index.html')
     html = t.render(c)
-    cache.set(key_name, html, 30)
+    cache.set(key_name, html)
     return http.HttpResponse(html)
 
 
@@ -225,8 +232,16 @@ def channel_history(request, nick, format='html'):
        }
       )
   if handled:
+    cache.delete(key_name)    
+    s = str(None) + ":"      \
+      + "/explore"
+    key_name = "html:%s" % s
     cache.delete(key_name)
-    cache.delete("html::explore_recent")
+    
+    s = str(request.COOKIES.get('user')) + ":"      \
+      + "/explore"
+    key_name = "html:%s" % s
+    cache.delete(key_name)
     return handled
 
   cached_data = cache.get(key_name)
@@ -317,9 +332,9 @@ def channel_history(request, nick, format='html'):
   members_count = view.extra['member_count']
   members_more = members_count > CONTACTS_PER_PAGE
 
-  # for sidebar_admins
-  admins_count = view.extra['admin_count']
-  admins_more = admins_count > CONTACTS_PER_PAGE
+#  # for sidebar_admins
+#  admins_count = view.extra['admin_count']
+#  admins_more = admins_count > CONTACTS_PER_PAGE
 
   # config for templates
   green_top = True
@@ -368,12 +383,10 @@ def channel_item(request, nick, item=None, format='html'):
     raise http.Http404()
 
   if request.META.get("QUERY_STRING").startswith("offset"):
-    s = str(request.COOKIES.get('user')) + ":"      \
-      + request.META.get("PATH_INFO") + "?"  \
+    s = request.META.get("PATH_INFO") + "?"  \
       + request.META.get("QUERY_STRING")
   else:
-    s = str(request.COOKIES.get('user')) + ":"      \
-      + request.META.get("PATH_INFO")
+    s = request.META.get("PATH_INFO")
   key_name = "html:%s" % s.strip()
 
   cached_data = cache.get(key_name)
@@ -384,7 +397,7 @@ def channel_item(request, nick, item=None, format='html'):
   stream_ref = api.stream_get_presence(request.user, view.nick)
 
   entry = '%s/%s' % (stream_ref.key().name(), item)
-
+  
   entry_ref = api.entry_get(request.user, entry)
   if not entry_ref:
     raise http.Http404()
@@ -439,7 +452,6 @@ def channel_item(request, nick, item=None, format='html'):
   elif format == 'json':
     t = loader.get_template('actor/templates/item.json')
     return util.HttpJsonResponse(t.render(c), request)
-
 
 def channel_browse(request, format='html'):
   per_page = CHANNELS_PER_PAGE
