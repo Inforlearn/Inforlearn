@@ -305,21 +305,6 @@ div#content div.main {
   padding: 7px 15px 15px;
 }
 
-div#content div.path {
-  background: #96C63F url(http://localhost:8080/themes/default/bg-main.gif) repeat-x 0px 0px;
-  color: white;
-  margin: 0px -15px 15px;
-  padding: 7px 15px 10px;
-}
-
-div.green_title {
-  background: #96C63F url(http://localhost:8080/themes/default/bg-main.gif) repeat-x 0px 0px;
-  color: white;
-  width: 592px;
-  padding-bottom: 3px;
-  margin-left: 7px;
-}
-
 div.green_title h1 {
   color: white;
   font-size: 1.5em;
