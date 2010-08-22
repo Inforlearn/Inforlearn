@@ -1,74 +1,63 @@
 {% extends 'flat/templates/help_base.html' %}
 
 {% block help %}
-<h2>{{POST_NAME}}s and Comments</h2>
+<h2>Gửi tin và bình luận</h2>
 
-<dl>
-    <dt><strong>To your stream</strong></dt>
+<dl style="margin-left: 20px;">
+    <dt><strong>Viết lên tường nhà bạn</strong></dt>
     <dd>
         <p>
-            Just type a message, it will be added as your latest post
+            Gõ nội dung tin nhắn và nhấn Enter :)
         </p>
     <dd>
-    <dt><strong>To a channel</strong></dt>
+    <dt><strong>Gửi tin vào một nhóm</strong></dt>
     <dd>
         <p>
-            Start your message with <code>#channelname</code>
+            Bắt đầu tin nhắn với <code>#group_id</code>
         </p>
         <p>
-            Example: <code>#example Hello everyone!</code>
+            Ví dụ: <code>#inforlearn Hello everyone!</code>
         </p>
     </dd>
-    <dt><strong>Comments</strong> - CURRENTLY IM ONLY</dt>
+    <dt><strong>Bình luận</strong></dt>
     <dd>
         <p>
-            Use <code>@username</code> to add a comment to the latest update from that user. 
+            Sử dụng <code>@username</code> để bình luận tin vừa gửi bởi người đó. 
         </p>
         <p>
-            Example: <code>@lordi Rock!</code>
+            Ví dụ: <code>@AloneRoad Thanks!</code>
         </p>
     </dd>
 </dl>
 
-<p>
-You can post to channels using the #channelname prefix also from other {{SITE_NAME}} interfaces, including the Web and desktop and mobile clients.
-</p>
 
-<h2>Commands</h2>
+<h2 style="display: inline;">Các lệnh hỗ trợ </h2> (Không phân biệt HOA/thường)
 
-<dl>
-    <dt><strong>sign in &lt;screenname&gt; &lt;password&gt;</strong> - CURRENTLY IM ONLY</dt>
-    <dd><p>Sign in with your {{SITE_NAME}} account credentials to start posting and receiving updates</p></dd>
-    <dt><strong>start</strong></dt>
-    <dd><p>Activates updates</p></dd>
-    <dt><strong>stop</strong></dt>
-    <dd><p>Stops updates</p></dd>
+<dl style="margin-left: 20px; margin-top: 10px;">
+    <dt><strong>sign in &lt;username&gt; &lt;password&gt;</strong></dt>
+    <dd><p>Đăng nhập tài khoản {{SITE_NAME}} để bắt đầu nhận và gửi tin</p></dd>
+    <dt><strong>start|on|wake</strong></dt>
+    <dd><p>Kích hoạt chế độ nhận thông báo qua IM</p></dd>
+    <dt><strong>stop|end|quit|off|unsubscribe|pause</strong></dt>
+    <dd><p>Vô hiệu hóa chế độ nhận tin thông báo qua IM</p></dd>
     <dt><strong>help</strong></dt>
-    <dd><p>Returns help message</p></dd>
-    <dt><strong>follow username / #channelname</strong></dt>
+    <dd><p>Trả về nội dung hướng dẫn</p></dd>
+    <dt><strong>follow username / #group_id|add|join|F</strong></dt>
     <dd><p>Adds the {{SITE_NAME}} member or channel to your contacts</p></dd>
-    <dt><strong>leave username / #channelname</strong></dt>
-    <dd><p>Removes the {{SITE_NAME}} member or channel from your contacts</p></dd>
-    <dt><strong>sign out</strong> - CURRENTLY IM ONLY</dt>
-    <dd><p>Sign out of your current {{SITE_NAME}} account so you can log in with a different user</p></dd>
+    <dt><strong>leave username / #group_id|remove|L</strong></dt>
+    <dd><p>Loại bỏ một người dùng khỏi danh sách bạn bè hoặc rời khỏi một nhóm</p></dd>
+    <dt><strong>sign out</strong></dt>
+    <dd><p>Đăng xuất khỏi tài khoản hiện tại</p></dd>
     <dt><strong>delete me</strong></dt>
-    <dd><p>Deletes your {{SITE_NAME}} account</p></dd>
-</p>
+    <dd><p>Xóa vĩnh viễn tài khoản của bạn tại {{SITE_NAME}}</p></dd>
+</dl>
 
-<p>
-    The following synonyms are also supported: "on, wake" for start; "end, quit, off, unsubscribe, pause" for stop; "add, join, F" for follow; and "remove, L" for leave. The commands are not case sensitive.
-</p>
 <ul>
-{% if SMS_ENABLED %}
     <li>
-        <a href="/settings/mobile">Activate Your Mobile Number</a>
-    </li>
-{% endif %}
-    <li>
-        <a href="/settings/im">Activate Your IM Address</a>
+        <a href="/settings/im">Kích hoạt địa chỉ IM</a>
     </li>
     <li>
-        <a href="/settings/notifications">Select Notification Options</a>
+        <a href="/settings/notifications">Thay đổi các tùy chọn thông báo</a>
     </li>
 </li>
 

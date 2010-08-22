@@ -78,7 +78,7 @@ def flat_press(request):
 @decorator.cache_forever
 def flat_help(request, page='index'):
   paths = {
-    'index': 'Liên hệ',
+    'index': 'Thông tin liên hệ',
     'sms': 'Gửi tin qua tin nhắn SMS',
     'im': 'Gửi và nhận tin qua IM Client',
     'commands': 'Cú pháp khi sử dụng IM Client',
