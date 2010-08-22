@@ -518,11 +518,12 @@ $j(function() {
 
 
 $j(document).ready(function($) {
-  $j("body").fadeIn(500);
+  //$j("body").fadeIn(0);
   
   $j(document.body).click(function(event) {
     if ((event.target.nodeName == "A" &&
     event.target.className != "send-message-disable" &&
+    event.target.className != "disable-fadeout" &&
     event.target.target != "_new" &&
     event.target.target != "_blank") ||
     (event.target.nodeName == "IMG" &&
@@ -532,7 +533,7 @@ $j(document).ready(function($) {
     (event.target.nodeName == "SPAN" &&
     event.target.className != "nickname" &&
     event.target.className != "full-name")) {
-      $j(document.body).fadeOut(500)
+      $j(document.body).fadeOut(700)
     }
   })
 })

@@ -73,6 +73,7 @@ urlpatterns += patterns('flat.views',
     (r'^sms$', 'flat_help', {'page': 'sms'}),
     (r'^help/im$', 'flat_help', {'page': 'im'}),
     (r'^help/commands$', 'flat_help', {'page': 'commands'}),
+    (r'^help/im_clients$', 'flat_help', {'page': 'im_clients'}),
 )
 
 # ACTOR

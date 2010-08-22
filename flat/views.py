@@ -78,10 +78,11 @@ def flat_press(request):
 @decorator.cache_forever
 def flat_help(request, page='index'):
   paths = {
-    'index': 'Inforlearn - Các câu hỏi thường gặp',
+    'index': 'Liên hệ',
     'sms': 'Gửi tin qua tin nhắn SMS',
-    'im': 'Gửi tin thông qua Instant Messaging',
-    'commands': 'Cú pháp khi sử dụng SMS và IM',
+    'im': 'Gửi và nhận tin qua IM Client',
+    'commands': 'Cú pháp khi sử dụng IM Client',
+    'im_clients': "Danh sách IM Client hỗ trợ XMPP"
   }
 
   path = paths[page]

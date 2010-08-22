@@ -15,7 +15,6 @@ from operator import itemgetter
 from settings import DEFAULT_OURPICKS_CHANNELS
 #from cachepy import cachepy as cache
 from common.memcache import client as cache
-from hashlib import md5
 
 
 CHANNEL_HISTORY_PER_PAGE = 20
@@ -35,6 +34,10 @@ def channel_create(request, format='html'):
       {'channel_create': '/channel/%s' % channel,}
       )
   if handled:
+    cache.delete(key_name)
+    
+    s = str(request.COOKIES.get('user')) + ":" + "/channel"
+    key_name = "html:%s" % s
     cache.delete(key_name)
     return handled
   
