@@ -491,5 +491,6 @@ def go_back(parser, token):
 def popup_description(value, request=None):
   from django.utils.text import normalize_newlines
   value = normalize_newlines(value)
-  return value.replace("\n", "<br>").replace('"', '\"')
+  value = value.replace("\"", "\\\"")
+  return value.replace("\n", "<br>")
   

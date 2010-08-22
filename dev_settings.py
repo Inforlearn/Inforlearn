@@ -4,10 +4,11 @@
 
 DEBUG = True
 TEMPLATE_DEBUG = True
+LOCAL_MODE = True
 
 GAE_DOMAIN = 'localhost:8080'
 DOMAIN = 'localhost:8080'
 COOKIE_DOMAIN = 'localhost'
-SUBDOMAINS_ENABLED = False
+SUBDOMAINS_ENABLED = True
 SSL_LOGIN_ENABLED = False
 

@@ -12,6 +12,7 @@ def flat_tour(request, page='create'):
 
   # config for template
   green_top = True
+  sidebar_green_top = True
   area = 'tour'
 
   c = template.RequestContext(request, locals())

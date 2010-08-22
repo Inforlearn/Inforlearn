@@ -708,7 +708,7 @@ form div.highlight {
 div.notice {
   position: relative;
   margin: -25px 8px 0px;
-  padding: 4px 1em 0.1em;
+  padding: 4px 1em 0em;
 }
 
 div.notice p {

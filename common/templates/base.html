@@ -3,7 +3,9 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
   <head>
-    <link href='http://fonts.googleapis.com/css?family=Droid+Sans' rel='stylesheet' type='text/css'>
+    {% if not LOCAL_MODE %}
+      <link href='http://fonts.googleapis.com/css?family=Droid+Sans' rel='stylesheet' type='text/css'>
+    {% endif %}
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <title>
       {{SITE_NAME}} {{DEBUG|yesno:"DEBUG ,"}}| {% block title %} {% endblock %}
@@ -87,24 +89,24 @@
     {% block head %}
     {% endblock %}
     
-    <script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/prototype/1.6.1/prototype.js'></script>
-    <script type='text/javascript' src='http://{{DOMAIN}}/js/prototip/prototip.js'></script>
     
-    <!-- Google Analytics -->
-    <script type="text/javascript">
-    
-      var _gaq = _gaq || [];
-      _gaq.push(['_setAccount', 'UA-10855304-2']);
-      _gaq.push(['_setDomainName', '.inforlearn.com']);
-      _gaq.push(['_trackPageview']);
-    
-      (function() {
-        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-      })();
-    
-    </script>
+    {% if not DEBUG %}
+      <!-- Google Analytics -->
+      <script type="text/javascript">
+      
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-10855304-2']);
+        _gaq.push(['_setDomainName', '.inforlearn.com']);
+        _gaq.push(['_trackPageview']);
+      
+        (function() {
+          var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+          ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+          var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+      
+      </script>
+    {% endif %}
   </head>
   <body {% ifequal area 'home'%}{% if request.user %}onload="document.message_form.message.focus();" {% endif %}{% endifequal %}
         style="display: none; {% if not view.extra.bg_image %} background: url(/images/backgrounds/{{ bg_image|auto_background }}); background-attachment: fixed; background-position: center; {% endif %}" {% block bodytag %}{% if area %} id="{{area}}"{% endif %}{% if not request.user %}class="global"{% endif %}{% endblock %}>
