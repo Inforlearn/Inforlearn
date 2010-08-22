@@ -89,6 +89,12 @@
     {% block head %}
     {% endblock %}
     
+    {% if not LOCAL_MODE %}
+      <script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/prototype/1.6.1/prototype.js'></script>
+    {% else %}
+      <script type='text/javascript' src='/js/prototype.js'></script>
+    {% endif %}
+    <script type='text/javascript' src='/js/prototip/prototip.js'></script>
     
     {% if not DEBUG %}
       <!-- Google Analytics -->

@@ -392,10 +392,6 @@ def channel_item(request, nick, item=None, format='html'):
     s = request.META.get("PATH_INFO")
   key_name = "html:%s" % s.strip()
 
-  cached_data = cache.get(key_name)
-  if cached_data and format == "html":
-#    print "has cache"
-    return http.HttpResponse(cached_data)
   
   stream_ref = api.stream_get_presence(request.user, view.nick)
 
@@ -416,6 +412,11 @@ def channel_item(request, nick, item=None, format='html'):
   if handled:
     cache.delete(key_name)
     return handled
+  
+  cached_data = cache.get(key_name)
+  if cached_data and format == "html":
+#    print "has cache"
+    return http.HttpResponse(cached_data)
 
   admins = api.channel_get_admins(request.user, channel=view.nick)
   user_is_admin = request.user and request.user.nick in admins
