@@ -530,7 +530,8 @@ $j(document).ready(function($) {
     (event.target.type == "submit" &&
     event.target.name != "submit-location") ||
     (event.target.nodeName == "SPAN" &&
-    event.target.className != "nickname")) {
+    event.target.className != "nickname" &&
+    event.target.className != "full-name")) {
       $j(document.body).fadeOut(500)
     }
   })
