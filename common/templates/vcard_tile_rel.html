@@ -4,7 +4,7 @@
 </div>
 <script type='text/javascript'>
   new Tip("tooltip_{{actor.nick}}", "Thành viên: {{actor.extra.member_count}}<br>" +
-                                    "Mô tả: {{actor.extra.description}}<br>" +
+                                    "Mô tả: {{actor.extra.description|linebreaksbr}}<br>" +
                                     "Website: <a href='{{actor.extra.external_url}}' target='_new'>{{actor.extra.external_url}}</a>", {
     title: "{{ actor.display_nick }}",
     stem: 'bottomRight',
@@ -12,6 +12,6 @@
     hideAfter: 0.25,
     delay: 0.5,
     closeButton: true,
-    hook: {target: 'topMiddle', tip: 'bottomRight'},
+    hook: {target: 'topMiddle', tip: 'bottomRight'}
   });
 </script>

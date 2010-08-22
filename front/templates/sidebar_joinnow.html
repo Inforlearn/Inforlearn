@@ -2,7 +2,7 @@
 <div id="sign-up">
   <h2>Đăng nhập</h2>
   {% include 'form_error.html' %}
-  <form id="loginform" action="/login" method="post">
+  <form id="front-loginform" action="/login" method="post">
     {% if redirect_to %}
       <input type="hidden" name="redirect_to" value="{{redirect_to}}" />
     {% endif %}

@@ -9,7 +9,7 @@
     "pretty_content": {{entry|format_comment|escapejson}},
     "url": {{entry.url|escapejson}},
     "created_at": {{entry.created_at|date:"Y-m-d\TH-i-s\Z"|escapejson}},
-    "created_at_relative": "{{entry.created_at|timesince}} ago",
+    "created_at_relative": "{{entry.created_at|timesince}} trước",
     "user": {% with entry.actor_ref as actor_ref %}
     {% include 'common/templates/user.json' %}
     {% endwith %}
@@ -23,7 +23,7 @@
     "icon": {{entry.extra.icon|escapejson}},
     "url": {{entry.url|escapejson}},
     "created_at": {{entry.created_at|date:"Y-m-d\TH-i-s\Z"|escapejson}},
-    "created_at_relative": "{{entry.created_at|timesince}} ago",
+    "created_at_relative": "{{entry.created_at|timesince}} trước",
     "comments": {{entry.extra.comment_count|escapejson}},
     "user": {% with entry.actor_ref as actor_ref %}
     {% include 'common/templates/user.json' %}

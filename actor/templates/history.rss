@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0" xmlns:jaiku="http://jaiku.com/ns">
+<rss version="2.0" xmlns:inforlearn="http://www.inforlearn.com/ns">
   <channel>
-    <title>{{SITE_NAME}} | {{POST_NAME}}s from {{view.display_nick}}</title>
+    <title>{{SITE_NAME}} | Tin gửi lên bởi {{ view.display_nick }}</title>
     <link>{{view.url}}</link>
-    <description>{{POST_NAME}}s from {{view.display_nick}}</description>
-    <language>en</language>
-    <copyright>Copyright 2009 {{SITE_NAME}}</copyright>
+    <description>Tin gửi lên bởi {{view.display_nick}}</description>
+    <language>vi</language>
+    <copyright>Copyright 2010 {{SITE_NAME}}</copyright>
     {% with entries|first as first_entry %} 
-    <lastBuildDate>{{first_entry.created_at|date:"r"}}</lastBuildDate>
+      <last_build_date>{{first_entry.created_at|date:"r"}}</last_build_date>
     {% endwith %}        
     <image>
       <link>http://{{DOMAIN}}</link>

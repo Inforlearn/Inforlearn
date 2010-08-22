@@ -12,16 +12,16 @@
     {{request.user|noncefield:"channel_create"}}
     <input type="hidden" name="nick" value="{{request.user.nick}}" />
     <input type="hidden" name="channel_create" value="" />
-    <div>
+    <div   style="display: inline;">
       <label for="channel">Chọn một ID cho nhóm</label>
       <input type="text" name="channel" id="channel" class="text" 
-          value="{{channel}}" />
+          value="{{channel}}"/>
     </div>
-    <div class="buttons">
+    <div class="buttons" style="display: inline; padding-left: 0px;">
       <input type="submit" value=" Đồng ý "/>
     </div>
     <div>
-      <p>Vui lòng chỉ sử dụng các ký tự từ A-Z, a-z, 0-9.<br>
+      <p style="text-align: right;">Vui lòng chỉ sử dụng các ký tự từ A-Z, a-z, 0-9 <br>
         Tên tiếng Việt có dấu 
         hoặc các mô tả dành cho nhóm có thể được bổ sung sau khi tạo.
       </p>

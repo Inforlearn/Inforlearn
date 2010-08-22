@@ -38,9 +38,9 @@ def channel_create(request, format='html'):
     cache.delete(key_name)
     return handled
   
-  cached_data = cache.get(key_name)
-  if cached_data:
-    return http.HttpResponse(cached_data)
+#  cached_data = cache.get(key_name)
+#  if cached_data:
+#    return http.HttpResponse(cached_data)
 
   # for template sidebar
   sidebar_green_top = True

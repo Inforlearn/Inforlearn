@@ -212,6 +212,22 @@ channel_regex = re.compile(
 def format_actor_links(value, request=None):
   """Formats usernames / channels
   """
+#  actor_link = '<a href="%s" rel="user" id="popup_%s">@%s</a>'
+#  actor_popup = """
+#  <script type='text/javascript'>
+#  new Tip("tooltip_{{actor.nick}}", "Tên đầy đủ: {{actor.extra.full_name}}<br>" +
+#                                    "Trang cá nhân: <a href='{{actor.extra.homepage}}' target='_new'>{{actor.extra.homepage}}</a><br>" 
+#                                  , {
+#    title: "{{ actor.display_nick }}",
+#    stem: 'bottomRight',
+#    hideOn: false,
+#    hideAfter: 0.25,
+#    delay: 0.5,
+#    closeButton: true,
+#    hook: {target: 'topMiddle', tip: 'bottomRight'},
+#  });
+#  </script>
+#  """
   value = re.sub(user_regex,
                  lambda match: '<a href="%s" rel="user">@%s</a>' % (
                    models.actor_url(match.group(1), 'user', request=request),
@@ -470,3 +486,10 @@ def go_back(parser, token):
     raise template.TemplateSyntaxError, \
       "%r tag requires exactly two arguments" % token.contents.split()[0]
   return GoBackLink(actor, request)
+@register.filter(name="popup_description")
+@safe
+def popup_description(value, request=None):
+  from django.utils.text import normalize_newlines
+  value = normalize_newlines(value)
+  return value.replace("\n", "<br>").replace('"', '\"')
+  

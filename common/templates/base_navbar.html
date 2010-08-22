@@ -10,7 +10,6 @@
     {% endif %}
     <div {% ifnotequal area 'welcome' %}id="header"{% endifnotequal %} {% if green_title%}style="padding: 0px;"{% endif %}>
       {% ifnotequal area 'welcome' %}
-        {% if not request.mobile %}
           <div id="helper-nav">
             <p id="login">
               {% block login %}
@@ -19,22 +18,31 @@
                   <a href="{{request.user.url}}/settings">Thiết lập</a> | 
                   <a href="http://{{DOMAIN}}/logout">Đăng xuất</a>
                 {% else %}
-                  Đã là thành viên? 
-                  {% if SUBDOMAINS_ENABLED %}
-                    <a href="http://{{DOMAIN}}/login?redirect_to=http://{{request.META.HTTP_HOST}}{{request.META.PATH_INFO}}">Đăng nhập</a>
+                  {% ifnotequal request.path "/join" %}
+                    Không có tài khoản? <a href="/join?redirect_to={{redirect_to|urlencode}}">Đăng ký</a>
                   {% else %}
-                    <a href="http://{{DOMAIN}}/login?redirect_to={{request.META.PATH_INFO}}">Đăng nhập</a>
-                  {% endif %}
+                    Đã là thành viên? 
+                    {% if SUBDOMAINS_ENABLED %}
+                      <a href="http://{{DOMAIN}}/login?redirect_to=http://{{request.META.HTTP_HOST}}{{request.META.PATH_INFO}}">Đăng nhập</a>
+                    {% else %}
+                      <a href="http://{{DOMAIN}}/login?redirect_to={{request.META.PATH_INFO}}">Đăng nhập</a>
+                    {% endif %}
+                  {% endifnotequal %}
+                    
+                  {% ifequal request.path "/login" %}
+                    <br><a href="{% url_for DOMAIN request %}/login/forgot" style="float: right;">Quên mật khẩu?</a>
+       
+                  {% endifequal %}
+                    
                 {% endif %}
+                
+                
               {% endblock %}
             </p>
           </div>
-        {% endif %}
       {% endifnotequal %}
       
-      {% if not request.mobile %}
-        {% block mainnav %}
-        
+      {% block mainnav %}
         <ul id="main-nav" style="margin-bottom: 0;">
                 <div id="site-logo">
                 <li>
@@ -74,7 +82,6 @@
           {% endif %}
         </ul>
         {% endblock %}
-      {% endif %}
     </div>
   </div>
 

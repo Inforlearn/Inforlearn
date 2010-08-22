@@ -74,6 +74,8 @@ def front_front(request):
 #  root = api.ROOT
 
   channels = api.channel_browse(request.user, 15)
+#  for channel in channels:
+#    print channel.extra["description"]
   area = 'frontpage'
 
   t = loader.get_template('front/templates/front.html')

@@ -1,5 +1,5 @@
 {% load json %}{
-  "title": "{{SITE_NAME}} | Latest Public {{POST_NAME}}s",
+  "title": "{{SITE_NAME}} | Khám phá",
   "url": "\/explore",
   "stream": {% include 'common/templates/stream.json' %}
 }
