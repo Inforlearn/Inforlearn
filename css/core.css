@@ -1529,15 +1529,21 @@ p#message-container img {
 
 div#form-message textarea#message {
   border: solid 1px #c3c3c3;
-  border-top: solid 1px #7c7c7c;
-  border-bottom: solid 1px #ddd;
-  background: #fff;
+  /* border-top: solid 1px #7c7c7c;
+  border-bottom: solid 1px #ddd; 
+  background: #fff; */
   font-size: 1.2em;
   height: 58px;
   width: 387px;
   color: #ccc;
   margin: 0;
   padding: 0;
+  
+  background: white url(/images/fieldbg.gif) repeat-x 50% 0%;
+  border-bottom: 1px solid #DDD;
+  border-left: 1px solid #C3C3C3;
+  border-right: 1px solid #C3C3C3;
+  border-top: 1px solid #7C7C7C;
 }
 
 .popup {
@@ -2491,6 +2497,11 @@ div.accordion div.wide textarea {
 textarea {
   overflow: visible !important;
   height: 7em;
+    background: white url(/images/fieldbg.gif) repeat-x 50% 0%;
+  border-bottom: 1px solid #DDD;
+  border-left: 1px solid #C3C3C3;
+  border-right: 1px solid #C3C3C3;
+  border-top: 1px solid #7C7C7C;
 }
 
 input.smaller, select.smaller {

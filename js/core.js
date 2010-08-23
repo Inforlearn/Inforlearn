@@ -13,9 +13,6 @@ $j.fn.location = function() {
   $j("a#set-location").click(function() {
     $j(this).parent().hide();
     a.show();
- 
-    alert("asdf");
- 
     $j("input#loc", a)[0].focus();
     return false
   })
