@@ -191,7 +191,7 @@ def actor_history(request, nick=None, format='html'):
   if format == 'html':
     t = loader.get_template('actor/templates/history.html')
     html = t.render(c)
-    cache.set(key_name, html)
+    cache.set(key_name, html, 120)
     return http.HttpResponse(html)
   elif format == 'json':
     t = loader.get_template('actor/templates/history.json')
@@ -354,7 +354,7 @@ def actor_overview(request, nick, format='html'):
   if format == 'html':
     t = loader.get_template('actor/templates/overview.html')
     html = t.render(c)
-    cache.set(key_name, html)
+    cache.set(key_name, html, 120)
 #    print "not cache"
     return http.HttpResponse(html)
   elif format == 'json':
@@ -525,7 +525,7 @@ def actor_item(request, nick=None, item=None, format='html'):
     # and difficult searches.
     t = loader.get_template('actor/templates/item.html')
     html = t.render(c)
-    cache.set(key_name, html)
+    cache.set(key_name, html, 120)
     return http.HttpResponse(html)
 
   elif format == 'json':
@@ -620,7 +620,7 @@ def actor_contacts(request, nick=None, format='html'):
   if format == 'html':
     t = loader.get_template('actor/templates/contacts.html')
     html = t.render(c)
-    cache.set(key_name, html)
+    cache.set(key_name, html, 120)
     return http.HttpResponse(html)
   elif format == 'json':
     t = loader.get_template('actor/templates/contacts.json')
@@ -704,7 +704,7 @@ def actor_followers(request, nick=None, format='html'):
   if format == 'html':
     t = loader.get_template('actor/templates/followers.html')
     html = t.render(c)
-    cache.set(key_name, html)
+    cache.set(key_name, html, 120)
     return http.HttpResponse(html)
 
 @alternate_nick

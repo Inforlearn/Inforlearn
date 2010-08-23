@@ -13,6 +13,9 @@ $j.fn.location = function() {
   $j("a#set-location").click(function() {
     $j(this).parent().hide();
     a.show();
+ 
+    alert("asdf");
+ 
     $j("input#loc", a)[0].focus();
     return false
   })
@@ -518,7 +521,7 @@ $j(function() {
 
 
 $j(document).ready(function($) {
-  //$j("body").fadeIn(0);
+  $j("body").fadeIn(300);
   
   $j(document.body).click(function(event) {
     if ((event.target.nodeName == "A" &&
@@ -533,7 +536,7 @@ $j(document).ready(function($) {
     (event.target.nodeName == "SPAN" &&
     event.target.className != "nickname" &&
     event.target.className != "full-name")) {
-      $j(document.body).fadeOut(700)
+      $j(document.body).fadeOut(500)
     }
   })
 })

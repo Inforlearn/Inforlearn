@@ -54,7 +54,7 @@ def channel_create(request, format='html'):
   if format == 'html':
     t = loader.get_template('channel/templates/create.html')
     html = t.render(c)
-    cache.set(key_name, html)
+    cache.set(key_name, html, 120)
     return http.HttpResponse(html)
 
 
@@ -141,7 +141,7 @@ def channel_index(request, format='html'):
   if format == 'html':
     t = loader.get_template('channel/templates/index.html')
     html = t.render(c)
-    cache.set(key_name, html)
+    cache.set(key_name, html, 120)
     return http.HttpResponse(html)
 
 
@@ -365,7 +365,7 @@ def channel_history(request, nick, format='html'):
   if format == 'html':
     t = loader.get_template('channel/templates/history.html')
     html = t.render(c)
-    cache.set(key_name, html)
+    cache.set(key_name, html, 120)
     return http.HttpResponse(html)
   elif format == 'json':
     t = loader.get_template('channel/templates/history.json')
@@ -451,7 +451,7 @@ def channel_item(request, nick, item=None, format='html'):
   if format == 'html':
     t = loader.get_template('channel/templates/item.html')
     html = t.render(c)
-    cache.set(key_name, html)
+    cache.set(key_name, html, 120)
     return http.HttpResponse(html)
   elif format == 'json':
     t = loader.get_template('actor/templates/item.json')

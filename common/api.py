@@ -586,7 +586,7 @@ def activation_create_email(api_user, nick, email):
   existing_ref = actor_lookup_email(ROOT, email)
   if existing_ref:
     raise exception.ApiAlreadyInUse(
-        "Địa chỉ email %s đã có người sử dụng" % email)
+        u"Địa chỉ email %s đã có người sử dụng" % email)
 
   return activation_create(api_user, nick, 'email', email)
 

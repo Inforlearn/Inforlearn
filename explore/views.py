@@ -80,7 +80,7 @@ def explore_recent(request, format="html"):
   if format == 'html':
     t = loader.get_template('explore/templates/recent.html')
     html = t.render(c)
-    cache.set(key_name, html)
+    cache.set(key_name, html, 120)
     return http.HttpResponse(html);
   elif format == 'json':
     t = loader.get_template('explore/templates/recent.json')
