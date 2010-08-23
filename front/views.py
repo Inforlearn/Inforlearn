@@ -3,6 +3,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from common import decorator
 from settings import NS_DOMAIN
 from common import api
+from common.memcache import client as cache
 
 ENTRIES_PER_PAGE = 5
 SIDEBAR_LIMIT = 9
@@ -16,6 +17,11 @@ def front_front(request):
   if request.user:
     url = request.user.url(request=request)
     return HttpResponseRedirect(url + "/overview")
+  
+  key_name = "html:homepage"
+  cached_data = cache.get(key_name)
+  if cached_data:
+    return HttpResponse(cached_data);
 
   # NOTE: grab a bunch of extra so that we don't ever end up with
   #       less than 5
@@ -80,5 +86,7 @@ def front_front(request):
 
   t = loader.get_template('front/templates/front.html')
   c = RequestContext(request, locals())
-
-  return HttpResponse(t.render(c));
+  html = t.render(c)
+  cache.set(key_name, html, 120)
+  
+  return HttpResponse(html);
