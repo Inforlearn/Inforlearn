@@ -78,7 +78,7 @@ def main():
 
   # Create a Django application for WSGI.
   application = django.core.handlers.wsgi.WSGIHandler()
-  application = redirect_from_appspot(application)
+#  application = redirect_from_appspot(application)
   # Run the WSGI CGI handler with that application.
   util.run_wsgi_app(application)
 

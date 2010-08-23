@@ -5,10 +5,13 @@ def prep_stream(stream, actors):
 
 def prep_entry(entry, streams, actors):
   """function to append the applicable referenced items to the entry"""
-  entry.stream_ref = streams[entry.stream]
-  entry.owner_ref = actors[entry.owner]
-  entry.actor_ref = actors[entry.actor]
-  return entry
+  try:
+    entry.stream_ref = streams[entry.stream]
+    entry.owner_ref = actors[entry.owner]
+    entry.actor_ref = actors[entry.actor]
+    return entry
+  except KeyError:
+    pass
 
 def prep_entry_entry(entry, entries):
   return entry

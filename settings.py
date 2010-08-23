@@ -292,7 +292,7 @@ IM_TEST_JIDS = []
 IM_PLAIN_TEXT_ONLY = False
 
 # Truncate entry title in comments. None or 140+ means no truncation.
-IM_MAX_LENGTH_OF_ENTRY_TITLES_FOR_COMMENTS = 40
+IM_MAX_LENGTH_OF_ENTRY_TITLES_FOR_COMMENTS = 255
 
 #
 # Task Queue
