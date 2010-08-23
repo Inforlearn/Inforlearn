@@ -1,6 +1,9 @@
 input[type = "text"], input[type = "password"] {
-  border: 1px solid #CCC;
-  color: #444;
+  background: white url(/images/fieldbg.gif) repeat-x 50% 0%;
+  border-bottom: 1px solid #DDD;
+  border-left: 1px solid #C3C3C3;
+  border-right: 1px solid #C3C3C3;
+  border-top: 1px solid #7C7C7C;
 }
 
 strong {
