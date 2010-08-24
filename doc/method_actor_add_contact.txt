@@ -1,32 +1,25 @@
-**actor_add_contact** (api_user, owner, target)
+**actor_add_contact** (owner, target)
 
 
-Adds a one-way relationshp of type 'contact' from owner to target.
+Xin kết bạn/đăng ký nhận tin từ owner tới target
 
-  May be called multiple times for the same owner and target and should
-  always ensure the same ending conditions.
+  Tham số:
+    * owner - nick của bạn
+    * target - nick người muốn kết bạn
 
-  PARAMS:
-    * owner - the nick of the follower
-    * target - the nick of the followed
-
-  RETURNS: a relation_ref
-
-  A relation_ref has the following attributes:
-    * owner: nick of the relationship owner
-    * relation: the type of the relation; always 'contact' in this case
-    * target: nick of the actor related to the owner
-
-  EXAMPLE API RETURN:
+  Trả lời:
 
   ::
 
-    {'status': 'ok',
-     'rv': {'relation': {'owner': 'test@example.com',
-                         'relation': 'contact',
-                         'target': 'root@example.com'
-                         }
-            }
+     {
+       'status': 'success',
+       'rv': {
+                'relation': {
+                              'owner': 'aloneroad@inforlearn.com',
+                              'relation': 'contact',
+                              'target': 'admin@inforlearn.com'
+                            }
+              }
      }
 
 

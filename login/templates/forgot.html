@@ -6,24 +6,29 @@
 
 {% block content %}
   {% include 'form_error.html' %}
-  <h1>Bạn quên mật khẩu?</h1>
+  <h1 style="padding-left: 20px;">Bạn quên mật khẩu?</h1>
   <form action="" method="post" id="lostpass">
     <input type="hidden" name="login_forgot" />
     {{None|noncefield:"login_forgot"}}
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    &nbsp;&nbsp;
+    Tên đăng nhập hoặc địa chỉ email:
     <div>
-      <label for="nick_or_email">Email hoặc tên đăng nhập</label>
-      <input type="text" name="nick_or_email" id="nick_or_email" value="" />
-      <p>Chúng tôi sẽ phục hồi lại mật khẩu và gửi link đăng nhập cho bạn qua email.</p>
-    </div>
-    <div class="buttons">
-      <input type="submit" value="Yêu cầu mật khẩu mới" />
+      <input type="text" name="nick_or_email" id="nick_or_email" style="width: 320px; margin-left: 100px;" value="" />
+      <div class="buttons" style="display: inline; padding-left: 257px;">
+        <input type="submit" class="button" value="Yêu cầu mật khẩu mới" />
+      </div>
     </div>
   </form>
   
-  <p class="centered">
+  <p style="text-align: right; margin-right: 140px;">
     <a href="{% url_for DOMAIN request %}/login">Quay lại trang đăng nhập</a>
   </p>
-  <p class="centered">
+  <p style="text-align: right; margin-right: 140px;">
     hoặc <a href="{% url_for DOMAIN request %}/">trở về trang chủ</a>
   </p>
 {% endblock %}

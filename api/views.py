@@ -76,7 +76,7 @@ def api_key(request, consumer_key):
   consumer_token_ref = api.oauth_get_consumer(request.user, consumer_key)
 
   # for templates
-  full_page = 'API Keys / %s' % consumer_key
+  full_page = consumer_key
   page = 'key'
   area = 'api'
   OAUTH_WEB = 'Web App'

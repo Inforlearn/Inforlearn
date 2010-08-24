@@ -532,7 +532,8 @@ $j(document).ready(function($) {
     event.target.name != "submit-location") ||
     (event.target.nodeName == "SPAN" &&
     event.target.className != "nickname" &&
-    event.target.className != "full-name")) {
+    event.target.className != "full-name" &&
+    event.target.className != "disable-fadeout")) {
       $j(document.body).fadeOut(500)
     }
   })

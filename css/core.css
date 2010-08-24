@@ -6,6 +6,39 @@ input[type = "text"], input[type = "password"] {
   border-top: 1px solid #7C7C7C;
 }
 
+.button {
+  background: #F6F6F6 -webkit-gradient(linear, 0% 0%, 0% 100%, from(white), to(#EFEFEF));
+  border: 1px solid #CCC;
+  border-bottom-left-radius: 3px 3px;
+  border-bottom-left-radius: 3px 3px;
+  border-bottom-right-radius: 3px 3px;
+  border-bottom-right-radius: 3px 3px;
+  border-top-left-radius: 3px 3px;
+  border-top-left-radius: 3px 3px;
+  border-top-right-radius: 3px 3px;
+  border-top-right-radius: 3px 3px;
+  cursor: pointer;
+  overflow: visible;
+  padding: 3px 10px;
+  white-space: nowrap;
+}
+
+.button:hover {
+  -webkit-box-shadow: #999 0px 0px 3px;
+  background: #F3F3F3 -webkit-gradient(linear, 0% 0%, 0% 100%, from(white), to(#EBEBEB));
+  background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(white), to(#EBEBEB));
+  background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(white), to(#EBEBEB));
+  border-color: #999;
+  outline: 0px;
+}
+
+.button:active {
+  background: #DDD -webkit-gradient(linear, 0% 0%, 0% 100%, from(#CCC), to(white));
+  background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#CCC), to(white));
+  background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#CCC), to(white));
+  border-color: #999;
+}
+
 strong {
   font-size: 1.1em;
   font-weight: normal;
@@ -393,7 +426,7 @@ div#content div#sidebar {
 }
 
 div#sidebar div.bottom {
-  padding: 0 18px 1.7em;
+  padding: 0 18px 2em;
 }
 
 body.single div#sidebar {
@@ -731,10 +764,10 @@ div#content div.notice, body.single div#content div.notice {
 
 body.single div.notice {
   position: absolute;
-  width: 380px;
-  right: 25px;
+  right: 10px;
   top: -70px;
-  margin: 0;
+  margin-top: 77px;
+  z-index: 9999;
 }
 
 div.message {
@@ -2370,7 +2403,7 @@ label, div.wide div.highlight label {
   text-align: right;
   float: left;
   width: 180px;
-  padding: 0 10px 0 0;
+  padding: 3px 10px 0 0;
 }
 
 #settings div.wide div.box label {

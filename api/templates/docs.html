@@ -10,8 +10,8 @@
   <dl style="padding-left: 10px;">
     {% for category, methods in api_methods %}
     <dt><h3>{{category}}</h3></dt>
-    <dd>
-      <ul>
+    <dd style="margin-left: 20px;">
+      <ul style="margin-bottom: 20px; margin-top: -10px;">
       {% for method in methods %}
         <li><a href='/api/docs/method_{{method}}'>{{method}}</a></li>
       {% endfor %}

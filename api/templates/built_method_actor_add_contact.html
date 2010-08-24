@@ -313,38 +313,29 @@ ul.auto-toc {
 <div class="document">
 
 
-<p><strong>actor_add_contact</strong> (api_user, owner, target)</p>
-<p>Adds a one-way relationshp of type 'contact' from owner to target.</p>
+<p><strong>actor_add_contact</strong> (owner, target)</p>
+<p>Xin kết bạn/đăng ký nhận tin từ owner tới target</p>
 <blockquote>
-<p>May be called multiple times for the same owner and target and should
-always ensure the same ending conditions.</p>
 <dl class="docutils">
-<dt>PARAMS:</dt>
+<dt>Tham số:</dt>
 <dd><ul class="first last simple">
-<li>owner - the nick of the follower</li>
-<li>target - the nick of the followed</li>
+<li>owner - nick của bạn</li>
+<li>target - nick người muốn kết bạn / đăng ký nhận tin</li>
 </ul>
 </dd>
 </dl>
-<p>RETURNS: a relation_ref</p>
-<dl class="docutils">
-<dt>A relation_ref has the following attributes:</dt>
-<dd><ul class="first last simple">
-<li>owner: nick of the relationship owner</li>
-<li>relation: the type of the relation; always 'contact' in this case</li>
-<li>target: nick of the actor related to the owner</li>
-</ul>
-</dd>
-</dl>
-<p>EXAMPLE API RETURN:</p>
+<p>Trả lời:</p>
 <pre class="literal-block">
-{'status': 'ok',
- 'rv': {'relation': {'owner': 'test&#64;example.com',
-                     'relation': 'contact',
-                     'target': 'root&#64;example.com'
-                     }
-        }
- }
+{
+  'status': 'success',
+  'response': {
+                'relation': {
+                              'owner': 'aloneroad&#64;inforlearn.com',
+                              'relation': 'contact',
+                              'target': 'admin&#64;inforlearn.com'
+                            }
+              }
+}
 </pre>
 </blockquote>
 </div>

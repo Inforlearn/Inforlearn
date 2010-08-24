@@ -314,25 +314,22 @@ ul.auto-toc {
 
 
 <p><strong>entry_add_comment</strong> (api_user, _task_ref, **kw)</p>
-<p>Adds a comment to the given entry.</p>
+<p>Gửi bình luận tới một tin.</p>
 <blockquote>
 <dl class="docutils">
-<dt>PARAMS:</dt>
+<dt>Tham số:</dt>
 <dd><ul class="first last simple">
-<li>_task_ref - admin-only, task to resume</li>
-<li>content - the text content of the comment</li>
-<li>stream - the key to the stream in which the entry being commented on
-resides; example: <tt class="docutils literal">stream/popular&#64;example.com/presence</tt></li>
+<li>content - nội dung bình luận</li>
+<li>stream - id của tin muốn bình luận
+Ví dụ: <tt class="docutils literal">stream/aloneroad&#64;inforlearn.com/presence</tt></li>
 <li>entry - the key to the parent entry associated with this comment; example:
 <tt class="docutils literal">stream/popular&#64;example.com/presence/12347</tt></li>
-<li>nick - the actor making the comment</li>
-<li>uuid - optional; a unique identifier for this comment; if absent, a new
-one will be generated</li>
+<li>nick - nick của bạn</li>
 </ul>
 </dd>
 </dl>
-<p><tt class="docutils literal">stream</tt> is formatted as 'stream/{nick}/{slug}'; and <tt class="docutils literal">entry</tt> is formatted
-as 'stream/{nick}/{slug}/{entry uuid}'.</p>
+<p><tt class="docutils literal">id của stream</tt> được định nghĩa theo dạng 'stream/{nick}/{slug}'; và id của <tt class="docutils literal">entry</tt> được định nghĩa theo dạng
+'stream/{nick}/{slug}/{entry uuid}'.</p>
 <p>For the comment stream, <tt class="docutils literal">slug</tt> is always &quot;comments.&quot; Similarly, for the
 presence stream, <tt class="docutils literal">slug</tt> is always &quot;presence.&quot; For other streams, <tt class="docutils literal">slug</tt> is
 some incomprehensible uuid.</p>
