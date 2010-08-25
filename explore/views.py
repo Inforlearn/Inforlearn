@@ -5,6 +5,7 @@ from common import api, util
 from common.display import prep_entry_list, prep_stream_dict
 from common.views import handle_view_action
 from common.memcache import client as cache
+from common.slimmer import html_slimmer
 
 ENTRIES_PER_PAGE = 20
 
@@ -79,7 +80,7 @@ def explore_recent(request, format="html"):
 
   if format == 'html':
     t = loader.get_template('explore/templates/recent.html')
-    html = t.render(c)
+    html = html_slimmer(t.render(c))
     cache.set(key_name, html, 120)
     return http.HttpResponse(html);
   elif format == 'json':

@@ -17,6 +17,7 @@ from common import display
 from common import views as common_views
 #from cachepy import cachepy as cache
 from common.memcache import client as cache
+from common.slimmer import html_slimmer
 from hashlib import md5
 
 ENTRIES_PER_PAGE = 20
@@ -353,7 +354,7 @@ def actor_overview(request, nick, format='html'):
 
   if format == 'html':
     t = loader.get_template('actor/templates/overview.html')
-    html = t.render(c)
+    html = html_slimmer(t.render(c))
     cache.set(key_name, html, 120)
 #    print "not cache"
     return http.HttpResponse(html)
@@ -524,7 +525,7 @@ def actor_item(request, nick=None, item=None, format='html'):
     # We always use the full path to the template to prevent naming conflicts
     # and difficult searches.
     t = loader.get_template('actor/templates/item.html')
-    html = t.render(c)
+    html = html_slimmer(t.render(c))
     cache.set(key_name, html, 120)
     return http.HttpResponse(html)
 
@@ -619,7 +620,7 @@ def actor_contacts(request, nick=None, format='html'):
 
   if format == 'html':
     t = loader.get_template('actor/templates/contacts.html')
-    html = t.render(c)
+    html = html_slimmer(t.render(c))
     cache.set(key_name, html, 120)
     return http.HttpResponse(html)
   elif format == 'json':
@@ -703,7 +704,7 @@ def actor_followers(request, nick=None, format='html'):
   # TODO: Other output formats.
   if format == 'html':
     t = loader.get_template('actor/templates/followers.html')
-    html = t.render(c)
+    html = html_slimmer(t.render(c))
     cache.set(key_name, html, 120)
     return http.HttpResponse(html)
 

@@ -4,6 +4,7 @@ from common import decorator
 from settings import NS_DOMAIN
 from common import api
 from common.memcache import client as cache
+from common.slimmer import html_slimmer
 
 ENTRIES_PER_PAGE = 5
 SIDEBAR_LIMIT = 9
@@ -86,7 +87,7 @@ def front_front(request):
 
   t = loader.get_template('front/templates/front.html')
   c = RequestContext(request, locals())
-  html = t.render(c)
+  html = html_slimmer(t.render(c))
   cache.set(key_name, html, 120)
   
   return HttpResponse(html);

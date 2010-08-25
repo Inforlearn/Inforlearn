@@ -13,6 +13,7 @@ from common import display
 from common import views as common_views
 #from cachepy import cachepy as cache
 from common.memcache import client as cache
+from common.slimmer import html_slimmer
 from hashlib import md5
 import re
 
@@ -146,7 +147,7 @@ def actor_post(request, format='html'):
 
   if format == 'html':
     t = loader.get_template('actor/templates/overview.html')
-    html = t.render(c)
+    html = html_slimmer(t.render(c))
     cache.set(key_name, html)
 #    print "not cache"
     return http.HttpResponse(html)

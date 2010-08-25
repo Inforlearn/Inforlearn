@@ -15,6 +15,7 @@ from operator import itemgetter
 from settings import DEFAULT_OURPICKS_CHANNELS
 #from cachepy import cachepy as cache
 from common.memcache import client as cache
+from common.slimmer import html_slimmer
 
 
 CHANNEL_HISTORY_PER_PAGE = 20
@@ -53,7 +54,7 @@ def channel_create(request, format='html'):
 
   if format == 'html':
     t = loader.get_template('channel/templates/create.html')
-    html = t.render(c)
+    html = html_slimmer(t.render(c))
     cache.set(key_name, html, 120)
     return http.HttpResponse(html)
 
@@ -140,7 +141,7 @@ def channel_index(request, format='html'):
 
   if format == 'html':
     t = loader.get_template('channel/templates/index.html')
-    html = t.render(c)
+    html = html_slimmer(t.render(c))
     cache.set(key_name, html, 120)
     return http.HttpResponse(html)
 
@@ -177,6 +178,20 @@ def channel_recommendation_list(request, format="html"):
 
 def channel_index_signedout(request, format='html'):
   # for the Our Picks section of the sidebar
+  if request.META.get("QUERY_STRING").startswith("offset"):
+    s = str(request.COOKIES.get('user')) + ":"      \
+      + request.META.get("PATH_INFO") + "?"  \
+      + request.META.get("QUERY_STRING")
+  else:
+    s = str(request.COOKIES.get('user')) + ":"      \
+      + request.META.get("PATH_INFO")
+  key_name = "html:%s" % s.strip()
+  
+  cached_data = cache.get(key_name)
+  if cached_data and format == "html":
+#    print "has cache"
+    return http.HttpResponse(cached_data)
+  
   ourpicks_channels = [] 
   for channel in DEFAULT_OURPICKS_CHANNELS:
     try:
@@ -189,7 +204,9 @@ def channel_index_signedout(request, format='html'):
 
   if format == 'html':
     t = loader.get_template('channel/templates/index_signedout.html')
-    return http.HttpResponse(t.render(c))
+    html = html_slimmer(t.render(c))
+    cache.set(key_name, html, 20)
+    return http.HttpResponse(html)
 
 
 def channel_history(request, nick, format='html'):
@@ -364,7 +381,7 @@ def channel_history(request, nick, format='html'):
 
   if format == 'html':
     t = loader.get_template('channel/templates/history.html')
-    html = t.render(c)
+    html = html_slimmer(t.render(c))
     cache.set(key_name, html, 120)
     return http.HttpResponse(html)
   elif format == 'json':
@@ -450,7 +467,7 @@ def channel_item(request, nick, item=None, format='html'):
   c = template.RequestContext(request, locals())
   if format == 'html':
     t = loader.get_template('channel/templates/item.html')
-    html = t.render(c)
+    html = html_slimmer(t.render(c))
     cache.set(key_name, html, 120)
     return http.HttpResponse(html)
   elif format == 'json':
