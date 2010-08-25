@@ -60,12 +60,6 @@ handlers:
   static_dir: image/default
   expiration: "365d"
 
-- url: /css
-  static_dir: css
-
-- url: /js
-  static_dir: js
-
 - url: /static
   static_dir: static
 

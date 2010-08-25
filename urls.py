@@ -158,6 +158,8 @@ urlpatterns += patterns('common.views',
 urlpatterns += patterns('blob.views',
     (common_patterns.AVATAR_PATH_RE, 'blob_image_jpg'),
     (r'^archive/.*', 'get_archive'),
+    (r'^css/.*', 'css'),
+    (r'^js/.*', 'js'),
 )
 
 # INSTALL
