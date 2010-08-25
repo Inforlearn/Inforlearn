@@ -1,9 +1,20 @@
 {% load error %}
-{% if request.errors %}
-  <div id="error" class='error'>
+{% if request.errors %}  
+  <style>
+    body.single div#header {
+      display: none;
+    }
+  </style>
+  
+  <div class="path">
+    <h1>&#187;  Error</h1>
+  </div>
+  
+  <div id="error" class="error">
     {% for error in request.errors %}
       {{error|error_to_html}}
     {% endfor %}
   </div>
+  
 {% endif %}
 

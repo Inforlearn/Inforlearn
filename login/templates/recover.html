@@ -9,16 +9,15 @@
   
   {% if new_password %}
     <div class='new-password'>
-      Bạn khẩu của bạn đã được khôi phục thành công, giờ bạn có thể đăng nhập với: 
-      Tên đăng nhập: <strong>{{nick}}</strong><br />
-      Mật khẩu: <strong>{{new_password}}</strong>
+      Dưới đây là mật khẩu mới của bạn, hãy sử dụng nó để đăng nhập và đổi lại nếu cần: <br />
+      Mật khẩu: <b>{{new_password}}</b>
     </div>
   {% endif %}
   
-  <p class="centered">
-    <a href="http://{{DOMAIN}}/login">Trở về trang đăng nhập</a>
+  <p style="text-align: right; margin-right: 140px;">
+    <a href="{% url_for DOMAIN request %}/login">Quay lại trang đăng nhập</a>
   </p>
-  <p class="centered">
-    hay <a href="http://{{DOMAIN}}/">quay về trang chủ</a>
+  <p style="text-align: right; margin-right: 140px;">
+    hoặc <a href="{% url_for DOMAIN request %}/">trở về trang chủ</a>
   </p>
 {% endblock %}

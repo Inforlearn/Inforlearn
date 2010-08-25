@@ -61,7 +61,7 @@ def common_error(request):
     validate.error_nonce(request, message)
   except:
     exception.handle_exception(request)
-    message = "An error has occurred"
+    message = "Hệ thống gặp phải một lỗi chưa rõ nguyên nhân"
 
   c = template.RequestContext(request, locals())
   t = loader.get_template('common/templates/error_generic.html')
