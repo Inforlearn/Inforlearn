@@ -1,16 +1,7 @@
 {% load error %}
 {% if request.errors %}  
-  <style>
-    body.single div#header {
-      display: none;
-    }
-  </style>
-  
-  <div class="path">
-    <h1>&#187;  Error</h1>
-  </div>
-  
-  <div id="error" class="error">
+ 
+  <div id="error" class="error" style="padding-bottom: 13px; text-align: center;">
     {% for error in request.errors %}
       {{error|error_to_html}}
     {% endfor %}
