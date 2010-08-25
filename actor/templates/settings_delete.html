@@ -8,18 +8,14 @@
 <div id="account-form">
   <p>
     Tất cả mọi dữ liệu được lưu trữ trên Inforlearn thuộc về tài khoản này sẽ bị 
-    xóa bỏ. Sẽ không có bất cứ một cách nào có thể phục hồi lại dữ liệu.
-  </p>
-  <p>
-    Nếu có gì sai sót, xin hãy góp ý với chúng tôi <a href="/channel/feedback">tại đây</a>. Chúng tôi vẫn đang cố gắng 
-    làm cho sản phẩm tốt lên.
+    xóa bỏ. Sau khi xóa, bạn sẽ không có bất cứ cách nào khôi phục dữ liệu.
   </p>
   <form action="" method="post">
     {{request.user|noncefield:"actor_remove"}}
     <input type="hidden" name="actor_remove" />
     <input type="hidden" name="nick" value="{{request.user.nick}}" />
     <div class="buttons">
-      <input type="submit" class="button" value="Vĩnh biệt" />
+      <input type="submit" class="button" value="Xóa tài khoản của tôi" />
     </div>
   </form>
 </div>

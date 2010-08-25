@@ -2403,7 +2403,7 @@ label, div.wide div.highlight label {
   text-align: right;
   float: left;
   width: 180px;
-  padding: 3px 10px 0 0;
+  padding: 0 10px 0 0;
 }
 
 #settings div.wide div.box label {
