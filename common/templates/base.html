@@ -57,7 +57,7 @@
   
     {# per-user custom background #}
     {% if not request.mobile %}
-      <style type="text/css"><!--
+      <style type="text/css">
         body {
           {% if view.extra.bg_image %}
             background-image: url("http://{{DOMAIN}}/image/{{view.extra.bg_image|urlencode}}.jpg");
@@ -79,7 +79,7 @@
         }
       {% block style %}
       {% endblock %}
-      --></style>
+      </style>
     {% endif %}
   
     {% for feed in feeds %}

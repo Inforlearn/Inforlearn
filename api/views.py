@@ -442,7 +442,7 @@ def _model_to_dict(rv):
 
   return o
 
-
+# TODO: parse rv to remove and auto add `@inforlearn.appspot.com`
 def render_api_response(rv, format="json", servertime=None):
   if isinstance(rv, exception.ApiException):
     o = {"status": "error"}
@@ -450,7 +450,7 @@ def render_api_response(rv, format="json", servertime=None):
   elif isinstance(rv, exception.ValidationError):
     o = {"status": "error", "msg": str(rv)}
   else:
-    o = {"status": "ok"}
+    o = {"status": "success"}
     # TODO make this into something real
     rv = {"response": rv.to_api()}
     o.update(rv)
